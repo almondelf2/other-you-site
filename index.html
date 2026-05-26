@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0d0818">
+<link rel="icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta name="description" content="Other You is a private app for couples to explore each other's alternate selves — the roads not taken, the versions that were forgotten. Go on multiverse date nights.">
+<meta property="og:title" content="Other You · Multiverse Date Night">
+<meta property="og:description" content="A private app for couples to date each other's alternate selves — the roads not taken, the versions that almost were.">
+<meta property="og:url" content="https://www.other-you.app">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://www.other-you.app/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Other You · Multiverse Date Night">
+<title>Other You · Multiverse Date Night</title>
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="site.css">
+<style>
+/* ── PAGE-SPECIFIC ── */
+/* INSTALL INSTRUCTIONS */
+.install-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 36px;
+}
+@media (max-width: 640px) { .install-grid { grid-template-columns: 1fr; } }
+
+.install-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 26px 24px;
+  backdrop-filter: blur(8px);
+}
+.install-os {
+  display: flex; align-items: center; gap: 9px;
+  font-size: .82rem; font-weight: 500; color: var(--cream);
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.install-steps {
+  list-style: none;
+  counter-reset: steps;
+  display: flex; flex-direction: column; gap: 11px;
+  margin-bottom: 16px;
+}
+.install-steps li {
+  counter-increment: steps;
+  display: flex; gap: 12px;
+  font-size: .85rem; color: var(--text-dim); line-height: 1.55;
+}
+.install-steps li::before {
+  content: counter(steps);
+  font-family: var(--font-d);
+  font-size: 1.1rem;
+  color: var(--gold);
+  min-width: 20px;
+  line-height: 1.3;
+  flex-shrink: 0;
+}
+.install-steps strong { color: var(--mist); font-weight: 500; }
+.install-url {
+  font-family: monospace;
+  font-size: .82rem;
+  background: rgba(91,58,140,.2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 1px 6px;
+  color: var(--mist);
+  white-space: nowrap;
+}
+.install-icon {
+  font-size: 1rem;
+  vertical-align: middle;
+}
+.install-note {
+  font-size: .75rem;
+  color: var(--text-dim);
+  line-height: 1.55;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  opacity: .85;
+}
+.install-footer {
+  text-align: center;
+  font-size: .88rem;
+  color: var(--text-dim);
+  line-height: 1.7;
+  max-width: 560px;
+  margin: 32px auto 0;
+}
+
+/* HERO */
+.hero {
+  min-height: min(100dvh, 900px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: calc(var(--nav-h) + 48px) 28px 64px;
+  position: relative;
+}
+.oy-logo-hero {
+  width: 300px;
+  height: 300px;
+  margin: 0 auto 40px;
+  flex-shrink: 0;
+}
+.oy-logo-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.hero-title {
+  font-family: var(--font-d);
+  font-size: clamp(3rem, 10vw, 5.5rem);
+  font-weight: 300;
+  line-height: 1.05;
+  color: var(--cream);
+  margin-bottom: 8px;
+}
+.hero-title em { font-style: italic; color: var(--gold); }
+.hero-sub {
+  font-family: var(--font-d);
+  font-size: clamp(1rem, 3vw, 1.3rem);
+  font-weight: 300;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 24px;
+}
+.hero-hook {
+  font-size: clamp(.95rem, 2.5vw, 1.1rem);
+  color: var(--text-dim);
+  line-height: 1.75;
+  max-width: 520px;
+  margin: 0 auto 40px;
+}
+.hero-hook strong { color: var(--mist); font-weight: 400; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+
+/* WHAT IS THIS */
+.what-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 40px;
+}
+@media (max-width: 640px) { .what-grid { grid-template-columns: 1fr; } }
+
+.what-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 24px;
+  backdrop-filter: blur(8px);
+}
+.what-card-icon { font-size: 1.8rem; margin-bottom: 12px; }
+.what-card-title {
+  font-family: var(--font-d);
+  font-size: 1.15rem;
+  color: var(--cream);
+  margin-bottom: 6px;
+}
+.what-card-text { font-size: .85rem; color: var(--text-dim); line-height: 1.65; }
+
+/* HOW IT WORKS */
+.steps { display: flex; flex-direction: column; gap: 0; margin-top: 40px; }
+.step {
+  display: flex; gap: 24px; align-items: flex-start;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--border);
+}
+.step:last-child { border-bottom: none; }
+.step-num {
+  font-family: var(--font-d);
+  font-size: 3rem; font-weight: 300;
+  color: var(--gold); line-height: 1;
+  min-width: 52px;
+  flex-shrink: 0;
+}
+.step-content {}
+.step-title {
+  font-family: var(--font-d);
+  font-size: 1.25rem; color: var(--cream);
+  margin-bottom: 6px;
+}
+.step-text { font-size: .88rem; color: var(--text-dim); line-height: 1.65; }
+
+/* FEATURE HIGHLIGHTS */
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 40px;
+}
+@media (max-width: 720px) { .features { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 480px) { .features { grid-template-columns: 1fr; } }
+
+.feature {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 22px 20px;
+  backdrop-filter: blur(6px);
+}
+.feature-icon { font-size: 1.5rem; margin-bottom: 10px; }
+.feature-title { font-size: .9rem; font-weight: 500; color: var(--cream); margin-bottom: 4px; }
+.feature-text { font-size: .78rem; color: var(--text-dim); line-height: 1.6; }
+
+/* EXPLORE LINKS */
+.explore-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 40px;
+}
+@media (max-width: 580px) { .explore-grid { grid-template-columns: 1fr; } }
+
+.explore-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px;
+  display: flex; flex-direction: column; gap: 12px;
+  text-decoration: none;
+  backdrop-filter: blur(8px);
+  transition: background .2s, border-color .2s, transform .2s;
+}
+.explore-card:hover {
+  background: var(--bg-card-h);
+  border-color: var(--border-h);
+  transform: translateY(-3px);
+}
+.explore-icon { font-size: 1.8rem; }
+.explore-label {
+  font-size: .65rem;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--gold);
+}
+.explore-title {
+  font-family: var(--font-d);
+  font-size: 1.3rem;
+  color: var(--cream);
+  line-height: 1.2;
+}
+.explore-text { font-size: .83rem; color: var(--text-dim); line-height: 1.6; flex: 1; }
+.explore-arrow { color: var(--gold); font-size: .85rem; align-self: flex-start; }
+
+/* CTA BAND */
+.cta-band {
+  background: linear-gradient(135deg, rgba(91,58,140,.25), rgba(124,58,237,.15));
+  border: 1px solid rgba(155,126,200,.2);
+  border-radius: 24px;
+  padding: 56px 40px;
+  text-align: center;
+  margin: 0 auto;
+  max-width: 700px;
+}
+.cta-band .display-title { margin-bottom: 16px; }
+.cta-band .lead { margin: 0 auto 32px; text-align: center; }
+@media (max-width: 480px) { .cta-band { padding: 40px 24px; } }
+
+/* REVEAL ANIMATIONS */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity .6s ease, transform .6s ease;
+}
+.reveal.revealed { opacity: 1; transform: translateY(0); }
+.reveal-d1 { transition-delay: .1s; }
+.reveal-d2 { transition-delay: .2s; }
+.reveal-d3 { transition-delay: .3s; }
+.reveal-d4 { transition-delay: .4s; }
+</style>
+</head>
+<body>
+<canvas id="site-bg"></canvas>
+
+<!-- ══ NAV ══ -->
+<nav class="site-nav" role="navigation" aria-label="Main navigation">
+  <a href="index.html" class="nav-logo" aria-label="Other You home">
+    Other <em>You</em>
+    <small>Multiverse Date Night</small>
+  </a>
+  <ul class="nav-links" role="list">
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="how-it-works.html">How It Works</a></li>
+    <li><a href="roadmap.html">Roadmap</a></li>
+    <li><a href="contact.html">Contact</a></li>
+    <li><a href="https://pwa.other-you.app" class="nav-cta">Open App</a></li>
+  </ul>
+  <button class="nav-hamburger" aria-label="Open menu" aria-expanded="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24">
+      <path d="M3 6h18M3 12h18M3 18h18"/>
+    </svg>
+  </button>
+</nav>
+<nav class="nav-mobile" aria-label="Mobile navigation">
+  <a href="index.html" class="active">Home</a>
+  <a href="how-it-works.html">How It Works</a>
+  <a href="roadmap.html">Roadmap</a>
+  <a href="contact.html">Contact</a>
+  <a href="https://pwa.other-you.app" class="nav-cta">Open App</a>
+</nav>
+
+<div class="page-wrap">
+
+  <!-- ══ HERO ══ -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="oy-logo-hero">
+      <img
+        src="assets/logo-icon.svg"
+        alt="Other You"
+        class="oy-logo-hero-img"
+        width="300"
+        height="300"
+      >
+    </div>
+
+    <p class="hero-sub fade-up">Multiverse Date Night</p>
+    <h1 class="hero-title fade-up fade-up-1" id="hero-title">
+      Other <em>You</em>
+    </h1>
+    <p class="hero-hook fade-up fade-up-2">
+      Somewhere in the multiverse, <strong>all the versions of you</strong> are waiting
+      to meet all the versions of them. This is a private app for couples to go on
+      dates as their alternate selves — the roads not taken, the versions that were forgotten.
+    </p>
+    <div class="hero-actions fade-up fade-up-3">
+      <a href="https://pwa.other-you.app" class="btn btn-primary">Enter the App</a>
+      <a href="#what" class="btn btn-ghost">Learn more ↓</a>
+    </div>
+  </section>
+
+  <!-- ══ WHAT IS THIS ══ -->
+  <section class="section" id="what" aria-labelledby="what-title">
+    <div class="container">
+      <p class="eyebrow reveal">What is Other You?</p>
+      <h2 class="display-title reveal reveal-d1" id="what-title">
+        A deeper kind<br>of <em>knowing</em>
+      </h2>
+      <p class="lead reveal reveal-d2" style="margin-top:16px;">
+        The slight deviation of a persona gives opportunity to explore yourself and your relationship. Ask deeper questions and share parts of yourself that don't come up in the daily routine.
+      </p>
+
+      <div class="what-grid">
+        <div class="what-card reveal reveal-d1">
+          <div class="what-card-icon">🎭</div>
+          <div class="what-card-title">Your alternate selves</div>
+          <div class="what-card-text">Think of a crossroads in your life — a choice you didn't take, a phase that ended too soon. Create a persona for that version of you. Nickname, origin story, personality traits, character tags, and a photo so you can dress up for your date.</div>
+        </div>
+        <div class="what-card reveal reveal-d2">
+          <div class="what-card-icon">🎰</div>
+          <div class="what-card-title">Personas get matched</div>
+          <div class="what-card-text">The app pairs one of your alternate selves with one of theirs. Spin until the combination feels right, then accept and go on a date. Every pairing tells a different story.</div>
+        </div>
+        <div class="what-card reveal reveal-d3">
+          <div class="what-card-icon">💬</div>
+          <div class="what-card-title">Explore new conversations</div>
+          <div class="what-card-text">Most couples know each other well. But do they know the version who almost became a musician? The one who got arrested at a protest in college? The one who still writes poetry at midnight?</div>
+        </div>
+        <div class="what-card reveal reveal-d4">
+          <div class="what-card-icon">🕰</div>
+          <div class="what-card-title">Date history</div>
+          <div class="what-card-text">Every completed date is saved. Browse through which versions of yourselves have met, and when — a record of the alternate universe you've built together.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ══ HOW IT WORKS ══ -->
+  <section class="section" aria-labelledby="how-title">
+    <div class="container">
+      <p class="eyebrow reveal">How it works</p>
+      <h2 class="display-title reveal reveal-d1" id="how-title">Three steps<br>into the <em>multiverse</em></h2>
+      <div class="steps">
+        <div class="step reveal reveal-d1">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <div class="step-title">Build your other yous</div>
+            <div class="step-text">Create personas for the versions of yourself defined by crossroads you didn't take. Your goth phase that never ended. The year you almost moved to Berlin. The artist you shelved for a stable job. Give them an alias, a story, a personality.</div>
+          </div>
+        </div>
+        <div class="step reveal reveal-d2">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <div class="step-title">Connect with your partner</div>
+            <div class="step-text">Share a private invite link over text, email, or any messaging app. Or a QR code when in person. Your persons are shared with your partner and your partner's personas are shared with you. Your universes connect privately.</div>
+          </div>
+        </div>
+        <div class="step reveal reveal-d3">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <div class="step-title">Go on a multiverse date</div>
+            <div class="step-text">Spin for a match. Two personas meet for the first time. Lock the slots you like and re-spin the rest. Accept when the combination feels right — then go on a date as those two versions of yourselves.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ══ FEATURES ══ -->
+  <section class="section" aria-labelledby="features-title">
+    <div class="container">
+      <p class="eyebrow reveal">Built with intention</p>
+      <h2 class="display-title reveal reveal-d1" id="features-title">Everything you need,<br>nothing you <em>don't</em></h2>
+      <div class="features">
+        <div class="feature reveal reveal-d1">
+          <div class="feature-icon">🔒</div>
+          <div class="feature-title">Completely private</div>
+          <div class="feature-text">No algorithm, no feed, no followers. This app exists only between you two — a private universe for the relationship you're building.</div>
+        </div>
+        <div class="feature reveal reveal-d2">
+          <div class="feature-icon">✨</div>
+          <div class="feature-title">Partner connection</div>
+          <div class="feature-text">Connect with your partner with an invite link, QR code, or manual code. Sync with each other's personas with end-to-end encryption.</div>
+        </div>
+        <div class="feature reveal reveal-d3">
+          <div class="feature-icon">🌀</div>
+          <div class="feature-title">Profile backup</div>
+          <div class="feature-text">Export your backup file for safe keeping. Import your backup file if you get a new device.</div>
+        </div>
+        <div class="feature reveal reveal-d4">
+          <div class="feature-icon">📱</div>
+          <div class="feature-title">Install on any device</div>
+          <div class="feature-text">A progressive web app — no App Store required. Install from your browser, works offline.</div>
+        </div>
+        <div class="feature reveal reveal-d5">
+	  <div class="feature-icon">🌙</div>
+          <div class="feature-title">Personalized app aesthetics</div>
+          <div class="feature-text">Dark &amp; light themes. Follows your device settings.</div>
+        </div>
+        <div class="feature reveal reveal-d6">
+          <div class="feature-icon">✦</div>
+          <div class="feature-title">Always free to start</div>
+          <div class="feature-text">The core experience is free. This is an early version being actively developed.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ══ EXPLORE LINKS ══ -->
+  <section class="section" aria-labelledby="explore-title">
+    <div class="container">
+      <p class="eyebrow reveal">Explore</p>
+      <h2 class="display-title reveal reveal-d1" id="explore-title">There's more<br>to <em>discover</em></h2>
+      <div class="explore-grid">
+        <a href="roadmap.html" class="explore-card reveal reveal-d1" aria-label="View the roadmap">
+          <div class="explore-icon">🗺</div>
+          <div class="explore-label">Where we're going</div>
+          <div class="explore-title">The Roadmap</div>
+          <div class="explore-text">See what's been built, what's coming next, and the longer vision for where Other You is headed.</div>
+          <div class="explore-arrow">View roadmap →</div>
+        </a>
+        <a href="contact.html" class="explore-card reveal reveal-d2" aria-label="Send a suggestion">
+          <div class="explore-icon">💌</div>
+          <div class="explore-label">Shape what's next</div>
+          <div class="explore-title">Suggestions &amp; Contact</div>
+          <div class="explore-text">Have a feature idea? Found something that needs fixing? I'd love to hear from you.</div>
+          <div class="explore-arrow">Get in touch →</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══ HOW TO INSTALL ══ -->
+  <section class="section" id="install" aria-labelledby="install-title">
+    <div class="container">
+      <p class="eyebrow reveal">No App Store needed</p>
+      <h2 class="display-title reveal reveal-d1" id="install-title">Add it to your<br><em>home screen</em></h2>
+      <p class="lead reveal reveal-d2" style="margin-top:16px;">
+        Other You is a progressive web app — it installs directly from your browser in seconds, works offline, and feels completely native.
+      </p>
+      <div class="install-grid">
+        <div class="install-card reveal reveal-d1">
+          <div class="install-os">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+            iPhone &amp; iPad
+          </div>
+          <ol class="install-steps">
+            <li>Open <strong>Safari</strong> and go to <span class="install-url">pwa.other-you.app</span></li>
+            <li>Tap the <strong>Share button</strong> <span class="install-icon">⎙</span> at the bottom of the screen</li>
+            <li>Scroll down and tap <strong>"Add to Home Screen"</strong></li>
+            <li>Tap <strong>Add</strong> in the top right</li>
+          </ol>
+          <p class="install-note">Must use Safari — Chrome on iOS does not support installation.</p>
+        </div>
+        <div class="install-card reveal reveal-d2">
+          <div class="install-os">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22" aria-hidden="true"><path d="M6 18c0 .55.45 1 1 1h1v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h2v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h1c.55 0 1-.45 1-1V8H6v10zM3.5 8C2.67 8 2 8.67 2 9.5v7c0 .83.67 1.5 1.5 1.5S5 17.33 5 16.5v-7C5 8.67 4.33 8 3.5 8zm17 0c-.83 0-1.5.67-1.5 1.5v7c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-7c0-.83-.67-1.5-1.5-1.5zm-4.97-5.84l1.3-1.3c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0l-1.48 1.48C13.85 1.23 12.95 1 12 1c-.96 0-1.86.23-2.66.63L7.85.15c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71l1.31 1.31C7.08 3.03 6 4.91 6 7h12c0-2.09-1.08-3.97-2.47-4.84zM10 5H9V4h1v1zm5 0h-1V4h1v1z"/></svg>
+            Android
+          </div>
+          <ol class="install-steps">
+            <li>Open <strong>Chrome</strong> and go to <span class="install-url">pwa.other-you.app</span></li>
+            <li>Tap the <strong>three-dot menu</strong> ⋮ in the top right</li>
+            <li>Tap <strong>"Add to Home Screen"</strong> or <strong>"Install App"</strong></li>
+            <li>Tap <strong>Install</strong> to confirm</li>
+          </ol>
+          <p class="install-note">Chrome may show an automatic install banner — tap it to install in one tap.</p>
+        </div>
+      </div>
+      <p class="install-footer reveal reveal-d3">
+        Once installed, Other You opens full-screen like any native app — and works offline.
+        No updates to download. No App Store account needed.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+  <!-- ══ CTA ══ -->
+  <section class="section-sm">
+    <div class="container">
+      <div class="cta-band reveal">
+        <p class="eyebrow">Ready?</p>
+        <h2 class="display-title">Meet the other<br><em>versions</em> of each other</h2>
+        <p class="lead">Try it now — no sign-up required. Just two people and all the versions of them.</p>
+        <a href="https://pwa.other-you.app" class="btn btn-gold">Enter the App</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FOOTER ══ -->
+  <footer class="site-footer">
+    <div class="footer-logo">Other <em>You</em></div>
+    <p>Privacy Policy &nbsp;·&nbsp; Terms and Conditions</p>
+    <p style="margin-top:8px;opacity:.6;">© 2026 Other You</p>
+    <p class="footer-donate">Enjoying the app? <a href="https://connect.vestwell.com/gift/stable/JpWVJZ7rQ0ixof6rguIVEA" target="_blank" rel="noopener">Leave a tip ↗</a></p>
+  </footer>
+
+</div><!-- /page-wrap -->
+
+<script src="site.js"></script>
+</body>
+</html>

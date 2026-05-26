@@ -1,0 +1,29 @@
+/* ================================================
+   OTHER YOU · Design Tokens
+   Single source of truth for brand colors and fonts.
+   Used by both site/site.css and the app.
+   ================================================ */
+
+:root {
+  /* Brand colors */
+  --oy-bg:        #0d0818;
+  --oy-surface:   #1a0e2e;
+  --oy-iris:      #5b3a8c;
+  --oy-gold:      #9e7a2e;
+  --oy-text:      #f5efe6;
+  --oy-text-dim:  #a89cc4;
+
+  /* Typography */
+  --oy-font-d: 'Cormorant Garamond', Georgia, serif;
+  --oy-font-b: 'DM Sans', sans-serif;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --oy-bg:       #f8f4ff;
+    --oy-surface:  #eee8fc;
+    --oy-text:     #2a1a45;
+    --oy-text-dim: #5a4880;
+    /* --oy-iris and --oy-gold are the same in both themes */
+  }
+}
