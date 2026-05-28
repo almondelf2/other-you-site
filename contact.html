@@ -62,8 +62,22 @@
   </header>
   <div class="form-wrap">
     <div class="form-card reveal">
-      <iframe class="embed-frame" id="19fe192e-5f57-408d-83b2-739bd360a7e1" src="https://opnform.com/forms/19fe192e-5f57-408d-83b2-739bd360a7e1" style="border:none;width:100%;min-height:500px;" title="Contact form"></iframe>
-      <script type="text/javascript" onload="initEmbed('19fe192e-5f57-408d-83b2-739bd360a7e1', { autoResize: true })" src="https://opnform.com/widgets/iframe.min.js"></script>
+      <!-- <iframe class="embed-frame" id="19fe192e-5f57-408d-83b2-739bd360a7e1" src="https://opnform.com/forms/19fe192e-5f57-408d-83b2-739bd360a7e1" style="border:none;width:100%;min-height:500px;" title="Contact form"></iframe>
+      //<script type="text/javascript" onload="initEmbed('19fe192e-5f57-408d-83b2-739bd360a7e1', { autoResize: true })" src="https://opnform.com/widgets/iframe.min.js"></script> -->
+      <iframe style="border:none;width:100%;" id="19fe192e-5f57-408d-83b2-739bd360a7e1" src="https://opnform.com/forms/19fe192e-5f57-408d-83b2-739bd360a7e1"></iframe>
+      <script src="https://opnform.com/widgets/opnform-sdk.min.js">
+      </script>
+      <script>
+        // Optional: example for demonstration — remove or replace with your own handlers
+        // SDK auto-resizes iframe by default.
+  
+          opnform.on('submit', function(data) {
+            console.log('Form submitted:', data);
+          });
+  
+        // More SDK methods: opnform.get('19fe192e-5f57-408d-83b2-739bd360a7e1').setField(id, value)
+        // Docs: https://docs.opnform.com/embedding/javascript-sdk
+      </script>
     </div>
   </div>
   <!-- ══ FOOTER ══ -->
