@@ -16,6 +16,7 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Other You · Multiverse Date Night">
 <title>Roadmap · Other You</title>
+<link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="site.css">
 <style>
 .page-header{padding:calc(var(--nav-h) + 64px) 28px 48px;text-align:center;}
@@ -55,14 +56,13 @@
 .vision-band blockquote em{color:var(--gold);}
 .feedback-cta{text-align:center;padding:48px 24px 0;}
 .feedback-cta p{font-size:.95rem;color:var(--text-dim-aa);max-width:480px;margin:12px auto 28px;line-height:1.7;}
-.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
-.reveal.revealed{opacity:1;transform:none;}
-.reveal-d1{transition-delay:.1s;}.reveal-d2{transition-delay:.2s;}.reveal-d3{transition-delay:.3s;}
+/* .reveal and .reveal-d1 through .reveal-d3 are defined in site.css */
 @media(max-width:640px){.phase{padding:0 0 40px 60px;}}
 </style>
 </head>
 <body>
-<canvas id="site-bg"></canvas>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+<canvas id="site-bg" aria-hidden="true"></canvas>
 <nav class="site-nav" role="navigation" aria-label="Main navigation">
   <a href="index.html" class="nav-logo">Other <em>You</em><small>Multiverse Date Night</small></a>
   <ul class="nav-links" role="list">
@@ -72,11 +72,11 @@
     <li><a href="contact.html">Contact</a></li>
     <li><a href="https://pwa.other-you.app" class="nav-cta">Open App</a></li>
   </ul>
-  <button class="nav-hamburger" aria-label="Open menu" aria-expanded="false">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  <button class="nav-hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
   </button>
 </nav>
-<nav class="nav-mobile" aria-label="Mobile navigation">
+<nav class="nav-mobile" id="nav-mobile" aria-label="Mobile navigation">
   <a href="index.html">Home</a>
   <a href="how-it-works.html">How It Works</a>
   <a href="roadmap.html" class="active">Roadmap</a>
@@ -84,7 +84,7 @@
   <a href="https://pwa.other-you.app" class="nav-cta">Open App</a>
 </nav>
 
-<div class="page-wrap">
+<div class="page-wrap" id="main-content" tabindex="-1">
   <header class="page-header">
     <p class="eyebrow fade-up">Building in the open</p>
     <h1 class="display-title fade-up fade-up-1">The Roadmap</h1>
@@ -97,7 +97,7 @@
 
       <div class="vision-band reveal">
         <blockquote>
-          "Most couples know each other's routines. Other You is about knowing each other's <em>depth</em> — the barried paths, the forgotten chapters, the potential versions."
+          "Most couples know each other's routines. Other You is about knowing each other's <em>depth</em> — the buried paths, the forgotten chapters, the potential versions."
         </blockquote>
         <p style="text-align:center;font-size:.8rem;color:var(--text-dim-aa);">The long-term goal is to become an intimate app a couple can share to strengthen their relationship and trigger deep conversation.</p>
       </div>
@@ -105,10 +105,12 @@
       <div class="timeline" role="list">
 
         <!-- PHASE 1 -->
-        <div class="phase active reveal" role="listitem">
+        <!-- class="done" = gold dot (no pulse). class="active" = pulsing purple dot.
+             Phase 1 is complete, so it gets the gold "done" treatment. -->
+        <div class="phase done reveal" role="listitem">
           <div class="phase-meta">
             <div class="phase-num">01</div>
-            <span class="phase-status status-active">Completed</span>
+            <span class="phase-status status-done">Completed</span>
           </div>
           <div class="phase-card">
             <div class="phase-title">A Working App for Real Couples</div>
@@ -152,10 +154,11 @@
         </div>
 
         <!-- PHASE 2 -->
-        <div class="phase reveal reveal-d1" role="listitem">
+        <!-- class="active" = pulsing purple dot, showing this is the current focus. -->
+        <div class="phase active reveal reveal-d1" role="listitem">
           <div class="phase-meta">
             <div class="phase-num">02</div>
-            <span class="phase-status status-next">In-Progress</span>
+            <span class="phase-status status-active">In Progress</span>
           </div>
           <div class="phase-card">
             <div class="phase-title">Inspirational Prompts</div>
@@ -225,8 +228,8 @@
   <footer class="site-footer">
     <div class="footer-logo">Other <em>You</em></div>
     <p>Privacy Policy &nbsp;·&nbsp; Terms and Conditions</p>
-    <p style="margin-top:8px;opacity:.6;">© 2026 Other You</p>
-    <p class="footer-donate">Enjoying the app? <a href="https://connect.vestwell.com/gift/stable/JpWVJZ7rQ0ixof6rguIVEA" target="_blank" rel="noopener">Leave a tip ↗</a></p>
+    <p class="footer-copyright">© 2026 Other You</p>
+    <p class="footer-donate">Enjoying the app? <a href="https://connect.vestwell.com/gift/stable/JpWVJZ7rQ0ixof6rguIVEA" target="_blank" rel="noopener noreferrer">Leave a tip ↗</a></p>
   </footer>
 
 </div>
