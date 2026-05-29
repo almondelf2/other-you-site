@@ -16,6 +16,7 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Other You · Multiverse Date Night">
 <title>Contact · Other You</title>
+<link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="site.css">
 <style>
 .page-header{padding:calc(var(--nav-h) + 72px) 28px 56px;text-align:center;}
@@ -25,13 +26,12 @@
 .embed-frame{display:block;width:100%;min-height:500px;border:none;border-radius:12px;}
 @media(prefers-color-scheme:light){.embed-frame{color-scheme:light;}}
 @media(prefers-color-scheme:dark){.embed-frame{color-scheme:dark;}}
-.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
-.reveal.revealed{opacity:1;transform:none;}
-.reveal-d1{transition-delay:.12s;}
+/* .reveal and .reveal-d1 are defined in site.css */
 </style>
 </head>
 <body>
-<canvas id="site-bg"></canvas>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+<canvas id="site-bg" aria-hidden="true"></canvas>
 <nav class="site-nav" role="navigation" aria-label="Main navigation">
   <a href="index.html" class="nav-logo">Other <em>You</em><small>Multiverse Date Night</small></a>
   <ul class="nav-links" role="list">
@@ -41,18 +41,18 @@
     <li><a href="contact.html" class="active">Contact</a></li>
     <li><a href="https://pwa.other-you.app" class="nav-cta">Open App</a></li>
   </ul>
-  <button class="nav-hamburger" aria-label="Open menu" aria-expanded="false">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  <button class="nav-hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
   </button>
 </nav>
-<nav class="nav-mobile" aria-label="Mobile navigation">
+<nav class="nav-mobile" id="nav-mobile" aria-label="Mobile navigation">
   <a href="index.html">Home</a>
   <a href="how-it-works.html">How It Works</a>
   <a href="roadmap.html">Roadmap</a>
   <a href="contact.html" class="active">Contact</a>
   <a href="https://pwa.other-you.app" class="nav-cta">Open App</a>
 </nav>
-<div class="page-wrap">
+<div class="page-wrap" id="main-content" tabindex="-1">
   <header class="page-header">
     <p class="eyebrow fade-up">Say anything</p>
     <h1 class="display-title fade-up fade-up-1">Get in <em>touch</em></h1>
@@ -62,21 +62,23 @@
   </header>
   <div class="form-wrap">
     <div class="form-card reveal">
-      <!-- <iframe class="embed-frame" id="19fe192e-5f57-408d-83b2-739bd360a7e1" src="https://opnform.com/forms/19fe192e-5f57-408d-83b2-739bd360a7e1" style="border:none;width:100%;min-height:500px;" title="Contact form"></iframe>
-      //<script type="text/javascript" onload="initEmbed('19fe192e-5f57-408d-83b2-739bd360a7e1', { autoResize: true })" src="https://opnform.com/widgets/iframe.min.js"></script> -->
-      <iframe style="border:none;width:100%;" id="19fe192e-5f57-408d-83b2-739bd360a7e1" src="https://opnform.com/forms/19fe192e-5f57-408d-83b2-739bd360a7e1"></iframe>
-      <script src="https://opnform.com/widgets/opnform-sdk.min.js">
-      </script>
+      <!-- title is required on iframes for screen readers to know what they're entering -->
+      <iframe
+        title="Contact form"
+        class="embed-frame"
+        id="19fe192e-5f57-408d-83b2-739bd360a7e1"
+        src="https://opnform.com/forms/19fe192e-5f57-408d-83b2-739bd360a7e1"
+      ></iframe>
+      <!-- The Opnform SDK auto-resizes the iframe to fit the form content -->
+      <script src="https://opnform.com/widgets/opnform-sdk.min.js"></script>
       <script>
-        // Optional: example for demonstration — remove or replace with your own handlers
-        // SDK auto-resizes iframe by default.
-  
-          opnform.on('submit', function(data) {
+        /* Guard: only call opnform.on if the SDK loaded successfully.
+           If the SDK script fails (e.g. network error), this prevents a JS crash. */
+        if (typeof opnform !== 'undefined') {
+          opnform.on('submit', function (data) {
             console.log('Form submitted:', data);
           });
-  
-        // More SDK methods: opnform.get('19fe192e-5f57-408d-83b2-739bd360a7e1').setField(id, value)
-        // Docs: https://docs.opnform.com/embedding/javascript-sdk
+        }
       </script>
     </div>
   </div>
@@ -84,8 +86,8 @@
   <footer class="site-footer">
     <div class="footer-logo">Other <em>You</em></div>
     <p>Privacy Policy &nbsp;·&nbsp; Terms and Conditions</p>
-    <p style="margin-top:8px;opacity:.6;">© 2026 Other You</p>
-    <p class="footer-donate">Enjoying the app? <a href="https://connect.vestwell.com/gift/stable/JpWVJZ7rQ0ixof6rguIVEA" target="_blank" rel="noopener">Leave a tip ↗</a></p>
+    <p class="footer-copyright">© 2026 Other You</p>
+    <p class="footer-donate">Enjoying the app? <a href="https://connect.vestwell.com/gift/stable/JpWVJZ7rQ0ixof6rguIVEA" target="_blank" rel="noopener noreferrer">Leave a tip ↗</a></p>
   </footer>
 </div>
 <script src="site.js"></script>
