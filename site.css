@@ -1,38 +1,89 @@
-@import './tokens.css';
-
 /* ═══════════════════════════════════════════
    OTHER YOU · MULTIVERSE DATE NIGHT
    Shared site stylesheet
    https://www.other-you.app
+
+   HOW THIS FILE IS ORGANIZED
+   ──────────────────────────
+   1.  Imports       — fonts and design tokens
+   2.  Theme         — CSS custom properties (variables)
+   3.  Reset         — browser default overrides
+   4.  Skip Link     — accessibility: keyboard jump to content
+   5.  Canvas BG     — animated starfield background
+   6.  Navigation    — fixed top bar + mobile drawer
+   7.  Layout        — sections, containers, dividers
+   8.  Typography    — eyebrow, display title, lead text
+   9.  Buttons       — primary, ghost, gold variants
+   10. Cards         — reusable card shell
+   11. Footer        — site-wide footer
+   12. Animations    — fade-up (load) + reveal (scroll)
+   13. Focus & A11y  — keyboard focus styles
+   14. Reduced Motion — respects user OS setting
 ═══════════════════════════════════════════ */
 
+
+/* ══════════════════════════════
+   1. IMPORTS
+   Fonts come first so the browser can
+   start downloading them immediately.
+══════════════════════════════ */
+@import './tokens.css';
+
+/*
+  Google Fonts loads two typefaces:
+  · Cormorant Garamond — elegant serif used for headings (--font-d)
+  · DM Sans            — clean sans-serif used for body text (--font-b)
+  "display=swap" means text shows in a fallback font while the custom
+  font loads, preventing invisible text (FOIT).
+*/
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap');
 
-/* ── THEME ── */
+
+/* ══════════════════════════════
+   2. THEME
+   CSS custom properties (variables) let us
+   define colors once and reuse them everywhere.
+   Changing one variable updates every element
+   that uses it — that's the power of a design system.
+══════════════════════════════ */
 :root {
+  /* Backgrounds */
   --bg:          var(--oy-bg);
   --bg-2:        var(--oy-surface);
-  --bg-card:     rgba(45,27,78,.45);
-  --bg-card-h:   rgba(55,33,95,.6);
+  --bg-card:     rgba(45,27,78,.45);      /* semi-transparent card background */
+  --bg-card-h:   rgba(55,33,95,.6);       /* card hover state */
+
+  /* Borders */
   --border:      rgba(91,58,140,.28);
-  --border-h:    rgba(155,126,200,.45);
+  --border-h:    rgba(155,126,200,.45);   /* border on hover */
   --border-soft: rgba(91,58,140,.18);
-  --iris:        var(--oy-iris);
-  --portal:      #7c3aed;
-  --text:        #ddd4f0;
-  --text-dim:    var(--oy-text-dim);
-  --text-dim-aa: var(--oy-text-dim);
-  --mist:        #cfc0e8;
+
+  /* Brand colors */
+  --iris:        var(--oy-iris);          /* primary purple */
+  --portal:      #7c3aed;                 /* deeper purple for gradients */
+  --gold:        var(--oy-gold);          /* warm accent gold */
+
+  /* Text hierarchy */
+  --text:        #ddd4f0;                 /* primary body text */
+  --text-dim:    var(--oy-text-dim);      /* secondary / muted text */
+  --text-dim-aa: var(--oy-text-dim);      /* same, but named to signal AA contrast intent */
+  --mist:        #cfc0e8;                 /* slightly brighter than text-dim */
   --mist-aa:     #cfc0e8;
-  --gold:        var(--oy-gold);
   --gold-aa:     var(--oy-gold);
   --gold-2:      var(--oy-gold);
-  --cream:       var(--oy-text);
-  --font-d:      var(--oy-font-d);
-  --font-b:      var(--oy-font-b);
-  --nav-h:       64px;
+  --cream:       var(--oy-text);          /* lightest text, headings */
+
+  /* Typography */
+  --font-d:      var(--oy-font-d);        /* display / heading font */
+  --font-b:      var(--oy-font-b);        /* body font */
+
+  /* Layout */
+  --nav-h:       64px;                    /* navigation bar height */
 }
 
+/* Light mode overrides.
+   "prefers-color-scheme" reads the user's OS/browser setting.
+   We only need to override what changes — everything else inherits. */
 @media (prefers-color-scheme: light) {
   :root {
     --bg:          var(--oy-bg);
@@ -47,16 +98,27 @@
     --text-dim-aa: var(--oy-text-dim);
     --mist:        #3d2768;
     --mist-aa:     #3d2768;
-    --gold:        var(--oy-gold);
     --gold-aa:     var(--oy-gold);
     --gold-2:      var(--oy-gold);
     --cream:       var(--oy-text);
   }
 }
 
-/* ── RESET ── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+
+/* ══════════════════════════════
+   3. RESET
+   Browsers have built-in styles that differ between
+   Chrome, Firefox, Safari, etc. A reset levels the
+   playing field so our styles behave predictably.
+══════════════════════════════ */
+*, *::before, *::after {
+  box-sizing: border-box; /* padding and border are included in width/height */
+  margin: 0;
+  padding: 0;
+}
+html {
+  scroll-behavior: smooth; /* anchor links (#install etc.) scroll smoothly */
+}
 body {
   background: var(--bg);
   color: var(--text);
@@ -64,26 +126,64 @@ body {
   font-size: 16px;
   line-height: 1.6;
   min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
+  -webkit-font-smoothing: antialiased; /* crisper text on macOS/iOS */
 }
-img { max-width: 100%; display: block; }
-a { color: inherit; text-decoration: none; }
+img  { max-width: 100%; display: block; }
+a    { color: inherit; text-decoration: none; }
 
-/* ── CANVAS BG ── */
+
+/* ══════════════════════════════
+   4. SKIP LINK
+   The very first focusable element on every page.
+   Sighted keyboard users and screen reader users
+   press Tab once to reveal it, then Enter to jump
+   past the navigation directly to the main content.
+   It's invisible until focused so it doesn't appear
+   for mouse users.
+══════════════════════════════ */
+.skip-link {
+  position: absolute;
+  top: -100%;          /* hidden above the viewport */
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--iris);
+  color: #fff;
+  padding: 10px 24px;
+  border-radius: 0 0 10px 10px;
+  font-size: .9rem;
+  font-weight: 500;
+  z-index: 200;        /* above everything, including the nav */
+  text-decoration: none;
+  transition: top 0.2s;
+  white-space: nowrap;
+}
+.skip-link:focus {
+  top: 0;              /* slides into view when focused */
+}
+
+
+/* ══════════════════════════════
+   5. CANVAS BACKGROUND
+   The <canvas> element renders the animated starfield
+   in site.js. It's fixed behind all content.
+══════════════════════════════ */
 #site-bg {
   position: fixed;
-  inset: 0;
+  inset: 0;            /* shorthand for top:0 right:0 bottom:0 left:0 */
   z-index: 0;
-  pointer-events: none;
+  pointer-events: none; /* mouse clicks pass through the canvas to elements below */
 }
 .page-wrap {
   position: relative;
-  z-index: 1;
+  z-index: 1;          /* sits above the canvas (z-index: 0) */
 }
 
+
 /* ══════════════════════════════
-   NAV
+   6. NAVIGATION
 ══════════════════════════════ */
+
+/* --- Desktop nav bar (fixed, always visible) --- */
 .site-nav {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -93,9 +193,11 @@ a { color: inherit; text-decoration: none; }
   align-items: center;
   justify-content: space-between;
   padding: 0 max(32px, calc((100vw - 1100px) / 2));
+  /* max() ensures minimum 32px padding on small screens,
+     and centers content with equal margins on wide screens */
   background: rgba(13,8,24,.82);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);           /* frosted glass effect */
+  -webkit-backdrop-filter: blur(16px);   /* Safari prefix */
   border-bottom: 1px solid var(--border);
   transition: background .3s;
 }
@@ -103,6 +205,7 @@ a { color: inherit; text-decoration: none; }
   .site-nav { background: rgba(244,240,255,.88); }
 }
 
+/* Brand logo in the nav */
 .nav-logo {
   font-family: var(--font-d);
   font-size: 1.1rem;
@@ -111,7 +214,7 @@ a { color: inherit; text-decoration: none; }
   color: var(--mist);
   white-space: nowrap;
 }
-.nav-logo em { font-style: italic; color: var(--gold); }
+.nav-logo em    { font-style: italic; color: var(--gold); }
 .nav-logo small {
   display: block;
   font-family: var(--font-b);
@@ -122,6 +225,7 @@ a { color: inherit; text-decoration: none; }
   margin-top: -2px;
 }
 
+/* Desktop nav link list */
 .nav-links {
   display: flex;
   align-items: center;
@@ -137,11 +241,13 @@ a { color: inherit; text-decoration: none; }
   color: var(--text-dim);
   transition: color .2s, background .2s;
 }
-.nav-links a:hover { color: var(--mist); }
-.nav-links a.active { color: var(--text); }
+.nav-links a:hover         { color: var(--mist); }
+.nav-links a.active        { color: var(--text); }
+
+/* "Open App" call-to-action button in the nav */
 .nav-links .nav-cta {
   background: linear-gradient(135deg, var(--iris), var(--portal));
-  color: #fff !important;
+  color: #fff !important; /* override the inherited link color */
   font-weight: 500;
   padding: 8px 18px;
   box-shadow: 0 2px 16px rgba(91,58,140,.4);
@@ -151,17 +257,20 @@ a { color: inherit; text-decoration: none; }
   transform: translateY(-1px);
 }
 
-/* Mobile nav */
+/* --- Hamburger button (mobile only) --- */
 .nav-hamburger {
-  display: none;
+  display: none;         /* hidden on desktop, shown at 680px breakpoint */
   background: none;
   border: none;
   cursor: pointer;
   color: var(--text-dim);
   padding: 6px;
+  border-radius: 8px;    /* gives the focus ring a nice shape */
 }
+
+/* --- Mobile nav drawer --- */
 .nav-mobile {
-  display: none;
+  display: none;         /* hidden by default */
   position: fixed;
   top: var(--nav-h);
   left: 0; right: 0;
@@ -175,7 +284,7 @@ a { color: inherit; text-decoration: none; }
 @media (prefers-color-scheme: light) {
   .nav-mobile { background: rgba(244,240,255,.98); }
 }
-.nav-mobile.open { display: flex; }
+.nav-mobile.open { display: flex; } /* JS adds/removes 'open' class */
 .nav-mobile a {
   padding: 12px 16px;
   border-radius: 12px;
@@ -183,7 +292,8 @@ a { color: inherit; text-decoration: none; }
   color: var(--text-dim);
   transition: color .2s, background .2s;
 }
-.nav-mobile a:hover, .nav-mobile a.active { color: var(--text); background: var(--bg-card); }
+.nav-mobile a:hover,
+.nav-mobile a.active    { color: var(--text); background: var(--bg-card); }
 .nav-mobile .nav-cta {
   background: linear-gradient(135deg, var(--iris), var(--portal));
   color: #fff !important;
@@ -192,25 +302,46 @@ a { color: inherit; text-decoration: none; }
   font-weight: 500;
 }
 
+/* --- Mobile breakpoint: swap desktop nav for hamburger --- */
 @media (max-width: 680px) {
   .site-nav { padding: 0 20px; }
-  .nav-links { display: none; }
-  .nav-hamburger { display: flex; }
-  .section { padding: 52px 20px; }
-  .section-sm { padding: 36px 20px; }
+  .nav-links    { display: none; }  /* hide desktop links */
+  .nav-hamburger { display: flex; } /* show hamburger */
+  .section      { padding: 52px 20px; }
+  .section-sm   { padding: 36px 20px; }
   .display-title { font-size: clamp(2rem, 8vw, 3.2rem); }
-  .lead { font-size: .95rem; }
-  .cta-band { padding: 36px 20px; }
+  .lead         { font-size: .95rem; }
+  .cta-band     { padding: 36px 20px; }
 }
 
+
 /* ══════════════════════════════
-   SHARED SECTION STYLES
+   7. LAYOUT
+   "container" constrains content width so long lines
+   of text don't span the full browser window — wide
+   lines are hard to read. Max ~75 characters per line
+   is the readability sweet spot.
 ══════════════════════════════ */
-.section { padding: 80px 24px; }
+.section    { padding: 80px 24px; }
 .section-sm { padding: 48px 24px; }
-.container { max-width: 900px; margin: 0 auto; }
+.container      { max-width: 900px;  margin: 0 auto; }
 .container-wide { max-width: 1100px; margin: 0 auto; }
 
+/* Visual rule between sections */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0 auto;
+  max-width: 900px;
+}
+
+
+/* ══════════════════════════════
+   8. TYPOGRAPHY
+   Consistent text styles used across all pages.
+══════════════════════════════ */
+
+/* Small uppercase label above a heading */
 .eyebrow {
   font-size: .68rem;
   text-transform: uppercase;
@@ -218,6 +349,10 @@ a { color: inherit; text-decoration: none; }
   color: var(--gold);
   margin-bottom: 12px;
 }
+
+/* Large section heading.
+   clamp(min, preferred, max) creates fluid type that
+   scales with viewport width between the min and max. */
 .display-title {
   font-family: var(--font-d);
   font-size: clamp(2.4rem, 6vw, 4rem);
@@ -226,6 +361,8 @@ a { color: inherit; text-decoration: none; }
   color: var(--cream);
 }
 .display-title em { font-style: italic; color: var(--gold); }
+
+/* Introductory paragraph below a heading */
 .lead {
   font-size: 1.05rem;
   color: var(--text-dim);
@@ -233,6 +370,13 @@ a { color: inherit; text-decoration: none; }
   max-width: 600px;
 }
 
+
+/* ══════════════════════════════
+   9. BUTTONS
+   Three visual variants, one base class.
+   Using "display: inline-flex" lets the button
+   text and any icons align vertically.
+══════════════════════════════ */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -244,9 +388,11 @@ a { color: inherit; text-decoration: none; }
   cursor: pointer;
   text-decoration: none;
   transition: transform .15s, box-shadow .15s, background .2s;
-  -webkit-appearance: none;
+  -webkit-appearance: none; /* removes default iOS button styling */
 }
-.btn:active { transform: scale(.97); }
+.btn:active { transform: scale(.97); } /* subtle press feedback */
+
+/* Purple gradient — primary action */
 .btn-primary {
   background: linear-gradient(135deg, var(--iris), var(--portal));
   color: #fff;
@@ -255,6 +401,8 @@ a { color: inherit; text-decoration: none; }
   box-shadow: 0 4px 24px rgba(91,58,140,.45);
 }
 .btn-primary:hover { box-shadow: 0 6px 32px rgba(91,58,140,.6); transform: translateY(-2px); }
+
+/* Outlined — secondary action */
 .btn-ghost {
   background: none;
   color: var(--text-dim);
@@ -263,6 +411,8 @@ a { color: inherit; text-decoration: none; }
   font-size: .9rem;
 }
 .btn-ghost:hover { color: var(--mist); border-color: var(--border-h); }
+
+/* Gold fill — final CTA */
 .btn-gold {
   background: var(--gold);
   color: #1a0a2e;
@@ -275,7 +425,13 @@ a { color: inherit; text-decoration: none; }
 }
 .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(122,63,0,.3); }
 
-/* ── CARDS ── */
+
+/* ══════════════════════════════
+   10. CARDS
+   A reusable glass-effect card shell.
+   backdrop-filter: blur() creates the frosted
+   glass look — it blurs what's behind the element.
+══════════════════════════════ */
 .card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -284,18 +440,13 @@ a { color: inherit; text-decoration: none; }
   backdrop-filter: blur(8px);
   transition: background .2s, border-color .2s, transform .2s;
 }
-.card:hover { background: var(--bg-card-h); border-color: var(--border-h); }
+.card:hover      { background: var(--bg-card-h); border-color: var(--border-h); }
 .card-link:hover { transform: translateY(-3px); }
 
-/* ── DIVIDER ── */
-.divider {
-  height: 1px;
-  background: var(--border);
-  margin: 0 auto;
-  max-width: 900px;
-}
 
-/* ── FOOTER ── */
+/* ══════════════════════════════
+   11. FOOTER
+══════════════════════════════ */
 .site-footer {
   padding: 40px 32px;
   text-align: center;
@@ -312,17 +463,103 @@ a { color: inherit; text-decoration: none; }
   margin-bottom: 8px;
 }
 .site-footer .footer-logo em { font-style: italic; color: var(--gold); }
-.footer-donate { margin-top: 8px; opacity: .6; }
-.footer-donate a { text-decoration: none; }
+.footer-copyright { margin-top: 8px; }
+.footer-donate    { margin-top: 8px; }
+.footer-donate a  { text-decoration: none; }
 
-/* ── ANIMATIONS ── */
+
+/* ══════════════════════════════
+   12. ANIMATIONS
+   Two animation systems work in parallel:
+
+   A) fade-up — CSS animation triggered on page load.
+      Used for hero elements that should appear right away.
+
+   B) reveal — CSS transition + JavaScript IntersectionObserver.
+      Elements start invisible, then the JS adds .revealed
+      when the element scrolls into view. This staggers content
+      gracefully as the user reads down the page.
+
+   The reveal-d1 through reveal-d6 classes add small delays
+   so sibling elements animate in sequence, not all at once.
+══════════════════════════════ */
+
+/* Load animations (hero) */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(24px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.fade-up { animation: fadeUp .6s ease both; }
-.fade-up-1 { animation-delay: .1s; }
+.fade-up   { animation: fadeUp .6s ease both; }
+.fade-up-1 { animation-delay: .10s; }
 .fade-up-2 { animation-delay: .22s; }
 .fade-up-3 { animation-delay: .34s; }
 .fade-up-4 { animation-delay: .46s; }
 .fade-up-5 { animation-delay: .58s; }
+
+/* Scroll-triggered reveal (sections) */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .6s ease, transform .6s ease;
+}
+.reveal.revealed    { opacity: 1; transform: none; }
+.reveal-d1 { transition-delay: .10s; }
+.reveal-d2 { transition-delay: .20s; }
+.reveal-d3 { transition-delay: .30s; }
+.reveal-d4 { transition-delay: .40s; }
+.reveal-d5 { transition-delay: .50s; }
+.reveal-d6 { transition-delay: .60s; }
+
+
+/* ══════════════════════════════
+   13. FOCUS & ACCESSIBILITY
+   :focus-visible shows a focus ring ONLY when
+   using keyboard navigation (Tab key), not when
+   clicking with a mouse. This is important because:
+   · Keyboard users need to see where they are
+   · Mouse users find visible focus rings distracting
+   Modern browsers support this natively, but we
+   override it here to match our brand colors.
+══════════════════════════════ */
+:focus-visible {
+  outline: 2px solid var(--iris);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Buttons and links with pill shapes get a matching
+   rounded focus ring */
+.btn:focus-visible,
+.nav-links a:focus-visible,
+.nav-mobile a:focus-visible,
+.explore-card:focus-visible {
+  outline-radius: 100px;
+  border-radius: 100px;
+}
+
+
+/* ══════════════════════════════
+   14. REDUCED MOTION
+   Some users have a system setting called "Reduce Motion"
+   — often because animations cause them discomfort,
+   dizziness, or nausea (vestibular disorders).
+
+   This media query detects that preference and disables
+   all our animations instantly. The !important overrides
+   any element-level animation settings.
+
+   This is a WCAG 2.1 AA requirement (Success Criterion 2.3.3).
+══════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* Smooth scrolling can also trigger motion sensitivity */
+  html { scroll-behavior: auto; }
+
+  /* Reveal elements should be visible immediately, not hidden */
+  .reveal { opacity: 1; transform: none; }
+}
