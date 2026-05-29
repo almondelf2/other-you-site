@@ -16,6 +16,7 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Other You · Multiverse Date Night">
 <title>How It Works · Other You</title>
+<link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="site.css">
 <style>
 .page-header{padding:calc(var(--nav-h) + 64px) 28px 48px;text-align:center;}
@@ -58,9 +59,7 @@
 .step-item-title{font-size:.88rem;font-weight:500;color:var(--cream);margin-bottom:3px;}
 .step-item-text{font-size:.8rem;color:var(--text-dim-aa);line-height:1.6;}
 .section-divider{height:1px;background:var(--border);margin:48px 0;}
-.reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease;}
-.reveal.revealed{opacity:1;transform:none;}
-.reveal-d1{transition-delay:.1s;}.reveal-d2{transition-delay:.2s;}
+/* .reveal and .reveal-d1/.reveal-d2 are defined in site.css */
 .toc{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:20px 24px;margin-bottom:40px;backdrop-filter:blur(6px);}
 .toc-title{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:12px;}
 .toc-list{list-style:none;display:flex;flex-direction:column;gap:6px;}
@@ -70,7 +69,8 @@
 </style>
 </head>
 <body>
-<canvas id="site-bg"></canvas>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+<canvas id="site-bg" aria-hidden="true"></canvas>
 <nav class="site-nav" role="navigation" aria-label="Main navigation">
   <a href="index.html" class="nav-logo">Other <em>You</em><small>Multiverse Date Night</small></a>
   <ul class="nav-links" role="list">
@@ -80,11 +80,11 @@
     <li><a href="contact.html">Contact</a></li>
     <li><a href="https://pwa.other-you.app" class="nav-cta">Open App</a></li>
   </ul>
-  <button class="nav-hamburger" aria-label="Open menu" aria-expanded="false">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  <button class="nav-hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
   </button>
 </nav>
-<nav class="nav-mobile" aria-label="Mobile navigation">
+<nav class="nav-mobile" id="nav-mobile" aria-label="Mobile navigation">
   <a href="index.html">Home</a>
   <a href="how-it-works.html" class="active">How It Works</a>
   <a href="roadmap.html">Roadmap</a>
@@ -92,7 +92,7 @@
   <a href="https://pwa.other-you.app" class="nav-cta">Open App</a>
 </nav>
 
-<div class="page-wrap">
+<div class="page-wrap" id="main-content" tabindex="-1">
   <header class="page-header">
     <p class="eyebrow fade-up">No surprises</p>
     <h1 class="display-title fade-up fade-up-1">How Other You<br><em>actually works</em></h1>
@@ -125,7 +125,7 @@
 
       <!-- EARLY VERSION NOTE -->
       <div class="callout callout-info reveal" style="margin-bottom:40px;">
-        <div class="callout-icon">🌱</div>
+        <div class="callout-icon" aria-hidden="true">🌱</div>
         <div>
           <div class="callout-title-info">This is an early version of Other You</div>
           <div class="callout-text">The full experience — persona creation, date matching, partner connection, and sync — is built and working. This guide covers everything as it exists today.</div>
@@ -134,7 +134,7 @@
 
       <!-- ── INSTALLING ── -->
       <div class="hiw-block reveal" id="install">
-        <div class="hiw-block-title"><span class="hiw-block-icon">📲</span> Installing the app</div>
+        <div class="hiw-block-title"><span class="hiw-block-icon" aria-hidden="true">📲</span> Installing the app</div>
         <p class="hiw-block-lead">Other You is a Progressive Web App (PWA). You install it directly from your browser — no App Store, no download, no account required.</p>
         <div class="explain-grid">
           <div class="explain-card">
@@ -162,7 +162,7 @@
           </div>
         </div>
         <div class="callout callout-info" style="margin-top:14px;">
-          <div class="callout-icon">💻</div>
+          <div class="callout-icon" aria-hidden="true">💻</div>
           <div>
             <div class="callout-title-info">Using on desktop</div>
             <div class="callout-text">The app works in any modern browser on Mac, Windows, or Linux. Although the app is designed for mobile first — on a large screen it displays in a centred column. You can also just use it in a regular browser tab without installing.</div>
@@ -174,18 +174,18 @@
 
       <!-- ── GETTING STARTED ── -->
       <div class="hiw-block reveal" id="getstarted">
-        <div class="hiw-block-title"><span class="hiw-block-icon">✨</span> Getting started — the demo and your first persona</div>
+        <div class="hiw-block-title"><span class="hiw-block-icon" aria-hidden="true">✨</span> Getting started — the demo and your first persona</div>
         <p class="hiw-block-lead">When you first open Other You, you'll see a four-slide introduction. Read through it, then you have two choices: try the demo, or set up your real profile.</p>
         <div class="expect-list">
           <div class="expect-row">
-            <div class="expect-icon">🎭</div>
+            <div class="expect-icon" aria-hidden="true">🎭</div>
             <div>
               <div class="expect-title">Try the demo first</div>
               <div class="expect-text">The demo loads two fully written fictional people — Jordan and Avery — each with four personas. You can explore every feature of the app with their personas: spin matches, accept dates, view history entries. Nothing you do in demo mode is saved. It's a safe way to see how everything works before you commit to creating your own.</div>
             </div>
           </div>
           <div class="expect-row">
-            <div class="expect-icon">👤</div>
+            <div class="expect-icon" aria-hidden="true">👤</div>
             <div>
               <div class="expect-title">Set up your real profile</div>
               <div class="expect-text">Tap "Start for real" on the welcome screen. You'll be asked for your name and a one-line bio — just enough for your partner to know whose profile they're looking at. This takes about 30 seconds. You can change it later in Settings.</div>
@@ -198,7 +198,7 @@
 
       <!-- ── PERSONAS ── -->
       <div class="hiw-block reveal" id="personas">
-        <div class="hiw-block-title"><span class="hiw-block-icon">🌀</span> Creating and managing personas</div>
+        <div class="hiw-block-title"><span class="hiw-block-icon" aria-hidden="true">🌀</span> Creating and managing personas</div>
         <p class="hiw-block-lead">A persona is an alternate version of you — based on a crossroads you didn't take, a phase that ended too soon, or a version of yourself that never quite got to exist. You can have as many as you like.</p>
         <div class="step-list" style="margin-bottom:20px;">
           <div class="step-item">
@@ -240,14 +240,14 @@
         </div>
         <div class="expect-list">
           <div class="expect-row">
-            <div class="expect-icon">↕️</div>
+            <div class="expect-icon" aria-hidden="true">↕️</div>
             <div>
               <div class="expect-title">Reordering personas</div>
               <div class="expect-text">On the Profiles screen, each persona has a small up/down arrow pair on the right side. Tap them to change the order. The order affects which persona appears first on the Date screen.</div>
             </div>
           </div>
           <div class="expect-row">
-            <div class="expect-icon">✕</div>
+            <div class="expect-icon" aria-hidden="true">✕</div>
             <div>
               <div class="expect-title">Deleting a persona</div>
               <div class="expect-text">Open the persona to edit it, then scroll to the bottom and tap "Remove this persona." A confirmation screen appears before anything is deleted. Your other personas are not affected.</div>
@@ -260,11 +260,11 @@
 
       <!-- ── CONNECTING ── -->
       <div class="hiw-block reveal" id="connect">
-        <div class="hiw-block-title"><span class="hiw-block-icon">🔗</span> Connecting with your partner</div>
+        <div class="hiw-block-title"><span class="hiw-block-icon" aria-hidden="true">🔗</span> Connecting with your partner</div>
         <p class="hiw-block-lead">The first connection is a one-time handshake. You do not need to be in the same room — it works entirely remotely over text, email, or any messaging app.</p>
 
         <div class="callout callout-info" style="margin-bottom:18px;">
-          <div class="callout-icon">🔑</div>
+          <div class="callout-icon" aria-hidden="true">🔑</div>
           <div>
             <div class="callout-title-info">No accounts required</div>
             <div class="callout-text">The invite link itself is the relationship. It contains a unique pair ID and an encryption key. Only the two of you ever hold that key — it never touches any server. Whoever has the link can join, so only send it to your partner.</div>
@@ -327,7 +327,7 @@
         </div>
 
         <div class="callout callout-warn" style="margin-top:16px;">
-          <div class="callout-icon">⚠️</div>
+          <div class="callout-icon" aria-hidden="true">⚠️</div>
           <div>
             <div class="callout-title-warn">The invite link expires after one use</div>
             <div class="callout-text">Once your partner joins, the link is invalid. If you sent it to the wrong person, cancel it immediately in the Connect screen before they open it. You can generate a new invite any time.</div>
@@ -339,7 +339,7 @@
 
       <!-- ── DATE MATCHING ── -->
       <div class="hiw-block reveal" id="dating">
-        <div class="hiw-block-title"><span class="hiw-block-icon">🎰</span> The date matching experience</div>
+        <div class="hiw-block-title"><span class="hiw-block-icon" aria-hidden="true">🎰</span> The date matching experience</div>
         <p class="hiw-block-lead">The Date tab is where the magic happens. It pairs one of your personas with one of your partner's. Spin, lock what you like, and accept when the combination feels right.</p>
         <div class="step-list" style="margin-bottom:20px;">
           <div class="step-item">
@@ -380,7 +380,7 @@
           </div>
         </div>
         <div class="callout callout-info">
-          <div class="callout-icon">💡</div>
+          <div class="callout-icon" aria-hidden="true">💡</div>
           <div>
             <div class="callout-title-info">You don't have to spin</div>
             <div class="callout-text">Some couples prefer to choose their personas deliberately rather than leaving it to chance. Use the manual arrows to pick exactly who meets who, then accept. The spin is an option, not a requirement.</div>
@@ -392,18 +392,18 @@
 
       <!-- ── HISTORY ── -->
       <div class="hiw-block reveal" id="history">
-        <div class="hiw-block-title"><span class="hiw-block-icon">🕰</span> Date history</div>
+        <div class="hiw-block-title"><span class="hiw-block-icon" aria-hidden="true">🕰</span> Date history</div>
         <p class="hiw-block-lead">Every completed date is saved in the History tab. Tap any entry to expand it and see the personas who matched and the date completed.</p>
         <div class="expect-list">
           <div class="expect-row">
-            <div class="expect-icon">✏️</div>
+            <div class="expect-icon" aria-hidden="true">✏️</div>
             <div>
               <div class="expect-title">Editing the date</div>
               <div class="expect-text">If you mark a date complete in the app before you actually go on it, you can fix the date afterward. Expand the history entry and tap "Edit date" in the bottom right of the card. A date picker lets you set the real date you went on it.</div>
             </div>
           </div>
           <div class="expect-row">
-            <div class="expect-icon">📋</div>
+            <div class="expect-icon" aria-hidden="true">📋</div>
             <div>
               <div class="expect-title">What's in each entry</div>
               <div class="expect-text">Each history entry shows both persona avatars and the personas' names. Expanding it shows whose personas they were and the date they went on it.</div>
@@ -416,32 +416,32 @@
 
       <!-- ── SYNC ── -->
       <div class="hiw-block reveal" id="sync">
-        <div class="hiw-block-title"><span class="hiw-block-icon">🔄</span> How sync works</div>
+        <div class="hiw-block-title"><span class="hiw-block-icon" aria-hidden="true">🔄</span> How sync works</div>
         <p class="hiw-block-lead">After connecting, your app and your partner's app stay in sync automatically — but only when both devices have the app open and an internet connection at the same time.</p>
         <div class="expect-list">
           <div class="expect-row">
-            <div class="expect-icon">✦</div>
+            <div class="expect-icon" aria-hidden="true">✦</div>
             <div>
               <div class="expect-title">You add or edit a persona</div>
               <div class="expect-text">The change is encrypted on your device and sent to Supabase (the relay service). The next time your partner opens the app with internet access, the change downloads to their device and their Profiles screen updates automatically.</div>
             </div>
           </div>
           <div class="expect-row">
-            <div class="expect-icon">🎰</div>
+            <div class="expect-icon" aria-hidden="true">🎰</div>
             <div>
               <div class="expect-title">A match is spun</div>
               <div class="expect-text">The result is written as a shared record. Both partners always see the same match — the same personas. If one partner spins while the other is offline, the result syncs when they next open the app.</div>
             </div>
           </div>
           <div class="expect-row">
-            <div class="expect-icon">📡</div>
+            <div class="expect-icon" aria-hidden="true">📡</div>
             <div>
               <div class="expect-title">One partner is offline</div>
               <div class="expect-text">Changes are queued and delivered the next time both devices are online. Nothing is lost — changes are stored until they can be delivered. This is not instant like a messaging app. Think of it as email: reliable, not instantaneous.</div>
             </div>
           </div>
           <div class="expect-row">
-            <div class="expect-icon">🔐</div>
+            <div class="expect-icon" aria-hidden="true">🔐</div>
             <div>
               <div class="expect-title">What the relay server sees</div>
               <div class="expect-text">All data is encrypted on your device before it leaves. The relay server (Supabase) sees only your pair ID — a random string with no names attached — and an encrypted blob it cannot read. Your names, personas, and date history are never readable by anyone except the two of you.</div>
@@ -454,25 +454,25 @@
 
       <!-- ── DISCONNECT ── -->
       <div class="hiw-block reveal" id="disconnect">
-        <div class="hiw-block-title"><span class="hiw-block-icon">🔌</span> Disconnecting from your partner</div>
+        <div class="hiw-block-title"><span class="hiw-block-icon" aria-hidden="true">🔌</span> Disconnecting from your partner</div>
         <p class="hiw-block-lead">Disconnecting removes your partner's data from your device and ends the sync relationship. Your own personas are not affected.</p>
         <div class="expect-list">
           <div class="expect-row">
-            <div class="expect-icon">⚙️</div>
+            <div class="expect-icon" aria-hidden="true">⚙️</div>
             <div>
               <div class="expect-title">How to disconnect</div>
               <div class="expect-text">Go to Settings (the gear icon in the bottom nav) → Partner connection → tap "Disconnect from [name]." A confirmation screen appears first. You can also disconnect from the Connect screen directly.</div>
             </div>
           </div>
           <div class="expect-row">
-            <div class="expect-icon">📲</div>
+            <div class="expect-icon" aria-hidden="true">📲</div>
             <div>
               <div class="expect-title">What happens on your partner's device</div>
               <div class="expect-text">Your partner's app receives a disconnect notification and shows that the connection has ended. Their own personas remain on their device.</div>
             </div>
           </div>
           <div class="expect-row">
-            <div class="expect-icon">🔁</div>
+            <div class="expect-icon" aria-hidden="true">🔁</div>
             <div>
               <div class="expect-title">Reconnecting</div>
               <div class="expect-text">Generate a new invite link in the Connect screen and share it again. The new connection starts fresh — sync history does not carry over.</div>
@@ -480,7 +480,7 @@
           </div>
         </div>
         <div class="callout callout-warn">
-          <div class="callout-icon">⚠️</div>
+          <div class="callout-icon" aria-hidden="true">⚠️</div>
           <div>
             <div class="callout-title-warn">Disconnecting is immediate</div>
             <div class="callout-text">There is no undo. Once confirmed, your partner's data is gone from your device. Export a backup first if you want to preserve anything.</div>
@@ -492,24 +492,24 @@
 
       <!-- ── PRIVACY ── -->
       <div class="hiw-block reveal" id="privacy">
-        <div class="hiw-block-title"><span class="hiw-block-icon">🔒</span> Your data and privacy</div>
+        <div class="hiw-block-title"><span class="hiw-block-icon" aria-hidden="true">🔒</span> Your data and privacy</div>
         <div class="expect-list" style="margin-bottom:16px;">
           <div class="expect-row">
-            <div class="expect-icon">📱</div>
+            <div class="expect-icon" aria-hidden="true">📱</div>
             <div>
               <div class="expect-title">Your data lives on your device</div>
               <div class="expect-text">Personas, history, and settings are stored in your browser's local storage. Nothing is uploaded to any server unless you have an active partner connection — and even then, only encrypted data is transmitted.</div>
             </div>
           </div>
           <div class="expect-row">
-            <div class="expect-icon">📄</div>
+            <div class="expect-icon" aria-hidden="true">📄</div>
             <div>
               <div class="expect-title">Your backup file is not encrypted</div>
               <div class="expect-text">When you export a backup, the downloaded file is plain readable text (JSON). Anyone who has the file can read your personas. Store it somewhere private — iCloud Drive, Google Drive, or a password-protected location. Do not share it publicly.</div>
             </div>
           </div>
           <div class="expect-row">
-            <div class="expect-icon">🚫</div>
+            <div class="expect-icon" aria-hidden="true">🚫</div>
             <div>
               <div class="expect-title">No accounts, no tracking, no ads</div>
               <div class="expect-text">There is no sign-up, no email required, no password, and no user profile on any server. The app does not track usage, does not serve ads, and does not share data with third parties.</div>
@@ -517,7 +517,7 @@
           </div>
         </div>
         <div class="callout callout-warn">
-          <div class="callout-icon">⚠️</div>
+          <div class="callout-icon" aria-hidden="true">⚠️</div>
           <div>
             <div class="callout-title-warn">No account means no account recovery</div>
             <div class="callout-text">There is no "forgot password" because there is no account. If you clear your browser storage or get a new phone without exporting a backup, your data is gone permanently. Export backups regularly.</div>
@@ -529,7 +529,7 @@
 
       <!-- ── BACKUP ── -->
       <div class="hiw-block reveal" id="backup">
-        <div class="hiw-block-title"><span class="hiw-block-icon">💾</span> Backing up your data</div>
+        <div class="hiw-block-title"><span class="hiw-block-icon" aria-hidden="true">💾</span> Backing up your data</div>
         <p class="hiw-block-lead">The Export Backup feature in Settings is your only safety net. Use it every time you create or edit a persona.</p>
         <div class="step-list" style="margin-bottom:16px;">
           <div class="step-item">
@@ -569,7 +569,7 @@
 
       <!-- ── DEVICES ── -->
       <div class="hiw-block reveal" id="devices">
-        <div class="hiw-block-title"><span class="hiw-block-icon">📱</span> Device and browser requirements</div>
+        <div class="hiw-block-title"><span class="hiw-block-icon" aria-hidden="true">📱</span> Device and browser requirements</div>
         <div class="explain-grid">
           <div class="explain-card">
             <div class="explain-card-label">iPhone &amp; iPad</div>
@@ -598,52 +598,52 @@
 
       <!-- ── QUESTIONS ── -->
       <div class="hiw-block reveal" id="questions">
-        <div class="hiw-block-title"><span class="hiw-block-icon">💬</span> Common questions</div>
+        <div class="hiw-block-title"><span class="hiw-block-icon" aria-hidden="true">💬</span> Common questions</div>
         <div class="expect-list">
           <div class="expect-row">
-            <div class="expect-icon">🆕</div>
+            <div class="expect-icon" aria-hidden="true">🆕</div>
             <div>
               <div class="expect-title">I got a new phone. What do I do?</div>
               <div class="expect-text">Before switching: export a backup on your old phone and save it to iCloud Drive or Google Drive. On your new phone: install the app, go to Settings → Import backup, and choose your file. Then go to the Connect screen and ask your partner to generate a new invite — tap it to re-establish the connection.</div>
             </div>
           </div>
           <div class="expect-row">
-            <div class="expect-icon">🔄</div>
+            <div class="expect-icon" aria-hidden="true">🔄</div>
             <div>
               <div class="expect-title">My partner's persona isn't showing up</div>
               <div class="expect-text">Make sure both of you have the app open and are connected to the internet at the same time. Try closing and reopening the app. If it still doesn't appear, your partner can export their data and share the backup file with you to import manually as a fallback.</div>
             </div>
           </div>
           <div class="expect-row">
-            <div class="expect-icon">📵</div>
+            <div class="expect-icon" aria-hidden="true">📵</div>
             <div>
               <div class="expect-title">Does it work on a plane or without WiFi?</div>
               <div class="expect-text">Yes — your personas and the most recent match are available offline once the app is installed. You can create and edit personas offline too. Sync with your partner resumes when you're back online.</div>
             </div>
           </div>
           <div class="expect-row">
-            <div class="expect-icon">🔑</div>
+            <div class="expect-icon" aria-hidden="true">🔑</div>
             <div>
               <div class="expect-title">I sent the invite to the wrong person</div>
               <div class="expect-text">Cancel it immediately in the Connect screen before the wrong person opens it. Once cancelled, the link is invalid. Generate a new one. If the wrong person already opened it, disconnect in Connect, clear all data in Settings, and start fresh — your partner will need to do the same.</div>
             </div>
           </div>
           <div class="expect-row">
-            <div class="expect-icon">💔</div>
+            <div class="expect-icon" aria-hidden="true">💔</div>
             <div>
               <div class="expect-title">What happens if we break up?</div>
               <div class="expect-text">Go to Settings → Partner connection → Disconnect. Your partner's data is removed from your device. Your own personas stay. Your partner sees that the connection ended the next time they open the app.</div>
             </div>
           </div>
           <div class="expect-row">
-            <div class="expect-icon">🎰</div>
+            <div class="expect-icon" aria-hidden="true">🎰</div>
             <div>
               <div class="expect-title">Do we both have to spin at the same time?</div>
               <div class="expect-text">No. Either partner can spin a match. The result syncs to the other device automatically. You don't need to be using the app simultaneously.</div>
             </div>
           </div>
           <div class="expect-row">
-            <div class="expect-icon">🔒</div>
+            <div class="expect-icon" aria-hidden="true">🔒</div>
             <div>
               <div class="expect-title">What does the lock button do on the Date screen?</div>
               <div class="expect-text">Each persona slot has a lock button (🔓/🔒). Tap it to lock that persona in place. When you spin again, locked slots stay fixed — only the unlocked slot re-rolls. Use it to keep a persona you like while trying different combinations.</div>
@@ -670,8 +670,8 @@
   <footer class="site-footer">
     <div class="footer-logo">Other <em>You</em></div>
     <p>Privacy Policy &nbsp;·&nbsp; Terms and Conditions</p>
-    <p style="margin-top:8px;opacity:.6;">© 2026 Other You</p>
-    <p class="footer-donate">Enjoying the app? <a href="https://connect.vestwell.com/gift/stable/JpWVJZ7rQ0ixof6rguIVEA" target="_blank" rel="noopener">Leave a tip ↗</a></p>
+    <p class="footer-copyright">© 2026 Other You</p>
+    <p class="footer-donate">Enjoying the app? <a href="https://connect.vestwell.com/gift/stable/JpWVJZ7rQ0ixof6rguIVEA" target="_blank" rel="noopener noreferrer">Leave a tip ↗</a></p>
   </footer>
 
 </div>
