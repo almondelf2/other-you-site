@@ -1,0 +1,23 @@
+{
+  "name": "Other You · Multiverse Date Night",
+  "short_name": "Other You",
+  "description": "A private app for couples to explore each other's alternate selves — the roads not taken, the versions that were forgotten.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d0818",
+  "theme_color": "#0d0818",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
