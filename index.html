@@ -187,7 +187,6 @@
   min-width: 52px;
   flex-shrink: 0;
 }
-.step-content {}
 .step-title {
   font-family: var(--font-d);
   font-size: 1.25rem; color: var(--cream);
@@ -270,23 +269,21 @@
 .cta-band .lead { margin: 0 auto 32px; text-align: center; }
 @media (max-width: 480px) { .cta-band { padding: 40px 24px; } }
 
-/* REVEAL ANIMATIONS */
-.reveal {
-  opacity: 0;
-  transform: translateY(28px);
-  transition: opacity .6s ease, transform .6s ease;
-}
-.reveal.revealed { opacity: 1; transform: translateY(0); }
-.reveal-d1 { transition-delay: .1s; }
-.reveal-d2 { transition-delay: .2s; }
-.reveal-d3 { transition-delay: .3s; }
-.reveal-d4 { transition-delay: .4s; }
+/* .reveal and .reveal-d1 through .reveal-d6 are defined in site.css */
 </style>
 </head>
 <body>
-<canvas id="site-bg"></canvas>
+
+<!-- Skip link: the very first Tab stop on the page. Keyboard users press Enter to
+     jump past the navigation directly to the main content. Invisible until focused. -->
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<!-- aria-hidden tells screen readers to ignore this element entirely.
+     The canvas is a visual decoration — it has no meaningful content. -->
+<canvas id="site-bg" aria-hidden="true"></canvas>
 
 <!-- ══ NAV ══ -->
+<!-- role="navigation" is redundant on <nav> but kept for older assistive tech. -->
 <nav class="site-nav" role="navigation" aria-label="Main navigation">
   <a href="index.html" class="nav-logo" aria-label="Other You home">
     Other <em>You</em>
@@ -299,13 +296,15 @@
     <li><a href="contact.html">Contact</a></li>
     <li><a href="https://pwa.other-you.app" class="nav-cta">Open App</a></li>
   </ul>
-  <button class="nav-hamburger" aria-label="Open menu" aria-expanded="false">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24">
+  <!-- aria-controls links this button to the menu it opens.
+       aria-expanded reflects whether the menu is currently open (managed by site.js). -->
+  <button class="nav-hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24" aria-hidden="true">
       <path d="M3 6h18M3 12h18M3 18h18"/>
     </svg>
   </button>
 </nav>
-<nav class="nav-mobile" aria-label="Mobile navigation">
+<nav class="nav-mobile" id="nav-mobile" aria-label="Mobile navigation">
   <a href="index.html" class="active">Home</a>
   <a href="how-it-works.html">How It Works</a>
   <a href="roadmap.html">Roadmap</a>
@@ -313,7 +312,9 @@
   <a href="https://pwa.other-you.app" class="nav-cta">Open App</a>
 </nav>
 
-<div class="page-wrap">
+<!-- id="main-content" is the skip link target. tabindex="-1" makes it
+     programmatically focusable (needed for the skip link to work in all browsers). -->
+<div class="page-wrap" id="main-content" tabindex="-1">
 
   <!-- ══ HERO ══ -->
   <section class="hero" aria-labelledby="hero-title">
@@ -355,22 +356,22 @@
 
       <div class="what-grid">
         <div class="what-card reveal reveal-d1">
-          <div class="what-card-icon">🎭</div>
+          <div class="what-card-icon" aria-hidden="true">🎭</div>
           <div class="what-card-title">Your alternate selves</div>
           <div class="what-card-text">Think of a crossroads in your life — a choice you didn't take, a phase that ended too soon. Create a persona for that version of you. Nickname, origin story, personality traits, character tags, and a photo so you can dress up for your date.</div>
         </div>
         <div class="what-card reveal reveal-d2">
-          <div class="what-card-icon">🎰</div>
+          <div class="what-card-icon" aria-hidden="true">🎰</div>
           <div class="what-card-title">Personas get matched</div>
           <div class="what-card-text">The app pairs one of your alternate selves with one of theirs. Spin until the combination feels right, then accept and go on a date. Every pairing tells a different story.</div>
         </div>
         <div class="what-card reveal reveal-d3">
-          <div class="what-card-icon">💬</div>
+          <div class="what-card-icon" aria-hidden="true">💬</div>
           <div class="what-card-title">Explore new conversations</div>
           <div class="what-card-text">Most couples know each other well. But do they know the version who almost became a musician? The one who got arrested at a protest in college? The one who still writes poetry at midnight?</div>
         </div>
         <div class="what-card reveal reveal-d4">
-          <div class="what-card-icon">🕰</div>
+          <div class="what-card-icon" aria-hidden="true">🕰</div>
           <div class="what-card-title">Date history</div>
           <div class="what-card-text">Every completed date is saved. Browse through which versions of yourselves have met, and when — a record of the alternate universe you've built together.</div>
         </div>
@@ -387,21 +388,21 @@
       <h2 class="display-title reveal reveal-d1" id="how-title">Three steps<br>into the <em>multiverse</em></h2>
       <div class="steps">
         <div class="step reveal reveal-d1">
-          <div class="step-num">01</div>
+          <div class="step-num" aria-hidden="true">01</div>
           <div class="step-content">
             <div class="step-title">Build your other yous</div>
             <div class="step-text">Create personas for the versions of yourself defined by crossroads you didn't take. Your goth phase that never ended. The year you almost moved to Berlin. The artist you shelved for a stable job. Give them an alias, a story, a personality.</div>
           </div>
         </div>
         <div class="step reveal reveal-d2">
-          <div class="step-num">02</div>
+          <div class="step-num" aria-hidden="true">02</div>
           <div class="step-content">
             <div class="step-title">Connect with your partner</div>
             <div class="step-text">Share a private invite link over text, email, or any messaging app. Or a QR code when in person. Your persons are shared with your partner and your partner's personas are shared with you. Your universes connect privately.</div>
           </div>
         </div>
         <div class="step reveal reveal-d3">
-          <div class="step-num">03</div>
+          <div class="step-num" aria-hidden="true">03</div>
           <div class="step-content">
             <div class="step-title">Go on a multiverse date</div>
             <div class="step-text">Spin for a match. Two personas meet for the first time. Lock the slots you like and re-spin the rest. Accept when the combination feels right — then go on a date as those two versions of yourselves.</div>
@@ -420,32 +421,32 @@
       <h2 class="display-title reveal reveal-d1" id="features-title">Everything you need,<br>nothing you <em>don't</em></h2>
       <div class="features">
         <div class="feature reveal reveal-d1">
-          <div class="feature-icon">🔒</div>
+          <div class="feature-icon" aria-hidden="true">🔒</div>
           <div class="feature-title">Completely private</div>
           <div class="feature-text">No algorithm, no feed, no followers. This app exists only between you two — a private universe for the relationship you're building.</div>
         </div>
         <div class="feature reveal reveal-d2">
-          <div class="feature-icon">✨</div>
+          <div class="feature-icon" aria-hidden="true">✨</div>
           <div class="feature-title">Partner connection</div>
           <div class="feature-text">Connect with your partner with an invite link, QR code, or manual code. Sync with each other's personas with end-to-end encryption.</div>
         </div>
         <div class="feature reveal reveal-d3">
-          <div class="feature-icon">🌀</div>
+          <div class="feature-icon" aria-hidden="true">🌀</div>
           <div class="feature-title">Profile backup</div>
           <div class="feature-text">Export your backup file for safe keeping. Import your backup file if you get a new device.</div>
         </div>
         <div class="feature reveal reveal-d4">
-          <div class="feature-icon">📱</div>
+          <div class="feature-icon" aria-hidden="true">📱</div>
           <div class="feature-title">Install on any device</div>
           <div class="feature-text">A progressive web app — no App Store required. Install from your browser, works offline.</div>
         </div>
         <div class="feature reveal reveal-d5">
-	  <div class="feature-icon">🌙</div>
+          <div class="feature-icon" aria-hidden="true">🌙</div>
           <div class="feature-title">Personalized app aesthetics</div>
           <div class="feature-text">Dark &amp; light themes. Follows your device settings.</div>
         </div>
         <div class="feature reveal reveal-d6">
-          <div class="feature-icon">✦</div>
+          <div class="feature-icon" aria-hidden="true">✦</div>
           <div class="feature-title">Always free to start</div>
           <div class="feature-text">The core experience is free. This is an early version being actively developed.</div>
         </div>
@@ -462,14 +463,14 @@
       <h2 class="display-title reveal reveal-d1" id="explore-title">There's more<br>to <em>discover</em></h2>
       <div class="explore-grid">
         <a href="roadmap.html" class="explore-card reveal reveal-d1" aria-label="View the roadmap">
-          <div class="explore-icon">🗺</div>
+          <div class="explore-icon" aria-hidden="true">🗺</div>
           <div class="explore-label">Where we're going</div>
           <div class="explore-title">The Roadmap</div>
           <div class="explore-text">See what's been built, what's coming next, and the longer vision for where Other You is headed.</div>
           <div class="explore-arrow">View roadmap →</div>
         </a>
         <a href="contact.html" class="explore-card reveal reveal-d2" aria-label="Send a suggestion">
-          <div class="explore-icon">💌</div>
+          <div class="explore-icon" aria-hidden="true">💌</div>
           <div class="explore-label">Shape what's next</div>
           <div class="explore-title">Suggestions &amp; Contact</div>
           <div class="explore-text">Have a feature idea? Found something that needs fixing? I'd love to hear from you.</div>
@@ -479,7 +480,6 @@
     </div>
   </section>
 
-  <div class="divider"></div>
 
   <!-- ══ HOW TO INSTALL ══ -->
   <section class="section" id="install" aria-labelledby="install-title">
@@ -540,8 +540,8 @@
   <footer class="site-footer">
     <div class="footer-logo">Other <em>You</em></div>
     <p>Privacy Policy &nbsp;·&nbsp; Terms and Conditions</p>
-    <p style="margin-top:8px;opacity:.6;">© 2026 Other You</p>
-    <p class="footer-donate">Enjoying the app? <a href="https://connect.vestwell.com/gift/stable/JpWVJZ7rQ0ixof6rguIVEA" target="_blank" rel="noopener">Leave a tip ↗</a></p>
+    <p class="footer-copyright">© 2026 Other You</p>
+    <p class="footer-donate">Enjoying the app? <a href="https://connect.vestwell.com/gift/stable/JpWVJZ7rQ0ixof6rguIVEA" target="_blank" rel="noopener noreferrer">Leave a tip ↗</a></p>
   </footer>
 
 </div><!-- /page-wrap -->
