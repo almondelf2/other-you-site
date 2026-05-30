@@ -34,7 +34,20 @@
   if (!canvas) return;               /* exit early if canvas isn't on this page */
 
   const ctx = canvas.getContext('2d');
-  const isDark = () => !window.matchMedia('(prefers-color-scheme: light)').matches;
+  /* Cache the MediaQueryList — reused by isDark() every frame AND by updateTheme() below.
+     Calling window.matchMedia() once and storing the result is more efficient
+     than calling it 60 times per second inside the draw loop. */
+  const darkMQ = window.matchMedia('(prefers-color-scheme: light)');
+  const isDark  = () => !darkMQ.matches;
+
+  /*
+    WCAG 2.3.3 — Motion: some users have a system setting called "Reduce Motion"
+    because animations can cause dizziness or nausea (vestibular disorders).
+    CSS handles our transitions and reveals automatically, but this canvas animation
+    runs entirely in JavaScript so we must check the preference here manually.
+    If the user prefers reduced motion, we draw the stars once (static) and stop.
+  */
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   let W, H, stars, raf;             /* W/H = canvas dimensions, raf = animation frame ID */
 
@@ -86,10 +99,13 @@
     /* Draw each star */
     const sc = dark ? '200,184,232' : '91,58,140';  /* star color: light or dark mode */
     stars.forEach(s => {
-      s.a += s.da;
-      if (s.a <= 0 || s.a >= 1) s.da *= -1;  /* reverse opacity direction at bounds */
-      s.y += s.dy;
-      if (s.y < -2) s.y = H + 2;             /* wrap star from top back to bottom */
+      /* Only animate (drift + twinkle) when the user hasn't requested reduced motion */
+      if (!prefersReducedMotion) {
+        s.a += s.da;
+        if (s.a <= 0 || s.a >= 1) s.da *= -1;  /* reverse opacity direction at bounds */
+        s.y += s.dy;
+        if (s.y < -2) s.y = H + 2;             /* wrap star from top back to bottom */
+      }
 
       ctx.beginPath();
       ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
@@ -97,20 +113,41 @@
       ctx.fill();
     });
 
-    raf = requestAnimationFrame(draw);        /* schedule the next frame */
+    /* Keep animating only if the user is OK with motion */
+    if (!prefersReducedMotion) {
+      raf = requestAnimationFrame(draw);      /* schedule the next frame */
+    }
   }
 
-  /* Re-initialize when the window is resized */
-  window.addEventListener('resize', init);
+  /* Debounce the resize handler.
+     The 'resize' event fires dozens of times per second during a window drag.
+     Without debouncing, init() would thrash — cancelling and restarting the
+     animation loop and recreating all 90 stars continuously.
+     Waiting 150ms after the last event fires once, cleanly. */
+  let _resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(_resizeTimer);
+    _resizeTimer = setTimeout(init, 150);
+  });
 
-  /* Update the browser tab color when the user switches light/dark mode */
-  const mq = window.matchMedia('(prefers-color-scheme: light)');
+  /* Pause animation when the browser tab is in the background.
+     requestAnimationFrame already throttles in hidden tabs, but this stops
+     it entirely — no CPU/battery use when the user has switched away. */
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      if (raf) cancelAnimationFrame(raf);
+    } else if (!prefersReducedMotion) {
+      draw();
+    }
+  });
+
+  /* Reuse darkMQ (declared above) — no need for a second matchMedia call. */
   function updateTheme(e) {
     const meta = document.querySelector('meta[name="theme-color"]');
     if (meta) meta.content = e.matches ? '#f4f0ff' : '#0d0818';
   }
-  mq.addEventListener('change', updateTheme);
-  updateTheme(mq);
+  darkMQ.addEventListener('change', updateTheme);
+  updateTheme(darkMQ);
 
   init();
 })();

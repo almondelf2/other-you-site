@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0d0818">
-<link rel="icon" href="assets/favicon.ico">
-<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="icon" href="assets/icons/favicon.ico">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
 <meta name="description" content="The Other You roadmap — what's been built and where we're going.">
 <meta property="og:title" content="Other You · Multiverse Date Night">
 <meta property="og:description" content="A private app for couples to date each other's alternate selves — the roads not taken, the versions that almost were.">
@@ -17,7 +17,10 @@
 <meta property="og:image:alt" content="Other You · Multiverse Date Night">
 <title>Roadmap · Other You</title>
 <link rel="manifest" href="manifest.json">
-<link rel="stylesheet" href="site.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap">
+<link rel="stylesheet" href="css/site.css">
 <style>
 .page-header{padding:calc(var(--nav-h) + 64px) 28px 48px;text-align:center;}
 .timeline{margin-top:56px;position:relative;}
@@ -72,7 +75,7 @@
     <li><a href="contact.html">Contact</a></li>
     <li><a href="https://pwa.other-you.app" class="nav-cta">Open App</a></li>
   </ul>
-  <button class="nav-hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
+  <button type="button" class="nav-hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
   </button>
 </nav>
@@ -84,7 +87,7 @@
   <a href="https://pwa.other-you.app" class="nav-cta">Open App</a>
 </nav>
 
-<div class="page-wrap" id="main-content" tabindex="-1">
+<main class="page-wrap" id="main-content" tabindex="-1">
   <header class="page-header">
     <p class="eyebrow fade-up">Building in the open</p>
     <h1 class="display-title fade-up fade-up-1">The Roadmap</h1>
@@ -113,16 +116,16 @@
             <span class="phase-status status-done">Completed</span>
           </div>
           <div class="phase-card">
-            <div class="phase-title">A Working App for Real Couples</div>
+            <h2 class="phase-title">A Working App for Real Couples</h2>
             <div class="phase-desc">Everything required for two real people to actually use Other You together. This phase ships as one complete release.</div>
 
-            <div class="phase-sub">Persona creation</div>
+            <h3 class="phase-sub">Persona creation</h3>
             <ul class="phase-items" aria-label="Persona features">
               <li><span class="item-dot" aria-hidden="true"></span>Persona profiles: alias, origin story, short descriptive bio, trait tags, emoji or photo</li>
               <li><span class="item-dot" aria-hidden="true"></span>Reorder and delete personas</li>
             </ul>
 
-            <div class="phase-sub">Date matching</div>
+            <h3 class="phase-sub">Date matching</h3>
             <ul class="phase-items" aria-label="Matching features">
               <li><span class="item-dot" aria-hidden="true"></span>Slot machine-like spin matching two personas for a date</li>
               <li><span class="item-dot" aria-hidden="true"></span>Lock individual slots and re-spin the rest</li>
@@ -131,7 +134,7 @@
               <li><span class="item-dot" aria-hidden="true"></span>Shared canonical match result synced to both partners</li>
             </ul>
 
-            <div class="phase-sub">Partner connection</div>
+            <h3 class="phase-sub">Partner connection</h3>
             <ul class="phase-items" aria-label="Connection features">
               <li><span class="item-dot" aria-hidden="true"></span>Invite link: share via text, email, or any messaging app</li>
               <li><span class="item-dot" aria-hidden="true"></span>QR code for in-person connection</li>
@@ -141,7 +144,7 @@
               <li><span class="item-dot" aria-hidden="true"></span>Disconnect with partner notification</li>
             </ul>
 
-            <div class="phase-sub">App foundation</div>
+            <h3 class="phase-sub">App foundation</h3>
             <ul class="phase-items" aria-label="Foundation features">
               <li><span class="item-dot" aria-hidden="true"></span>Progressive Web App: installable from browser, works offline</li>
               <li><span class="item-dot" aria-hidden="true"></span>Dark and light themes following device settings</li>
@@ -161,7 +164,7 @@
             <span class="phase-status status-active">In Progress</span>
           </div>
           <div class="phase-card">
-            <div class="phase-title">Inspirational Prompts</div>
+            <h2 class="phase-title">Inspirational Prompts</h2>
             <div class="phase-desc">Moving beyond basic persona spins with the addition of inspirational date prompts.</div>
             <ul class="phase-items" aria-label="Phase 2 features">
               <li><span class="item-dot" aria-hidden="true"></span>Personas creation prompts to combat writer's block</li>
@@ -179,7 +182,7 @@
             <span class="phase-status status-next">Planned</span>
           </div>
           <div class="phase-card">
-            <div class="phase-title">Persona Compatibility</div>
+            <h2 class="phase-title">Persona Compatibility</h2>
             <div class="phase-desc">Automated personalization and expanded date idea library.</div>
             <ul class="phase-items" aria-label="Phase 3 features">
               <li><span class="item-dot" aria-hidden="true"></span>Trait compatibility algorithm for tension and resonance between personas including date suggestions and questions for conversation</li>
@@ -197,7 +200,7 @@
             <span class="phase-status status-next">Planned</span>
           </div>
           <div class="phase-card">
-            <div class="phase-title">AI Personalization</div>
+            <h2 class="phase-title">AI Personalization</h2>
             <div class="phase-desc">AI features add extremely personalized assistance and date recommendations.</div>
             <ul class="phase-items" aria-label="Phase 4 features">
               <li><span class="item-dot" aria-hidden="true"></span>Personalized AI features: date suggestions, questions, personas assistant</li>
@@ -232,7 +235,7 @@
     <p class="footer-donate">Enjoying the app? <a href="https://connect.vestwell.com/gift/stable/JpWVJZ7rQ0ixof6rguIVEA" target="_blank" rel="noopener noreferrer">Leave a tip ↗</a></p>
   </footer>
 
-</div>
-<script src="site.js"></script>
+</main>
+<script src="js/site.js"></script>
 </body>
 </html>

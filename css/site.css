@@ -30,13 +30,12 @@
 @import './tokens.css';
 
 /*
-  Google Fonts loads two typefaces:
-  · Cormorant Garamond — elegant serif used for headings (--font-d)
-  · DM Sans            — clean sans-serif used for body text (--font-b)
-  "display=swap" means text shows in a fallback font while the custom
-  font loads, preventing invisible text (FOIT).
+  Google Fonts (Cormorant Garamond + DM Sans) is loaded in each HTML file's <head>
+  using <link> tags with rel="preconnect" hints. This lets the browser begin the DNS
+  lookup and download one network round-trip earlier than a CSS @import chain would,
+  reducing the time the fallback font is visible. "display=swap" in the URL prevents
+  invisible text during load (FOIT). The font <link> tags live in each HTML file.
 */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap');
 
 
 /* ══════════════════════════════
@@ -81,26 +80,22 @@
   --nav-h:       64px;                    /* navigation bar height */
 }
 
-/* Light mode overrides.
-   "prefers-color-scheme" reads the user's OS/browser setting.
-   We only need to override what changes — everything else inherits. */
+/*
+  Light mode overrides — only variables with hardcoded dark-mode values need
+  explicit overrides here. Variables defined as var(--oy-*) aliases automatically
+  pick up their light-mode values when tokens.css changes the underlying --oy-*
+  token — no re-declaration needed in this block.
+*/
 @media (prefers-color-scheme: light) {
   :root {
-    --bg:          var(--oy-bg);
-    --bg-2:        var(--oy-surface);
     --bg-card:     rgba(255,255,255,.72);
     --bg-card-h:   rgba(255,255,255,.92);
     --border:      rgba(91,58,140,.2);
     --border-h:    rgba(91,58,140,.45);
     --border-soft: rgba(91,58,140,.12);
-    --text:        #2a1a45;
-    --text-dim:    var(--oy-text-dim);
-    --text-dim-aa: var(--oy-text-dim);
-    --mist:        #3d2768;
+    --text:        #2a1a45;   /* overrides the hardcoded #ddd4f0 dark-mode value above */
+    --mist:        #3d2768;   /* overrides hardcoded #cfc0e8 */
     --mist-aa:     #3d2768;
-    --gold-aa:     var(--oy-gold);
-    --gold-2:      var(--oy-gold);
-    --cream:       var(--oy-text);
   }
 }
 
@@ -143,9 +138,14 @@ a    { color: inherit; text-decoration: none; }
 ══════════════════════════════ */
 .skip-link {
   position: absolute;
-  top: -100%;          /* hidden above the viewport */
+  top: 0;
   left: 50%;
-  transform: translateX(-50%);
+  /*
+    translate(-50%, -100%) keeps the element above the viewport.
+    Animating transform is GPU-composited; animating `top` forces a layout
+    reflow on every frame — transform is the correct property here.
+  */
+  transform: translate(-50%, -100%);
   background: var(--iris);
   color: #fff;
   padding: 10px 24px;
@@ -154,11 +154,11 @@ a    { color: inherit; text-decoration: none; }
   font-weight: 500;
   z-index: 200;        /* above everything, including the nav */
   text-decoration: none;
-  transition: top 0.2s;
+  transition: transform 0.2s;
   white-space: nowrap;
 }
 .skip-link:focus {
-  top: 0;              /* slides into view when focused */
+  transform: translate(-50%, 0); /* slides into view when focused */
 }
 
 
@@ -264,7 +264,7 @@ a    { color: inherit; text-decoration: none; }
   border: none;
   cursor: pointer;
   color: var(--text-dim);
-  padding: 6px;
+  padding: 10px;         /* 24px icon + 10px padding each side = 44×44px touch target (HIG minimum) */
   border-radius: 8px;    /* gives the focus ring a nice shape */
 }
 
@@ -437,6 +437,7 @@ a    { color: inherit; text-decoration: none; }
   border: 1px solid var(--border);
   border-radius: 20px;
   padding: 28px;
+  -webkit-backdrop-filter: blur(8px); /* required for iOS Safari < 15.4 */
   backdrop-filter: blur(8px);
   transition: background .2s, border-color .2s, transform .2s;
 }
@@ -527,15 +528,12 @@ a    { color: inherit; text-decoration: none; }
   border-radius: 4px;
 }
 
-/* Buttons and links with pill shapes get a matching
-   rounded focus ring */
-.btn:focus-visible,
-.nav-links a:focus-visible,
-.nav-mobile a:focus-visible,
-.explore-card:focus-visible {
-  outline-radius: 100px;
-  border-radius: 100px;
-}
+/*
+  No extra focus rules needed for pill-shaped elements.
+  `outline-radius` is not a valid CSS property — it was a no-op.
+  Modern browsers (Chrome 94+, Firefox 88+, Safari 15.4+) draw outlines
+  following the element's own border-radius automatically.
+*/
 
 
 /* ══════════════════════════════
@@ -554,6 +552,8 @@ a    { color: inherit; text-decoration: none; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+    animation-delay: 0s !important;        /* without this, staggered delays still cause a brief
+                                              flash of invisible content before the 0.01ms animation fires */
     transition-duration: 0.01ms !important;
   }
 
@@ -562,4 +562,18 @@ a    { color: inherit; text-decoration: none; }
 
   /* Reveal elements should be visible immediately, not hidden */
   .reveal { opacity: 1; transform: none; }
+}
+
+
+/* ══════════════════════════════
+   15. LIGHT MODE OVERRIDES
+   These callout title colors are designed for dark mode —
+   the light pink/green are invisible on a light background.
+   We swap them for dark accessible equivalents in light mode.
+   #b91c1c on #f8f4ff = 6.0:1 (WCAG AA pass)
+   #15803d on #f8f4ff = 4.7:1 (WCAG AA pass)
+══════════════════════════════ */
+@media (prefers-color-scheme: light) {
+  .callout-title-warn { color: #b91c1c; }
+  .callout-title-good { color: #15803d; }
 }

@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0d0818">
-<link rel="icon" href="assets/favicon.ico">
-<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="icon" href="assets/icons/favicon.ico">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
 <meta name="description" content="Say anything — feature ideas, reactions, questions. I read everything.">
 <meta property="og:title" content="Other You · Multiverse Date Night">
 <meta property="og:description" content="A private app for couples to date each other's alternate selves — the roads not taken, the versions that almost were.">
@@ -17,7 +17,10 @@
 <meta property="og:image:alt" content="Other You · Multiverse Date Night">
 <title>Contact · Other You</title>
 <link rel="manifest" href="manifest.json">
-<link rel="stylesheet" href="site.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap">
+<link rel="stylesheet" href="css/site.css">
 <style>
 .page-header{padding:calc(var(--nav-h) + 72px) 28px 56px;text-align:center;}
 .form-wrap{max-width:680px;margin:0 auto;padding:0 24px 96px;}
@@ -41,7 +44,7 @@
     <li><a href="contact.html" class="active">Contact</a></li>
     <li><a href="https://pwa.other-you.app" class="nav-cta">Open App</a></li>
   </ul>
-  <button class="nav-hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
+  <button type="button" class="nav-hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
   </button>
 </nav>
@@ -52,7 +55,7 @@
   <a href="contact.html" class="active">Contact</a>
   <a href="https://pwa.other-you.app" class="nav-cta">Open App</a>
 </nav>
-<div class="page-wrap" id="main-content" tabindex="-1">
+<main class="page-wrap" id="main-content" tabindex="-1">
   <header class="page-header">
     <p class="eyebrow fade-up">Say anything</p>
     <h1 class="display-title fade-up fade-up-1">Get in <em>touch</em></h1>
@@ -75,8 +78,8 @@
         /* Guard: only call opnform.on if the SDK loaded successfully.
            If the SDK script fails (e.g. network error), this prevents a JS crash. */
         if (typeof opnform !== 'undefined') {
-          opnform.on('submit', function (data) {
-            console.log('Form submitted:', data);
+          opnform.on('submit', function () {
+            /* Form submitted — no-op handler. Extend here for analytics if needed. */
           });
         }
       </script>
@@ -89,7 +92,7 @@
     <p class="footer-copyright">© 2026 Other You</p>
     <p class="footer-donate">Enjoying the app? <a href="https://connect.vestwell.com/gift/stable/JpWVJZ7rQ0ixof6rguIVEA" target="_blank" rel="noopener noreferrer">Leave a tip ↗</a></p>
   </footer>
-</div>
-<script src="site.js"></script>
+</main>
+<script src="js/site.js"></script>
 </body>
 </html>
