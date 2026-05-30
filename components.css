@@ -1,0 +1,1314 @@
+
+
+/* ================================================================
+   📖 STUDY GUIDE — css/components.css
+   Other You: Multiverse Date Night
+   ================================================================
+
+   WHAT THIS FILE DOES
+   -------------------
+   Styles every specific UI component in the app — buttons, cards,
+   form fields, tags, avatar circles, persona rows, the slot machine,
+   modals, toasts, history entries, and the backup UI. Where
+   tokens.css defines the palette and layout.css defines the rooms,
+   this file furnishes and decorates every room.
+
+   WHAT YOU'LL LEARN IN THIS FILE
+   --------------------------------
+   - CSS composition — the base + modifier class pattern (.btn
+     + .btn-primary) that lets you build variants without repetition
+   - backdrop-filter: blur() — how the frosted glass card effect works
+     and why the background must be semi-transparent
+   - The ellipsis trio — the three CSS properties that must be set
+     together to truncate long text with "..."
+   - CSS animations and @keyframes — how to define and apply custom
+     animations, illustrated by the slot machine bounce
+   - will-change: transform — a GPU hint that makes animations smooth,
+     used (and then removed) just during the slot machine spin
+   - scroll-snap-type — how the welcome carousel snaps to whole slides
+   - The ::before touch-target expansion trick — making a small button
+     have a large tap area without changing its visual size (WCAG 2.5.5)
+   - CSS Grid vs Flexbox — when each layout model is the right choice
+   - The .on class toggle pattern — how JS and CSS collaborate to
+     show/hide elements using a single class addition
+
+   HOW IT FITS IN THE ARCHITECTURE
+   ---------------------------------
+   Load order: tokens.css → base.css → layout.css → THIS FILE (last)
+
+   Depends on: tokens.css (every color, font, and spacing value
+               here is read from a CSS custom property)
+   Used by: index.html (every class name in the HTML that isn't
+            .screen, .topbar, or #bnav is defined in this file)
+
+   HOW TO READ THIS FILE
+   ----------------------
+   Read Section 1 (buttons) first — it explains the composition
+   pattern used throughout. Then jump to Section 6 (slot machine)
+   for the CSS animation deep-dive. The remaining sections follow
+   naturally from there.
+
+================================================================ */
+
+
+/* ================================================================
+   📖 CHAPTER 3 — CSS: Components
+   ================================================================
+
+   WHAT THIS CHAPTER COVERS
+   -------------------------
+   Every visual component in the app: buttons, cards, form fields,
+   tags, avatar circles, persona rows, the slot machine, modals,
+   toasts, and all the screen-specific styles. Each component reads
+   from the design tokens in Chapter 2 — no raw hex codes here.
+
+   HOW TO READ THIS CHAPTER
+   -------------------------
+   Components are grouped by type (buttons, cards, fields) and
+   then by screen (welcome, match, connect, history, backup).
+   The groupings mirror the HTML screen structure from Chapter 1.
+
+================================================================ */
+
+
+/* ================================================================
+   📚 SECTION 1: Buttons
+   ================================================================
+
+   WHAT THIS SECTION DOES
+   -----------------------
+   Defines the entire button system using a composition pattern:
+   one base class (.btn) sets shared behavior, and modifier classes
+   (.btn-primary, .btn-gold, .btn-ghost) layer on specific
+   appearances. A button gets both: class="btn btn-primary".
+
+   KEY CONCEPTS IN THIS SECTION
+   -----------------------------
+   → CSS Composition (base + modifier classes)
+     Instead of writing a completely separate rule for every button
+     variant, we write shared rules once in .btn and only write
+     the DIFFERENCES in each modifier. .btn-primary doesn't need
+     to re-declare font-family or cursor — those are inherited from
+     .btn. This is called composition: small, focused pieces that
+     combine. It's cleaner, shorter, and easier to change.
+
+   → linear-gradient
+     A gradient that transitions between two colors in a straight
+     line. linear-gradient(135deg, color-a, color-b) goes from
+     color-a in the top-left (135°) to color-b in the bottom-right.
+     Used on .btn-primary to give the button depth and richness —
+     a flat purple would look dull; a gradient looks dimensional.
+
+   → transform: scale(.97) on :active
+     When a button is pressed, it shrinks very slightly (to 97% of
+     its size). This gives immediate tactile feedback — it feels
+     like the button physically depresses. The transition on .btn
+     (transition:transform .15s) makes the scale animate smoothly
+     in and out.
+
+   → -webkit-appearance: none
+     iOS Safari adds its own visual styling to buttons and inputs
+     (rounded corners, gradients, shadows) that would fight your
+     custom styles. This resets it to nothing so our styles take
+     full control.
+
+   → ::before / ::after pseudo-elements on .divider
+     These CSS pseudo-elements insert invisible generated content
+     (content:'') before and after the divider text. flex:1 makes
+     each side stretch to fill the remaining space. The result:
+     a horizontal line — text — horizontal line, all in CSS with
+     no extra HTML elements.
+
+================================================================ */
+
+/* 📌 WHAT: Base button — all buttons in the app start here.
+   📌 WHY:  display:inline-flex centers content (icon + label) perfectly.
+            border:none resets browser default button border.
+            border-radius:100px makes it a pill shape regardless of size.
+            The transition animates scale and shadow on press/hover. */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:100px;font-family:var(--font-b);font-weight:500;cursor:pointer;-webkit-appearance:none;transition:transform .15s,box-shadow .15s;}
+
+/* 📌 WHAT: Press feedback — button shrinks 3% when tapped/clicked.
+   📌 WHY:  Gives immediate physical feedback so the user knows the
+            tap registered. Feels native. The .15s transition on .btn
+            makes the scale animate smoothly rather than snapping. */
+.btn:active{transform:scale(.97);}
+
+/* 📌 WHAT: The primary CTA button — gradient purple, white text, glow shadow.
+   📌 WHY:  The diagonal gradient (iris → portal-1) gives visual depth.
+            The box-shadow creates a subtle purple glow beneath the button,
+            lifting it off the surface. Used for the most important action
+            on any given screen. */
+.btn-primary{background:linear-gradient(135deg,var(--iris),var(--portal-1));color:#fff;padding:14px 32px;font-size:.9rem;letter-spacing:.04em;box-shadow:0 4px 24px rgba(91,58,140,.45);}
+
+/* 📌 WHAT: Gold accent button — solid amber, dark text.
+   📌 WHY:  Used for high-value actions that need to feel different
+            from the purple primary (e.g. "See the match →" on Home).
+            Dark text (#1a0a30) on gold meets WCAG AA contrast. */
+.btn-gold{background:var(--gold);color:#1a0a30;padding:10px 22px;font-size:.82rem;font-weight:700;}
+
+/* 📌 WHAT: Ghost button — no fill, just a border and muted text.
+   📌 WHY:  Used for secondary actions ("Skip intro", "Back") that
+            should be available but visually subordinate to the
+            primary action. The :active state brightens the border
+            and text to acknowledge the tap. */
+.btn-ghost{background:none;color:var(--text-dim-aa);border:1px solid var(--border);padding:11px 24px;font-size:.85rem;}
+.btn-ghost:active{color:var(--mist-aa);border-color:var(--iris);}
+
+/* Size and width modifiers — stack on top of any button variant */
+.btn-sm{padding:8px 18px;font-size:.78rem;}   /* smaller padding for compact contexts */
+.btn-block{width:100%;}                         /* full-width — fills its container */
+
+/* 📌 WHAT: An "or" divider with lines extending to both edges.
+   📌 WHY:  The ::before and ::after pseudo-elements are flex:1 children
+            of the flex-row container. flex:1 makes each grow to fill
+            all available space equally, pushing the text to the center.
+            height:1px + background creates the horizontal line. */
+.divider{display:flex;align-items:center;gap:12px;font-size:.72rem;color:var(--text-dim-aa);}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border-soft);}
+
+
+/* ================================================================
+   📚 SECTION 2: Cards, Form Fields & Tags
+   ================================================================
+
+   WHAT THIS SECTION DOES
+   -----------------------
+   The three building blocks of content surfaces in the app: the
+   card container (frosted glass surface), form field groups
+   (label + input pairs), and tag pills (the trait selector buttons
+   on the persona form).
+
+   KEY CONCEPTS IN THIS SECTION
+   -----------------------------
+   → backdrop-filter: blur()
+     This creates the "frosted glass" effect seen throughout the
+     app — cards look like semi-transparent glass through which
+     the starfield background is visible but softened. backdrop-
+     filter applies a visual effect to whatever is BEHIND the
+     element, not the element itself. blur(6px) adds a 6px
+     Gaussian blur. This only works on elements with a transparent
+     or semi-transparent background — which is why --bg-card uses
+     rgba with .55 opacity.
+
+   → outline: none on .finput
+     Inputs have a default browser focus outline (often an ugly
+     blue rectangle). We suppress it here and provide our own
+     feedback instead: the border-color changes to --iris when
+     focused, and the background lightens slightly. This is
+     acceptable because we ARE providing a visible focus indicator —
+     just a custom one. Never remove outline without a replacement.
+
+   → CSS Transitions on inputs
+     transition:border-color .2s,background .2s makes the color
+     change animate smoothly over 200ms rather than snapping
+     instantly. This small detail makes the form feel polished.
+
+   → flex-wrap: wrap on .tags
+     The trait tags container wraps its children onto new lines
+     when they can't all fit in one row. Without flex-wrap:wrap,
+     tags would overflow or squish. This creates the organic
+     "tag cloud" layout seen in the persona form.
+
+================================================================ */
+
+/* 📌 WHAT: The base card surface — translucent, rounded, frosted.
+   📌 WHY:  backdrop-filter:blur(6px) creates the frosted glass look.
+            The semi-transparent --bg-card background lets the
+            starfield show through softened. Note: backdrop-filter
+            requires the element to have a non-opaque background
+            to show any effect. */
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:18px;padding:18px;backdrop-filter:blur(6px);}
+
+/* 📌 WHAT: A form field group — wraps a label and input together.
+   📌 WHY:  flex-direction:column with gap:7px stacks label above
+            input with consistent spacing. Using a wrapper element
+            (rather than adjacent selectors) makes the label-input
+            pair easy to move as a unit. */
+.fgroup{display:flex;flex-direction:column;gap:7px;}
+
+/* 📌 WHAT: The small uppercase label above each field.
+   📌 WHY:  text-transform:uppercase + letter-spacing:.1em gives it
+            the "eyebrow" treatment — it reads as a category label,
+            not body text. --lavender-aa color keeps it visible but
+            subordinate to the input content below. */
+.flabel{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--lavender-aa);font-weight:500;}
+
+/* 📌 WHAT: All text inputs and textareas share this base style.
+   📌 WHY:  outline:none removes browser default focus ring — we
+            replace it with border-color:var(--iris) on focus.
+            -webkit-appearance:none prevents iOS from adding its
+            own rounded styling. The transition animates the border
+            color and background smoothly on focus/blur. */
+.finput{background:var(--bg-input);border:1px solid var(--border);border-radius:12px;padding:13px 16px;color:var(--text-aa);font-family:var(--font-b);font-size:1rem;width:100%;outline:none;-webkit-appearance:none;transition:border-color .2s,background .2s;}
+
+/* 📌 WHAT: Visual focus feedback — border turns iris purple, background lightens.
+   📌 WHY:  This is the accessible alternative to outline:none — it
+            clearly signals which field has focus without the default
+            browser ring. The background change adds a second subtle cue. */
+.finput:focus{border-color:var(--iris);background:var(--bg-input-f);}
+.finput::placeholder{color:var(--text-dim-aa);opacity:.65;}
+textarea.finput{resize:none;min-height:76px;line-height:1.55;}
+
+/* 📌 WHAT: More faded placeholder for the persona name field specifically.
+   📌 WHY:  The name field has a longer, example-text placeholder
+            ("A real name, an archetype, or both…") that should
+            feel softer than a standard hint so it doesn't compete
+            with the user's real input. opacity:.42 is fainter than
+            the standard .65. */
+.name-input::placeholder{color:var(--text-dim-aa);opacity:.42;font-size:.88rem;}
+
+/* 📌 WHAT: Wrapping flex row for the trait tag pills.
+   📌 WHY:  flex-wrap:wrap lets tags flow to new lines when they
+            can't all fit in a row — creating the organic tag cloud
+            layout. gap:7px spaces them consistently. */
+.tags{display:flex;flex-wrap:wrap;gap:7px;}
+
+/* 📌 WHAT: A single trait tag — a pill-shaped toggle button.
+   📌 WHY:  These are <button> elements styled as pill tags. Using
+            <button> gives keyboard focusability and screen reader
+            announcement for free. The .on class (toggled by JS)
+            signals "selected" by filling the background and
+            brightening the text and border. */
+.tag{background:rgba(91,58,140,.15);border:1px solid var(--border);border-radius:100px;padding:5px 13px;font-size:.78rem;color:var(--mist-aa);cursor:pointer;-webkit-appearance:none;font-family:var(--font-b);transition:background .15s,border-color .15s;}
+.tag.on{background:rgba(91,58,140,.4);border-color:var(--iris);color:var(--cream);}
+
+/* ================================================================
+   📚 SECTION 3: Avatar System
+   ================================================================
+
+   WHAT THIS SECTION DOES
+   -----------------------
+   Three related visual components used in the persona creation
+   flow: the 80px avatar circle (the tappable circle at the top
+   of the form), the 64px avatar preview (on the source picker
+   screen), and the emoji picker mount (the emoji browser screen).
+
+   KEY CONCEPTS IN THIS SECTION
+   -----------------------------
+   → overflow:visible on outer, overflow:hidden on inner
+     The .avatar-circle (outer) has overflow:visible so the gold
+     edit badge in the bottom-right corner can extend outside the
+     circle boundary. But the .avatar-circle-inner has overflow:
+     hidden so a user's photo is clipped to the circle shape. Two
+     elements, opposite overflow values, different purposes.
+
+   → pointer-events: none on the edit badge
+     The pencil badge is purely decorative — tapping it should
+     trigger the parent button (.avatar-circle), not the badge
+     itself. pointer-events:none makes the badge transparent to
+     mouse/touch events, so clicks fall through to the parent.
+
+   → object-fit: cover on images
+     When a photo is chosen, it fills the circle. object-fit:cover
+     scales the image to fill the entire container while maintaining
+     aspect ratio — cropping if necessary. Without it, a portrait
+     photo in a square container would either squish or show
+     whitespace. cover always fills the container completely.
+
+   → Theming a web component with CSS custom properties
+     emoji-mart is a web component (<em-emoji-picker>). Web
+     components have their own "shadow DOM" — internal elements
+     that are normally invisible to external CSS. The only way to
+     style inside them is through CSS custom properties that the
+     component explicitly exposes. The --em-rgb-* variables are
+     emoji-mart's documented theming API. We pass our dark theme
+     colors through these variables to make the picker match the
+     rest of the app.
+
+================================================================ */
+
+/* 📌 WHAT: Outer wrapper — centers the circle and hint text vertically.
+   📌 WHY:  flex-direction:column + align-items:center stacks the
+            circle above the "Tap to change avatar" hint. */
+.avatar-circle-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;padding:8px 0 22px;}
+
+/* 📌 WHAT: The tappable 80px avatar circle with a gold border.
+   📌 WHY:  overflow:visible is intentional — it lets the edit badge
+            extend beyond the circle boundary. position:relative
+            anchors the badge's absolute positioning. flex-shrink:0
+            prevents flex containers from squishing it. */
+.avatar-circle{width:80px;height:80px;border-radius:50%;background:rgba(42,26,78,.85);border:2px solid var(--gold-aa);display:flex;align-items:center;justify-content:center;font-size:36px;overflow:visible;cursor:pointer;position:relative;flex-shrink:0;-webkit-tap-highlight-color:transparent;}
+
+/* 📌 WHAT: Inner div that clips photos to the circle shape.
+   📌 WHY:  overflow:hidden is what actually clips the image.
+            The outer circle uses overflow:visible for the badge,
+            so without this inner clip, a photo would bleed out
+            of the circle boundaries. */
+.avatar-circle-inner{width:100%;height:100%;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+
+/* 📌 WHAT: Photo fills the circle, cropped to fit.
+   📌 WHY:  object-fit:cover fills the container while preserving
+            aspect ratio — it crops if needed but never squishes. */
+.avatar-circle-inner img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+
+/* 📌 WHAT: The gold pencil badge in the bottom-right corner.
+   📌 WHY:  position:absolute places it relative to .avatar-circle.
+            pointer-events:none means taps pass through to the parent
+            button — the badge is visual only. The dark border
+            (#0d0818) creates a separation ring between the badge
+            and the avatar background. */
+.avatar-edit-badge{position:absolute;bottom:-2px;right:-2px;width:22px;height:22px;border-radius:50%;background:var(--gold-aa);border:2px solid #0d0818;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+.avatar-circle-hint{font-size:.73rem;color:var(--gold-aa);letter-spacing:.02em;}
+
+/* Avatar source picker screen — 64px preview of current avatar */
+.avatar-src-preview{width:64px;height:64px;border-radius:50%;background:rgba(42,26,78,.85);border:2px solid var(--gold-aa);display:flex;align-items:center;justify-content:center;font-size:28px;overflow:hidden;margin:0 auto 24px;}
+.avatar-src-preview img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.avatar-src-icon{width:38px;height:38px;border-radius:10px;background:rgba(91,58,140,.2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+
+/* 📌 WHAT: The emoji-mart picker fills the available screen height.
+   📌 WHY:  flex:1 + min-height:0 is the Flexbox Scrolling Trap fix
+            from Chapter 2 applied again — the picker needs to fill
+            the screen without overflowing it. */
+#emoji-picker-mount{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;}
+
+/* 📌 WHAT: Themes the emoji-mart web component to match the dark app.
+   📌 WHY:  Web components have their own isolated "shadow DOM" that
+            external CSS can't reach. emoji-mart exposes these --em-*
+            custom property variables as its theming API. We pass our
+            dark purple palette values through them. width/height:
+            100% !important override the component's own sizing so
+            it fills the mount container. */
+#emoji-picker-mount em-emoji-picker{--em-rgb-background:26,14,46;--em-rgb-input:13,8,24;--em-rgb-color:248,244,255;--em-rgb-accent:158,122,46;--em-color-border:rgba(255,255,255,.08);--em-color-border-over:rgba(255,255,255,.15);width:100% !important;max-width:100% !important;height:100% !important;border-radius:0 !important;border:none !important;flex:1;}
+
+
+/* ================================================================
+   📚 SECTION 4: Persona Row, Partner Banner & Toast
+   ================================================================
+
+   WHAT THIS SECTION DOES
+   -----------------------
+   Three components that appear on multiple screens: the persona
+   list row (each alternate self), the partner connection banner
+   (shown at the top of screens when connected), and the toast
+   notification (the brief status message that appears and fades).
+
+   KEY CONCEPTS IN THIS SECTION
+   -----------------------------
+   → text-overflow: ellipsis
+     When text is too long for its container, text-overflow:ellipsis
+     truncates it and adds "..." at the end. This ONLY works when
+     three properties are set together:
+       white-space: nowrap    (force single line)
+       overflow: hidden       (clip the overflow)
+       text-overflow: ellipsis (replace clipped text with "...")
+     Without all three, it won't work. The .pinfo wrapper also needs
+     min-width:0 (the Flexbox Scrolling Trap again — flex:1 children
+     won't shrink below their content width without it, so long names
+     would push the row wider instead of truncating).
+
+   → transform:translateX(-50%) for centering
+     The toast is position:fixed, bottom:92px, left:50%. left:50%
+     places the LEFT EDGE of the toast at the center. To center the
+     toast itself, we shift it left by half its own width:
+     transform:translateX(-50%). This works for any width — it's
+     the standard technique for horizontally centering a fixed
+     or absolute element when you don't know its exact width.
+
+   → opacity:0 / opacity:1 for show/hide
+     The toast uses opacity rather than display:none to appear and
+     disappear. display:none can't be animated — the element either
+     exists or doesn't. opacity transitions smoothly. The toast is
+     always in the layout (pointer-events:none keeps it from
+     blocking taps) but invisible until .on adds opacity:1.
+
+================================================================ */
+
+/* 📌 WHAT: In-screen section title + optional subtitle (right-aligned).
+   📌 WHY:  Used for "Your Yous" heading on the Personas screen.
+            justify-content:space-between pushes the subtitle to the
+            right while the serif title stays left. */
+.sh{padding:18px 24px 4px;display:flex;align-items:flex-end;justify-content:space-between;}
+.sh-title{font-family:var(--font-d);font-size:1.45rem;font-weight:400;color:var(--cream);}
+.sh-sub{font-size:.78rem;color:var(--text-dim-aa);}
+
+/* 📌 WHAT: A tappable persona list row — avatar + info + chevron.
+   📌 WHY:  flex:1 on .pinfo (with min-width:0) allows the name/tag
+            text to shrink and truncate instead of overflowing.
+            The :active scale gives press feedback. backdrop-filter
+            creates the frosted glass card look. */
+.prow{display:flex;align-items:center;gap:15px;cursor:pointer;padding:16px 18px;background:var(--bg-card);border:1px solid var(--border);border-radius:17px;transition:border-color .2s,transform .15s;backdrop-filter:blur(6px);}
+.prow:active{transform:scale(.98);}
+.pavatar{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;position:relative;}
+
+/* 📌 WHAT: The thin gold ring around the avatar.
+   📌 WHY:  position:absolute + inset:-3px extends it 3px OUTSIDE
+            the avatar boundaries in all directions, creating a ring
+            that floats around the avatar rather than overlapping it.
+            opacity:.55 keeps it subtle — present but not dominant. */
+.pavatar-ring{position:absolute;inset:-3px;border-radius:50%;border:1.5px solid var(--gold-aa);opacity:.55;}
+
+/* 📌 WHAT: The text column (name + origin preview). min-width:0 is
+            required so flex:1 can shrink below content width,
+            enabling text-overflow:ellipsis on the children. */
+.pinfo{flex:1;min-width:0;}
+.pname{font-family:var(--font-d);font-size:1.1rem;color:var(--cream);}
+
+/* 📌 WHAT: The truncated origin/description preview under the name.
+   📌 WHY:  The three properties that make ellipsis work together:
+            white-space:nowrap (one line), overflow:hidden (clip it),
+            text-overflow:ellipsis (show "..."). All three required. */
+.ptag{font-size:.77rem;color:var(--text-dim-aa);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;}
+
+/* 📌 WHAT: The "Add another version of yourself" dashed button.
+   📌 WHY:  border-style:dashed signals "add new" — a well-understood
+            UI convention. width:calc(100% - 48px) accounts for the
+            24px left+right margin so it aligns with the content above. */
+.padd{margin:0 24px;background:none;border:1.5px dashed var(--border);border-radius:17px;padding:16px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;color:var(--text-dim-aa);font-family:var(--font-b);font-size:.88rem;-webkit-appearance:none;width:calc(100% - 48px);transition:border-color .2s,color .2s;}
+.padd:active{border-color:var(--iris);color:var(--mist-aa);}
+.padd-icon{width:42px;height:42px;border-radius:50%;background:rgba(91,58,140,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+/* 📌 WHAT: The "Connected with X" / "Demo mode" banner below topbars.
+   📌 WHY:  A persistent contextual reminder of connection state.
+            The gold-tinted avatar border (rgba(212,169,106,.35))
+            signals "special" without competing with the iris brand. */
+.pbanner{margin:8px 24px 0;background:var(--bg-card);border:1px solid var(--border-soft);border-radius:13px;padding:12px 15px;display:flex;align-items:center;gap:11px;}
+.pbanner-avatar{width:34px;height:34px;border-radius:50%;background:rgba(91,58,140,.2);display:flex;align-items:center;justify-content:center;font-size:.95rem;border:1px solid rgba(212,169,106,.35);}
+.pbanner-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--iris);}
+.pbanner-name{font-size:.88rem;color:var(--mist-aa);font-weight:500;}
+
+/* 📌 WHAT: The floating status pill that appears briefly then fades.
+   📌 WHY:  position:fixed + left:50% + transform:translateX(-50%)
+            centers it horizontally regardless of its text width.
+            opacity:0 keeps it invisible; .on adds opacity:1 and the
+            .3s transition fades it in. pointer-events:none prevents
+            it from blocking taps on content below. z-index:999
+            layers it above screens but below modals (z-index:200). */
+#toast{position:fixed;bottom:92px;left:50%;transform:translateX(-50%);background:var(--bg-deep);border:1px solid var(--border);border-radius:100px;padding:10px 20px;font-size:.82rem;color:var(--mist-aa);z-index:999;pointer-events:none;opacity:0;transition:opacity .3s;white-space:nowrap;}
+#toast.on{opacity:1;}
+
+/* ================================================================
+   📚 SECTION 5: Welcome Screen & Setup Screen
+   ================================================================
+
+   WHAT THIS SECTION DOES
+   -----------------------
+   Styles the tutorial carousel (horizontal swipe slides) and the
+   first-time setup form. These are the first two screens a new
+   user sees — the welcome slides introduce the concept, then
+   setup captures the user's name and bio.
+
+   KEY CONCEPTS IN THIS SECTION
+   -----------------------------
+   → scroll-snap-type: x mandatory
+     CSS Scroll Snap turns the .w-slides container into a carousel.
+     scroll-snap-type:x mandatory means: when the user stops
+     scrolling horizontally, the container will snap to the nearest
+     slide (rather than stopping at an arbitrary point). Each slide
+     has scroll-snap-align:start, declaring where it wants to snap.
+     The result: swipe-based navigation that always lands cleanly on
+     a full slide — no half-visible slides. JavaScript drives this
+     same container programmatically via scrollTo() in nextSlide()
+     and prevSlide().
+
+   → min-width: 100% on each slide
+     Each .wslide takes up the FULL width of its flex container
+     (.w-slides). Combined with the container's overflow-x:auto,
+     slides sit side by side horizontally — the container shows one
+     at a time and scrolls between them. min-width:100% ensures each
+     slide is exactly as wide as the viewport, never less.
+
+   → The dot indicator pattern
+     The .dot elements start with a neutral background. When a
+     slide is active, JS adds .on to its dots. The .on class applies
+     the gold color and a scale(1.3) transform — the dot grows
+     slightly and turns gold. The transition:background .3s,
+     transform .3s makes these changes animate smoothly.
+
+================================================================ */
+
+/* 📌 WHAT: Welcome screen overrides — full-height, no bottom padding.
+   📌 WHY:  justify-content:flex-start overrides .screen's default to
+            let the slides control their own vertical alignment.
+            padding-bottom:0 removes the 88px bottom nav clearance —
+            the welcome screen appears before the nav is visible. */
+#welcome-screen{justify-content:flex-start;align-items:stretch;padding-bottom:0;}
+
+/* 📌 WHAT: The horizontal slides container — CSS carousel.
+   📌 WHY:  display:flex creates a horizontal row. overflow-x:auto
+            enables horizontal scrolling. scroll-snap-type:x mandatory
+            snaps to full slides when scrolling stops. scrollbar-width:
+            none hides the browser scrollbar. height:100dvh fills the
+            full visible screen. */
+.w-slides{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;height:100dvh;}
+.w-slides::-webkit-scrollbar{display:none;}
+
+/* 📌 WHAT: Each individual slide fills the full width and height.
+   📌 WHY:  min-width:100% ensures each slide takes up the full
+            container width (no shrinking). scroll-snap-align:start
+            declares this as a snap point — scrolling snaps so this
+            element's start edge aligns with the container's start. */
+.wslide{min-width:100%;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 32px 56px;text-align:center;gap:0;}
+.slide-dot-row{display:flex;gap:8px;justify-content:center;margin:18px 0 0;width:100%;}
+.slide-icon{font-size:3rem;margin-bottom:20px;}
+.slide-step{font-size:.65rem;text-transform:uppercase;letter-spacing:.15em;color:var(--iris);margin-bottom:8px;}
+.slide-title{font-family:var(--font-d);font-size:2.2rem;font-weight:300;color:var(--cream);line-height:1.15;margin-bottom:10px;}
+.slide-title em{font-style:italic;color:var(--gold-aa);}
+.slide-body{font-size:.88rem;color:var(--text-dim-aa);line-height:1.7;max-width:300px;margin:0 auto 28px;}
+.slide-body strong{color:var(--mist-aa);font-weight:400;}
+
+/* 📌 WHAT: Small progress dot — inactive state (neutral border color).
+   📌 WHY:  The transition animates both the color change and the
+            scale transform when .on is added/removed by JS. */
+.dot{width:6px;height:6px;border-radius:50%;background:var(--border);transition:background .3s,transform .3s;}
+
+/* 📌 WHAT: Active slide dot — gold fill, slightly larger.
+   📌 WHY:  transform:scale(1.3) makes the active dot 30% larger than
+            its siblings, creating a clear visual hierarchy. The
+            color+size combination leaves no ambiguity about which
+            slide is current. */
+.dot.on{background:var(--gold-aa);transform:scale(1.3);}
+.slide-actions{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;max-width:300px;margin-top:22px;}
+.slide-actions .btn{width:100%;}
+.hiw-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:18px 20px;text-align:left;width:100%;max-width:320px;margin-bottom:20px;backdrop-filter:blur(6px);}
+.hiw-num{font-family:var(--font-d);font-size:2rem;color:var(--gold-aa);line-height:1;margin-bottom:6px;}
+.hiw-heading{font-size:.92rem;font-weight:500;color:var(--cream);margin-bottom:4px;}
+.hiw-text{font-size:.8rem;color:var(--text-dim-aa);line-height:1.6;}
+
+/* Setup screen — the first-time identity form */
+.setup-top{padding:18px 24px 0;}
+.setup-back{background:none;border:none;cursor:pointer;color:var(--text-dim-aa);font-size:.83rem;display:flex;align-items:center;gap:5px;padding:0;margin-bottom:14px;font-family:var(--font-b);}
+.setup-step{font-size:.68rem;text-transform:uppercase;letter-spacing:.12em;color:var(--iris);margin-bottom:5px;}
+.setup-h{font-family:var(--font-d);font-size:1.85rem;font-weight:400;color:var(--cream);line-height:1.2;}
+.setup-sub{font-size:.83rem;color:var(--text-dim-aa);line-height:1.6;margin-top:6px;}
+.setup-form{padding:22px 24px;display:flex;flex-direction:column;gap:18px;}
+
+/* ================================================================
+   📚 SECTION 6: Match Screen — The Slot Machine
+   ================================================================
+
+   WHAT THIS SECTION DOES
+   -----------------------
+   Styles the slot machine UI at the center of the Match screen:
+   the container, the two persona avatar slots, the divider,
+   and the spin animation. Also covers the match confirmation card
+   and the accept/complete action buttons below the slots.
+
+   KEY CONCEPTS IN THIS SECTION
+   -----------------------------
+   → CSS Animations and @keyframes
+     A CSS animation repeatedly applies a series of style changes
+     over time. You define the animation in an @keyframes rule —
+     a named description of what happens at each percentage of the
+     animation's duration. Then you apply it with the animation
+     shorthand on an element.
+
+     The slot-tick animation (see below) bounces the avatar up 3px
+     then down 3px repeatedly, 11 times per second — creating the
+     classic slot machine "rolling" feel entirely in CSS.
+
+   → will-change: transform
+     This is a performance hint to the browser: "this element is
+     about to be transformed — prepare for it." The browser can
+     pre-promote the element to its own compositor layer (handled
+     by the GPU), so the animation runs smoothly without triggering
+     a full layout recalculation every frame. It's added by JS just
+     before spinning starts and removed right after, because keeping
+     it permanently wastes GPU memory.
+
+   → The bug we fixed: per-element animation class
+     The ORIGINAL code added a .slot-spinning class to the .slot-wrap
+     CONTAINER and used a CSS descendant selector to animate BOTH
+     avatar elements inside it. This meant locking one slot didn't
+     stop it from animating — the CSS couldn't tell which slot was
+     locked. The fix: JS now adds .slot-reel-spin directly to each
+     INDIVIDUAL avatar element, only if that slot is unlocked. Locked
+     slots never get the class, so they stay still.
+
+================================================================ */
+
+/* ┌─────────────────────────────────────────────────────────────┐
+   │  💡 CONCEPT: CSS Animations and @keyframes                  │
+   ├─────────────────────────────────────────────────────────────┤
+   │                                                             │
+   │  CSS can animate elements without JavaScript. You describe  │
+   │  what the element should look like at different points in   │
+   │  time using @keyframes, then attach those keyframes to an   │
+   │  element using the animation property.                      │
+   │                                                             │
+   │  @keyframes my-anim {                                       │
+   │    0%   { transform: translateY(0); }   /* start */         │
+   │    50%  { transform: translateY(-10px); } /* middle */      │
+   │    100% { transform: translateY(0); }   /* end */           │
+   │  }                                                          │
+   │                                                             │
+   │  .bouncing-thing {                                          │
+   │    animation: my-anim 1s ease-in-out infinite;             │
+   │  /*             name  dur  easing          repeat */        │
+   │  }                                                          │
+   │                                                             │
+   │  The animation shorthand takes several values:              │
+   │    name      — which @keyframes to use                     │
+   │    duration  — how long one cycle takes                     │
+   │    timing    — easing curve (ease, linear, ease-in-out)    │
+   │    iteration — how many times (a number, or infinite)       │
+   │                                                             │
+   │  In the slot machine: slot-tick runs for .09 seconds per    │
+   │  cycle (about 11 cycles per second), infinitely, creating   │
+   │  the rapid bounce that looks like a spinning reel.          │
+   └─────────────────────────────────────────────────────────────┘ */
+
+.match-hero{padding:24px 24px 12px;text-align:center;}
+.match-h{font-family:var(--font-d);font-size:1.95rem;font-weight:300;color:var(--cream);margin-bottom:6px;}
+.match-h em{font-style:italic;color:var(--gold-aa);}
+.match-sub{font-size:.83rem;color:var(--text-dim-aa);}
+
+/* 📌 WHAT: The outer container for both avatar slots.
+   📌 WHY:  overflow:hidden clips the bottom of avatars that grow
+            beyond the container. backdrop-filter:blur(8px) gives
+            the frosted glass look — slightly more blur than cards
+            (6px) to make the slot machine feel distinct and special. */
+.slot-wrap{margin:12px 24px;background:var(--slot-bg);border:1px solid var(--border);border-radius:20px;padding:20px 16px;display:flex;align-items:center;justify-content:center;gap:0;position:relative;overflow:hidden;backdrop-filter:blur(8px);min-height:130px;}
+.slot-side{flex:1;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.slot-avatar{width:60px;height:60px;border-radius:50%;background:rgba(45,27,78,.5);border:1.5px solid rgba(212,169,106,.3);display:flex;align-items:center;justify-content:center;font-size:2rem;overflow:hidden;flex-shrink:0;}
+.slot-avatar img{width:100%;height:100%;object-fit:cover;}
+
+/* 📌 WHAT: The persona name under the avatar — truncated if too long.
+   📌 WHY:  max-width:100px caps the display width. The
+            overflow/text-overflow/white-space trio truncates long
+            names with "..." rather than overflowing the slot. */
+.slot-name{font-family:var(--font-d);font-size:1rem;color:var(--cream);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.slot-who{font-size:.65rem;color:var(--text-dim-aa);text-transform:uppercase;letter-spacing:.08em;}
+.slot-divider{font-size:1.4rem;color:var(--gold-aa);padding:0 10px;flex-shrink:0;}
+
+/* 📌 WHAT: The spin animation — applied per-slot when spinning.
+   📌 WHY:  ⭐ BUG FIX — the original code added a class to the
+            parent CONTAINER (.slot-wrap), so a CSS descendant rule
+            animated BOTH avatars, even locked ones. The fix: JS now
+            adds .slot-reel-spin directly to each avatar element,
+            only when that slot is NOT locked. Locked avatars never
+            get this class and never animate.
+
+            will-change:transform hints the browser to pre-promote
+            this element to a GPU compositor layer for smooth
+            animation. Added by JS before spinning, removed after —
+            so GPU memory is only held during the actual animation. */
+.slot-avatar.slot-reel-spin{animation:slot-tick .09s infinite;will-change:transform;}
+
+/* 📌 WHAT: The vertical bounce keyframe animation.
+   📌 WHY:  Bouncing 3px up and 3px down in 90ms = ~11 cycles/second.
+            At that speed it reads as rapid spinning, not individual
+            bounces. linear timing (default) keeps the speed constant
+            so it feels mechanical rather than elastic. */
+@keyframes slot-tick{0%{transform:translateY(-3px)}50%{transform:translateY(3px)}100%{transform:translateY(-3px)}}
+
+/* ================================================================
+   📚 SECTION 7: Connect, Home, Modal & Shared Components
+   ================================================================
+
+   WHAT THIS SECTION DOES
+   -----------------------
+   Screen-specific styles for Connect (the pairing hub), Home (the
+   dashboard), the modal overlay (the bottom sheet dialog), and
+   several shared visual components: the logo hero, photo upload
+   preview, custom trait inputs, the .sr-only accessibility utility,
+   the slide dot indicator, and the semantic HTML element resets.
+
+================================================================ */
+
+/* ── Connect screen ── */
+.connect-hero{padding:28px 24px 14px;text-align:center;}
+.connect-h{font-family:var(--font-d);font-size:1.9rem;font-weight:300;color:var(--cream);margin-bottom:7px;}
+.connect-sub{font-size:.83rem;color:var(--text-dim-aa);line-height:1.6;}
+.qr-box{margin:0 auto 20px;width:190px;height:190px;border:1px solid var(--border);border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;background:var(--bg-card);color:var(--text-dim-aa);font-size:.77rem;text-align:center;padding:18px;}
+.qr-box svg{opacity:.45;}
+.copts{padding:0 24px;display:flex;flex-direction:column;gap:12px;}
+
+/* 📌 WHAT: Action option card — icon left, title+desc right.
+   📌 WHY:  Used for the three connect options (Generate invite,
+            Try demo, etc.). backdrop-filter gives the frosted glass
+            card look. flex-shrink:0 on the icon prevents it from
+            shrinking when description text is long. */
+.ccard{background:var(--bg-card);border:1px solid var(--border);border-radius:15px;padding:16px;display:flex;align-items:center;gap:13px;cursor:pointer;backdrop-filter:blur(6px);}
+.ccard-icon{width:42px;height:42px;border-radius:11px;background:rgba(91,58,140,.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.2rem;}
+.ccard-title{font-size:.92rem;font-weight:500;color:var(--cream);margin-bottom:2px;}
+.ccard-desc{font-size:.76rem;color:var(--text-dim-aa);line-height:1.4;}
+
+/* ── Home screen ── */
+.home-greet{padding:24px 24px 8px;}
+.home-greet-sub{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim-aa);margin-bottom:3px;}
+.home-greet-name{font-family:var(--font-d);font-size:1.9rem;font-weight:300;color:var(--cream);}
+
+/* 📌 WHAT: A two-column CSS grid for the stat boxes.
+   📌 WHY:  grid-template-columns:1fr 1fr creates two equal columns.
+            CSS Grid is ideal for this layout because both columns
+            must be exactly the same width regardless of content. */
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:11px;padding:14px 24px;}
+.stat{background:var(--bg-card);border:1px solid var(--border-soft);border-radius:13px;padding:15px;text-align:center;}
+.stat-n{font-family:var(--font-d);font-size:1.9rem;font-weight:300;color:var(--gold-aa);line-height:1;}
+.stat-l{font-size:.68rem;color:var(--text-dim-aa);margin-top:3px;text-transform:uppercase;letter-spacing:.08em;}
+.home-section{padding:0 24px 14px;}
+
+/* Demo badge — the small "✦ Demo" pill shown in topbars during demo mode */
+.demo-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(212,169,106,.12);border:1px solid rgba(212,169,106,.3);border-radius:100px;padding:4px 10px;font-size:.68rem;color:var(--gold-aa);letter-spacing:.06em;text-transform:uppercase;}
+
+/* ── Modal overlay ── */
+/* 📌 WHAT: Full-screen overlay that slides up a bottom sheet.
+   📌 WHY:  position:fixed inset:0 covers the entire viewport.
+            z-index:200 layers it above screen content (z:1) and the
+            bottom nav (z:100) but below the backup onboarding (z:300).
+            align-items:flex-end pushes the .modal sheet to the bottom.
+            display:none by default; .on switches it to display:flex. */
+#overlay{position:fixed;inset:0;z-index:200;display:none;align-items:flex-end;}
+#overlay.on{display:flex;}
+
+/* 📌 WHAT: The semi-transparent scrim behind the modal sheet.
+   📌 WHY:  position:absolute inset:0 makes it fill #overlay. The click
+            handler on this element (onclick="closeOverlay()") lets
+            users dismiss the modal by tapping outside it. */
+.overlay-bg{position:absolute;inset:0;background:var(--overlay-bg);}
+
+/* 📌 WHAT: The white-ish modal content sheet that slides up.
+   📌 WHY:  max-height:85dvh prevents the modal from taking the full
+            screen — the scrim behind stays visible. border-radius on
+            the top two corners gives the bottom-sheet appearance.
+            overflow-y:auto lets the content scroll if it's long. */
+.modal{position:relative;width:100%;max-height:85dvh;background:var(--modal-bg);border-radius:24px 24px 0 0;border-top:1px solid var(--border);overflow-y:auto;padding:22px 24px 40px;scrollbar-width:none;}
+.modal::-webkit-scrollbar{display:none;}
+
+/* 📌 WHAT: The small drag handle at the top of the modal sheet.
+   📌 WHY:  A visual affordance that signals "this sheet can be
+            dragged down to dismiss" — a standard mobile UX pattern.
+            It's purely decorative; actual close is via the backdrop
+            tap or the Escape key (Chapter 4 JS). */
+.modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;}
+.modal-h{font-family:var(--font-d);font-size:1.6rem;font-weight:400;color:var(--text-aa);margin-bottom:4px;}
+.modal-sub{font-size:.83rem;color:var(--text-dim-aa);line-height:1.6;margin-bottom:18px;}
+.demo-pair{display:flex;gap:10px;margin-bottom:16px;}
+.demo-pcard{flex:1;background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;}
+.demo-pcard-em{font-size:1.8rem;margin-bottom:5px;}
+.demo-pcard-name{font-family:var(--font-d);font-size:.95rem;color:var(--text-aa);}
+.demo-pcard-role{font-size:.68rem;color:var(--text-dim-aa);text-transform:uppercase;letter-spacing:.08em;margin-top:2px;}
+
+/* Logo hero — the SVG logo image on the welcome screen slide 0 */
+.oy-logo-hero{width:160px;height:160px;margin:0 auto 28px;flex-shrink:0;}
+.oy-logo-hero-img{width:100%;height:100%;object-fit:contain;display:block;}
+
+/* ── Photo upload (within Create Persona form) ── */
+.photo-upload-wrap{display:flex;align-items:center;gap:16px;margin-bottom:4px;}
+.photo-preview{width:72px;height:72px;border-radius:50%;background:rgba(45,27,78,.5);border:1.5px solid rgba(91,58,140,.4);display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;overflow:hidden;position:relative;cursor:pointer;}
+.photo-preview img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+
+/* 📌 WHAT: Camera-icon overlay that appears on hover/focus.
+   📌 WHY:  ⭐ BUGFIX — this class was referenced in the HTML but
+            never defined, so the overlay never appeared. It's now
+            defined here. opacity:0 hides it by default; hover/focus
+            bring it to opacity:1. pointer-events:none lets clicks
+            fall through to the parent .photo-preview element, which
+            handles the actual tap. */
+.photo-preview-overlay{
+  position:absolute;inset:0;border-radius:50%;
+  background:rgba(0,0,0,.45);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .2s;
+  pointer-events:none;
+}
+.photo-preview:hover .photo-preview-overlay{opacity:1;}
+.photo-preview:focus-visible .photo-preview-overlay{opacity:1;}
+.photo-upload-info{flex:1;}
+.photo-upload-title{font-size:.82rem;color:var(--text-aa);margin-bottom:4px;font-weight:500;}
+.photo-upload-hint{font-size:.72rem;color:var(--text-dim-aa);line-height:1.5;}
+.photo-upload-btn{background:rgba(91,58,140,.2);border:1px solid rgba(91,58,140,.4);border-radius:100px;padding:7px 16px;font-size:.76rem;color:var(--lavender-aa);cursor:pointer;font-family:var(--font-b);-webkit-appearance:none;margin-top:8px;transition:background .15s;}
+.photo-upload-btn:active{background:rgba(91,58,140,.4);}
+
+/* ── Custom traits (persona form) ── */
+/* 📌 WHAT: The left-border hint box above the trait tags.
+   📌 WHY:  border-left:2px creates the accent bar. border-radius:
+            0 8px 8px 0 rounds only the RIGHT corners — the left edge
+            stays flush with the accent bar for a clean block-quote
+            style. */
+.trait-helper{font-size:.75rem;color:var(--text-dim-aa);line-height:1.55;margin-bottom:10px;padding:10px 12px;background:rgba(45,27,78,.3);border-left:2px solid rgba(155,126,200,.4);border-radius:0 8px 8px 0;}
+.trait-helper strong{color:var(--mist-aa);}
+.custom-tag-row{display:flex;gap:8px;margin-top:10px;}
+.custom-tag-input{flex:1;background:rgba(45,27,78,.4);border:1px solid rgba(91,58,140,.35);border-radius:100px;padding:7px 14px;color:var(--text);font-family:var(--font-b);font-size:.82rem;outline:none;-webkit-appearance:none;}
+.custom-tag-input:focus{border-color:var(--iris);}
+.custom-tag-input::placeholder{color:var(--text-dim-aa);opacity:.6;font-size:.78rem;}
+.custom-tag-add{background:rgba(91,58,140,.3);border:1px solid rgba(91,58,140,.5);border-radius:100px;padding:7px 16px;font-size:.8rem;color:var(--mist-aa);cursor:pointer;font-family:var(--font-b);-webkit-appearance:none;white-space:nowrap;transition:background .15s;}
+.custom-tag-add:active{background:rgba(91,58,140,.5);}
+.tag-custom{background:rgba(212,169,106,.12);border-color:rgba(212,169,106,.3);color:var(--gold-light);}
+
+/* .sr-only — moved to base.css */
+
+/* 📌 WHAT: Slide progress dot used in the welcome screen (same .on
+            toggle pattern as .dot but slightly larger, for setup flows). */
+.sdot{width:7px;height:7px;border-radius:50%;background:var(--border);transition:background .3s,transform .3s;}
+.sdot.on{background:var(--gold-aa);transform:scale(1.35);}
+
+/* ── Semantic element browser resets ────────────────────────────
+   📌 WHAT: Strips browser default styling from <button> and <a>
+            elements that are styled as settings rows or option cards.
+   📌 WHY:  Browsers add their own visual styles to buttons (border,
+            background) and links (color, underline) by default. When
+            we use these semantic elements as card components, we need
+            those defaults gone so our own CSS takes full effect.
+            We use the semantic elements BECAUSE they're keyboard
+            focusable and screen-reader-aware — we just strip the
+            browser visuals while keeping the behavior.
+
+   ⭐ GREAT PATTERN: Semantic HTML + visual reset is always better
+      than a non-semantic div with onclick. The semantics are worth
+      the few extra reset lines.                                 */
+button.settings-row, a.settings-row {
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  color: inherit;
+  text-decoration: none;
+  font-family: var(--font-b);
+  font-size: inherit;
+}
+button.ccard {
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--bg-card);
+  font-family: var(--font-b);
+  font-size: inherit;
+  color: inherit;
+  text-align: left;
+  width: 100%;
+}
+
+/* ================================================================
+   📚 SECTION 8: Settings, Connect/Pair, Match Controls & History
+   ================================================================
+
+   WHAT THIS SECTION DOES
+   -----------------------
+   Styles for the remaining screens and their specific components:
+   settings rows, the connect/pair invite system, slot machine lock
+   and navigation controls (with the touch-target expansion trick),
+   match confirmation buttons, history entries, and the topbar
+   back button.
+
+   KEY CONCEPTS IN THIS SECTION
+   -----------------------------
+   → The ::before touch-target expansion technique
+     WCAG 2.5.5 requires interactive elements to have at least a
+     44×44px touch target. The slot lock and nav buttons are only
+     28×26px visually — too small for easy tapping. The fix:
+
+     1. Add position:relative to the button
+     2. Add a ::before pseudo-element:
+          content: '';           (required — pseudo-elements need content)
+          position: absolute;    (relative to the button)
+          width: 44px;           (expanded tap zone width)
+          height: 44px;          (expanded tap zone height)
+          top: 50%;  left: 50%;  (center it on the button)
+          transform: translate(-50%, -50%);  (shift back by half)
+
+     The visual button stays 28px. The tappable area expands to 44px.
+     The pseudo-element is invisible — just a larger hit zone.
+
+   → CSS pulsing animations (@keyframes)
+     The connection status dots use opacity pulses (statusPulse,
+     pulseDot2) to indicate "waiting" state. Fading from fully
+     opaque to .3 and back creates a breathing effect. This is
+     purely communicative — it signals activity without being
+     distracting.
+
+   → @media max-width responsive breakpoint
+     @media(max-width:380px) fires only on screens narrower than
+     380px — very small phones like the iPhone SE. The nav button
+     labels and SVGs shrink slightly to prevent overlap. This is
+     the only responsive breakpoint in the app; everything else
+     uses fluid layouts that work across screen sizes naturally.
+
+   → The expand/collapse class pattern (.open)
+     History entries show a detail panel when tapped. The pattern:
+     .history-entry-body { display: none }
+     .history-entry.open .history-entry-body { display: block }
+     JS toggles the .open class on the entry. The chevron rotates
+     90° via .history-entry.open .history-entry-chevron rule. Same
+     .on class pattern used everywhere else, just named .open here.
+
+================================================================ */
+
+/* ── Settings screen ── */
+.settings-section{padding:18px 24px 0;}
+.settings-section-title{font-size:.68rem;text-transform:uppercase;letter-spacing:.14em;color:var(--iris);margin-bottom:12px;font-weight:500;}
+.settings-card{background:var(--bg-card);border:1px solid var(--border);border-radius:17px;overflow:hidden;margin-bottom:14px;}
+
+/* 📌 WHAT: A tappable settings row — icon + text + arrow chevron.
+   📌 WHY:  overflow:hidden on .settings-card clips row borders at the
+            card's rounded corners. border-bottom creates dividers
+            between rows. last-child removes the final row's divider
+            so the card bottom stays clean. */
+.settings-row{display:flex;align-items:center;gap:14px;padding:16px 18px;border-bottom:1px solid var(--border-soft);cursor:pointer;transition:background .15s;}
+.settings-row:last-child{border-bottom:none;}
+.settings-row:active{background:var(--bg-card-b);}
+.settings-row-icon{width:38px;height:38px;border-radius:11px;background:rgba(91,58,140,.18);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.settings-row-info{flex:1;min-width:0;}
+.settings-row-title{font-size:.9rem;font-weight:500;color:var(--cream);}
+.settings-row-desc{font-size:.75rem;color:var(--text-dim-aa);margin-top:2px;line-height:1.45;}
+.settings-row-arrow{color:var(--text-dim-aa);flex-shrink:0;}
+.settings-info-box{background:rgba(91,58,140,.1);border:1px solid var(--border-soft);border-radius:13px;padding:14px 16px;margin-bottom:14px;}
+.settings-info-box p{font-size:.8rem;color:var(--text-dim-aa);line-height:1.65;}
+.settings-info-box strong{color:var(--mist-aa);}
+.settings-version{text-align:center;padding:8px 24px 0;font-size:.7rem;color:var(--text-dim-aa);opacity:.6;}
+
+/* ── Connect screen — status and pair system ── */
+/* (the duplicate invite-box/sync-indicator block was removed in the audit
+   — canonical definitions are here in the CONNECT/PAIR section) */
+#qr-canvas{display:flex;justify-content:center;margin-bottom:12px;}
+#qr-canvas canvas,#qr-canvas img{border-radius:10px;border:3px solid #fff;}
+
+/* 📌 WHAT: Connection status bar showing waiting/connected/offline dot + text.
+   📌 WHY:  The three .conn-status-dot modifier classes provide semantic
+            color coding: gold (waiting), green (connected), red (offline).
+            statusPulse makes the gold dot breathe to indicate "still waiting." */
+.conn-status{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--bg-card);border:1px solid var(--border-soft);border-radius:14px;margin:0 24px 12px;}
+.conn-status-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.conn-status-dot.waiting{background:var(--gold-aa);animation:statusPulse 1.5s ease-in-out infinite;}
+.conn-status-dot.connected{background:#4ade80;}
+.conn-status-dot.offline{background:#f87171;}
+@keyframes statusPulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.conn-status-text{font-size:.82rem;color:var(--text-dim-aa);line-height:1.45;}
+.conn-status-text strong{color:var(--cream);}
+
+/* Invite pending state — QR code, URL, share buttons */
+.invite-box{margin:0 24px 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:24px;text-align:center;backdrop-filter:blur(8px);}
+.invite-qr{margin:0 auto 16px;width:180px;height:180px;background:#fff;border-radius:12px;padding:10px;display:flex;align-items:center;justify-content:center;}
+.invite-qr canvas{border-radius:6px;}
+
+/* 📌 WHAT: The invite URL displayed in monospace below the QR code.
+   📌 WHY:  font-family:monospace makes all characters equal-width,
+            which helps with readability of long alphanumeric URLs.
+            word-break:break-all allows breaking anywhere in the URL
+            string so it wraps instead of overflowing. */
+.invite-url{font-family:monospace;font-size:.72rem;color:var(--text-dim-aa);word-break:break-all;background:rgba(91,58,140,.15);border-radius:8px;padding:8px 10px;margin-bottom:12px;line-height:1.5;text-align:left;}
+.invite-code-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:16px;}
+.invite-code{font-family:var(--font-d);font-size:1.8rem;font-weight:300;color:var(--cream);letter-spacing:.15em;}
+.copy-btn{background:rgba(91,58,140,.2);border:1px solid var(--border);border-radius:100px;padding:6px 14px;font-size:.75rem;color:var(--mist-aa);cursor:pointer;font-family:var(--font-b);-webkit-appearance:none;transition:background .15s;}
+.copy-btn:active{background:rgba(91,58,140,.4);}
+.invite-share-btns{display:flex;flex-direction:column;gap:9px;}
+.share-btn{display:flex;align-items:center;gap:12px;background:var(--bg-card);border:1px solid var(--border);border-radius:13px;padding:13px 16px;cursor:pointer;-webkit-appearance:none;font-family:var(--font-b);text-align:left;width:100%;transition:background .15s,border-color .15s;}
+.share-btn:active{background:var(--bg-card-b);border-color:var(--border-h,var(--iris));}
+.share-btn-icon{font-size:1.2rem;flex-shrink:0;}
+.share-btn-text{}
+.share-btn-title{font-size:.88rem;font-weight:500;color:var(--cream);}
+.share-btn-desc{font-size:.73rem;color:var(--text-dim-aa);margin-top:1px;}
+
+/* Pair status indicator row */
+.pair-status{display:flex;align-items:center;gap:8px;font-size:.75rem;color:var(--text-dim-aa);justify-content:center;margin-bottom:14px;}
+.pair-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.pair-dot-waiting{background:var(--gold-aa);animation:pulseDot2 1.8s ease-in-out infinite;}
+.pair-dot-connected{background:#4ade80;}
+@keyframes pulseDot2{0%,100%{opacity:1}50%{opacity:.4}}
+.join-form{padding:0 24px 16px;}
+.join-form-title{font-family:var(--font-d);font-size:1.3rem;color:var(--cream);margin-bottom:6px;}
+.join-form-desc{font-size:.82rem;color:var(--text-dim-aa);line-height:1.6;margin-bottom:14px;}
+
+/* 📌 WHAT: The "Syncing" indicator in the Match screen topbar.
+   📌 WHY:  display:none by default, switched to display:flex via .on
+            while a Supabase realtime sync is in progress. The dot
+            pulses using the same pulseDot2 animation. */
+.sync-indicator{display:none;align-items:center;gap:7px;font-size:.72rem;color:var(--mist-aa);padding:0 24px 8px;}
+.sync-indicator.on{display:flex;}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--iris);animation:pulseDot2 1s ease-in-out infinite;}
+
+
+/* ── Match screen — slot columns, lock/nav controls, confirmation ── */
+
+/* 📌 WHAT: Each persona "column" inside the slot machine.
+   📌 WHY:  box-sizing:border-box is explicitly re-stated here (even
+            though the global * rule covers it) because padding + flex:1
+            is exactly the scenario where forgetting it breaks things.
+            The comment in the original code explained this well. */
+.slot-col{display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;padding:12px 8px;box-sizing:border-box;}
+.slot-lock-row{display:flex;align-items:center;gap:6px;margin-top:2px;}
+
+/* 📌 WHAT: The lock button — visually 28px, tappable area 44px.
+   📌 WHY:  position:relative enables the ::before hit-area expansion.
+            The .locked modifier adds a gold background tint and gold
+            border to signal "this slot is locked." */
+.slot-lock-btn{background:none;border:1px solid var(--border-soft);border-radius:100px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.85rem;transition:background .15s,border-color .15s;-webkit-appearance:none;position:relative;}
+
+/* 📌 WHAT: Invisible pseudo-element that expands the tap target to 44×44px.
+   📌 WHY:  WCAG 2.5.5 and Apple/Google guidelines require 44×44px minimum
+            touch targets. The button is only 28px visually — too small.
+            This pseudo-element creates an invisible 44px square centered on
+            the button, making it easy to tap without changing appearance. */
+.slot-lock-btn::before{content:'';position:absolute;width:44px;height:44px;top:50%;left:50%;transform:translate(-50%,-50%);}
+.slot-lock-btn.locked{background:rgba(232,188,120,.15);border-color:var(--gold-aa);}
+.slot-lock-btn:active{transform:scale(.92);}
+.slot-nav-row{display:flex;align-items:center;gap:4px;margin-top:2px;}
+
+/* 📌 WHAT: Prev/Next arrow buttons — same ::before hit-area expansion pattern. */
+.slot-nav-btn{background:none;border:1px solid var(--border-soft);border-radius:100px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-dim-aa);-webkit-appearance:none;transition:background .15s;position:relative;}
+.slot-nav-btn::before{content:'';position:absolute;width:44px;height:44px;top:50%;left:50%;transform:translate(-50%,-50%);}
+.slot-nav-btn:active{background:var(--bg-card);}
+.slot-nav-btn:disabled{opacity:.25;cursor:not-allowed;}
+
+/* Match confirmation and action buttons */
+.match-confirm{margin:0 24px 14px;background:var(--bg-card);border:1px solid rgba(212,169,106,.22);border-radius:20px;padding:24px;backdrop-filter:blur(6px);}
+.match-confirm-lbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gold-aa);margin-bottom:16px;}
+.match-confirm-btns{display:flex;gap:10px;}
+.btn-spin-again{flex:1;background:none;border:1px solid var(--border);border-radius:100px;padding:13px;color:var(--text-dim-aa);font-family:var(--font-b);font-size:.88rem;cursor:pointer;-webkit-appearance:none;transition:background .15s,color .15s;}
+.btn-spin-again:active{background:var(--bg-card-b);color:var(--mist-aa);}
+.btn-spin-again:disabled{opacity:.45;cursor:not-allowed;}
+.btn-accept-date{flex:1;background:linear-gradient(135deg,var(--iris),#7c3aed);border:none;border-radius:100px;padding:13px;color:#fff;font-family:var(--font-b);font-size:.88rem;font-weight:500;cursor:pointer;-webkit-appearance:none;box-shadow:0 4px 20px rgba(91,58,140,.4);transition:opacity .15s,transform .15s;}
+.btn-accept-date:active{transform:scale(.97);}
+.match-action-row{display:flex;flex-direction:column;gap:9px;padding:4px 24px 4px;}
+.btn-accept{background:linear-gradient(135deg,var(--iris),#7c3aed);border:none;border-radius:100px;padding:14px;color:#fff;font-family:var(--font-b);font-size:.92rem;font-weight:500;cursor:pointer;width:100%;-webkit-appearance:none;transition:opacity .15s,transform .15s;box-shadow:0 4px 20px rgba(91,58,140,.4);}
+.btn-accept:active{transform:scale(.97);}
+
+/* 📌 WHAT: The "We did it!" completion button — green tinted.
+   📌 WHY:  Green (#86efac) is the universal "success" color. Using
+            a translucent background rather than solid keeps the
+            dark theme consistency. */
+.btn-complete{background:rgba(134,239,172,.1);border:1px solid rgba(134,239,172,.3);border-radius:100px;padding:13px;color:#86efac;font-family:var(--font-b);font-size:.88rem;cursor:pointer;width:100%;-webkit-appearance:none;transition:background .15s;}
+.btn-complete:active{background:rgba(134,239,172,.2);}
+.accepted-badge{display:flex;align-items:center;justify-content:center;gap:7px;font-size:.78rem;color:#86efac;padding:6px 0 2px;}
+
+
+/* ── History screen ── */
+.history-empty{text-align:center;padding:48px 32px;color:var(--text-dim-aa);}
+.history-empty-icon{font-size:2.5rem;margin-bottom:14px;}
+.history-empty-title{font-family:var(--font-d);font-size:1.3rem;color:var(--cream);margin-bottom:8px;}
+.history-empty-text{font-size:.82rem;line-height:1.65;}
+.history-list{padding:0 20px 16px;display:flex;flex-direction:column;gap:12px;}
+.history-entry{background:var(--bg-card);border:1px solid var(--border);border-radius:17px;overflow:hidden;backdrop-filter:blur(6px);}
+.history-entry-head{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.history-entry-avatars{display:flex;gap:-4px;flex-shrink:0;}
+.history-avatar{width:36px;height:36px;border-radius:50%;background:rgba(45,27,78,.5);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.1rem;overflow:hidden;}
+.history-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+
+/* 📌 WHAT: The second avatar overlaps the first by 10px.
+   📌 WHY:  A negative left margin creates the overlapping avatar pair
+            visual — showing both personas as a stacked pair rather
+            than side-by-side. The nth-child selector targets only
+            the second avatar in the pair. */
+.history-avatar:nth-child(2){margin-left:-10px;}
+.history-entry-meta{flex:1;min-width:0;}
+.history-entry-names{font-size:.88rem;font-weight:500;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.history-entry-date{font-size:.68rem;color:var(--text-dim-aa);flex-shrink:0;text-align:right;}
+
+/* 📌 WHAT: The collapse/expand chevron — rotates 90° when entry is open.
+   📌 WHY:  The .history-entry.open descendant selector fires when the
+            parent entry has the .open class. transform:rotate(90deg)
+            points the right-facing chevron downward, signaling "open." */
+.history-entry-chevron{color:var(--text-dim-aa);flex-shrink:0;transition:transform .2s;}
+.history-entry.open .history-entry-chevron{transform:rotate(90deg);}
+
+/* 📌 WHAT: The detail panel — hidden by default, shown when .open is added.
+   📌 WHY:  display:none completely removes it from layout. display:block
+            when .open is set reveals it. This is the same .on class
+            pattern seen throughout the app, just named .open here. */
+.history-entry-body{display:none;padding:0 16px 16px;border-top:1px solid var(--border-soft);}
+.history-entry.open .history-entry-body{display:block;}
+.history-count{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--iris);padding:0 20px 12px;}
+
+/* 📌 WHAT: Compact nav on very small screens (iPhone SE — 375px wide).
+   📌 WHY:  5 tabs at normal size risk overlapping on sub-380px screens.
+            This breakpoint shrinks the font, padding, and icon sizes
+            to keep all five tabs on one line. This is the ONLY
+            responsive breakpoint in the entire app. */
+@media(max-width:380px){
+  .nb{font-size:.52rem;gap:2px;padding:6px 2px;}
+  .nb svg{width:18px;height:18px;}
+}
+
+.history-edit-row{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid var(--border-soft);}
+.history-edit-btn{background:none;border:1px solid var(--border-soft);border-radius:100px;padding:5px 13px;font-size:.72rem;color:var(--text-dim-aa);font-family:var(--font-b);cursor:pointer;-webkit-appearance:none;display:flex;align-items:center;gap:5px;transition:border-color .15s,color .15s;}
+.history-edit-btn:hover{border-color:var(--border);color:var(--mist-aa);}
+.history-completed-label{font-size:.7rem;color:var(--text-dim-aa);}
+.history-completed-date{font-size:.78rem;color:var(--mist-aa);font-weight:500;}
+
+/* Topbar back button — appears on sub-screens navigated to with pushHistory */
+.topbar-back{background:none;border:none;cursor:pointer;color:var(--text-dim-aa);display:flex;align-items:center;gap:5px;font-family:var(--font-b);font-size:.78rem;padding:4px 8px 4px 2px;border-radius:8px;-webkit-appearance:none;transition:color .15s;}
+.topbar-back:active{color:var(--mist-aa);}
+.topbar-back svg{flex-shrink:0;}
+
+/* .sp — a simple spacer div, adds 20px of breathing room at the bottom of screens */
+.sp{height:20px;}
+
+/* ================================================================
+   📚 SECTION 9: Backup Onboarding & Backup Screen
+   ================================================================
+
+   WHAT THIS SECTION DOES
+   -----------------------
+   Styles for the two backup-related UI areas: the first-time
+   onboarding overlay (the blocking bottom sheet that walks new
+   users through password creation and save location), and the
+   ongoing backup management screen (status badges, action buttons,
+   educational prose, and the password strength meter).
+
+   KEY CONCEPTS IN THIS SECTION
+   -----------------------------
+   → The ::before content: '✦' bullet pattern
+     .backup-bullet-list li::before inserts a ✦ character before
+     each list item automatically, via CSS. content:'✦' on a
+     pseudo-element is how you add decorative bullets in CSS without
+     putting the character in the HTML. flex-shrink:0 prevents the
+     bullet from being squeezed if the list item text is long.
+
+   → Status badge color variants
+     .backup-status-ok / .backup-status-warn / .backup-status-none
+     are modifier classes on .backup-status-badge. Each applies a
+     different background/border/text color trio. Green = healthy,
+     yellow = needs attention, purple-grey = not configured. The
+     semantic color coding helps users recognize status at a glance.
+
+   → Password strength bar animation
+     The .pw-strength-bar uses background:linear-gradient(...) set
+     dynamically via JavaScript as the user types. transition:
+     background .3s makes the bar color shift animate smoothly.
+     The .pw-req-item.met / .pw-req-item transitions animate
+     check items turning from grey to lavender as requirements pass.
+
+================================================================ */
+
+/* ── Backup onboarding overlay ── */
+/* 📌 WHAT: Full-screen blocking overlay — above everything (z:300).
+   📌 WHY:  z-index:300 puts it above modals (z:200) and all screens.
+            The near-opaque dark background (rgba(13,8,24,.97)) creates
+            the sense that the app is paused pending setup completion.
+            justify-content:flex-end pushes the inner sheet to the bottom. */
+#backup-onboard{position:fixed;inset:0;z-index:300;background:rgba(13,8,24,.97);display:none;flex-direction:column;align-items:center;justify-content:flex-end;}
+#backup-onboard.on{display:flex;}
+
+/* 📌 WHAT: The scrollable inner sheet — the content area of the overlay.
+   📌 WHY:  max-height:92dvh prevents it from taking the full screen
+            (the dark scrim behind stays visible). min-height:0 is the
+            Flexbox Scrolling Trap fix applied here too — without it,
+            the inner sheet won't scroll if content is taller than the
+            max-height. overflow-y:auto enables scrolling when needed. */
+.backup-onboard-inner{width:100%;max-height:92dvh;background:var(--bg-deep);border-radius:24px 24px 0 0;border-top:1px solid var(--border);overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;min-height:0;padding:28px 24px 52px;}
+.backup-step-icon{font-size:2.4rem;margin-bottom:16px;text-align:center;}
+.backup-step-h{font-family:var(--font-d);font-size:1.7rem;font-weight:300;color:var(--cream);margin-bottom:12px;}
+.backup-step-body{font-size:.87rem;color:var(--text-dim-aa);line-height:1.72;margin-bottom:20px;}
+
+/* 📌 WHAT: Adds top margin between consecutive <p> tags inside body text.
+   📌 WHY:  The p+p selector means "a <p> that immediately follows a <p>."
+            This creates paragraph spacing without adding it to the first
+            paragraph (no top margin on the first one). Elegant. */
+.backup-step-body p+p{margin-top:10px;}
+.backup-step-body strong{color:var(--mist-aa);}
+.backup-option-row{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;}
+.backup-option{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:16px 18px;}
+.backup-option-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--iris);margin-bottom:5px;}
+.backup-option-title{font-size:.95rem;font-weight:500;color:var(--cream);margin-bottom:5px;}
+.backup-option-desc{font-size:.8rem;color:var(--text-dim-aa);line-height:1.6;}
+
+/* 📌 WHAT: Custom bullet list using CSS-generated ✦ character.
+   📌 WHY:  list-style:none removes native bullet points. The ::before
+            pseudo-element inserts the ✦ via content:'✦'. flex-shrink:0
+            prevents the bullet from being compressed by long item text. */
+.backup-bullet-list{list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:14px;}
+.backup-bullet-list li{display:flex;gap:12px;font-size:.85rem;color:var(--text-dim-aa);line-height:1.65;}
+.backup-bullet-list li::before{content:'✦';color:var(--gold-aa);flex-shrink:0;margin-top:2px;}
+.backup-bullet-list li strong{color:var(--mist-aa);}
+.backup-onboard-dots{display:flex;gap:8px;justify-content:center;margin-bottom:24px;}
+.backup-dot{width:7px;height:7px;border-radius:50%;background:var(--border);transition:background .25s;}
+.backup-dot.on{background:var(--portal-2);}
+
+/* ── Backup management screen ── */
+.backup-section{padding:16px 24px 0;}
+.backup-section-title{font-size:.68rem;text-transform:uppercase;letter-spacing:.14em;color:var(--iris);margin-bottom:10px;font-weight:500;}
+.backup-prose{font-size:.84rem;color:var(--text-dim-aa);line-height:1.72;margin-bottom:14px;}
+.backup-prose strong{color:var(--mist-aa);}
+.backup-prose-card{background:var(--bg-card);border:1px solid var(--border-soft);border-radius:16px;padding:16px 18px;margin-bottom:12px;}
+
+/* 📌 WHAT: A yellow-tinted warning box for pending backup alerts.
+   📌 WHY:  The rgba(251,191,36,.08) background and rgba(251,191,36,.2)
+            border give a yellow-amber tint without being garish. The
+            strong element inside uses #fde68a (pale yellow) for the
+            emphasized text. Yellow universally signals "warning" or
+            "attention needed." */
+.backup-warn-box{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:.8rem;color:var(--text-dim-aa);line-height:1.6;}
+.backup-warn-box strong{color:#fde68a;}
+
+/* 📌 WHAT: Status badge pill — base style. Modifier classes add color.
+   📌 WHY:  Three semantic states with distinct color coding:
+            ok = green (healthy), warn = yellow (needs attention),
+            none = grey (not yet configured). The badge is inline-flex
+            so it sits naturally next to text without a line break. */
+.backup-status-badge{display:inline-flex;align-items:center;gap:6px;font-size:.74rem;padding:4px 11px;border-radius:100px;flex-shrink:0;}
+.backup-status-ok  {background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25);color:#86efac;}
+.backup-status-warn{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.25);color:#fde68a;}
+.backup-status-none{background:rgba(91,58,140,.15);border:1px solid var(--border-soft);color:var(--text-dim-aa);}
+.backup-ts-row{margin-bottom:14px;}
+.backup-ts-label{font-size:.82rem;font-weight:500;color:var(--cream);margin-bottom:3px;}
+.backup-ts-desc{font-size:.8rem;color:var(--text-dim-aa);line-height:1.6;}
+
+/* ── Password creation UI (backup onboarding step 1) ── */
+.pw-callout{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:14px;padding:16px 18px;margin-bottom:18px;}
+.pw-callout-head{font-size:.86rem;font-weight:500;color:#fca5a5;margin-bottom:7px;}
+.pw-callout-body{font-size:.82rem;color:var(--text-dim-aa);line-height:1.65;}
+.pw-callout-body strong{color:#fca5a5;}
+.pw-rec-box{background:rgba(91,58,140,.12);border:1px solid var(--border-soft);border-radius:14px;padding:16px 18px;margin-bottom:18px;}
+.pw-rec-title{font-size:.85rem;font-weight:500;color:var(--mist-aa);margin-bottom:8px;}
+.pw-rec-body{font-size:.81rem;color:var(--text-dim-aa);line-height:1.65;}
+.pw-rec-body strong{color:var(--mist-aa);}
+
+/* 📌 WHAT: The password strength bar + label.
+   📌 WHY:  The bar is a thin flex:1 strip whose background is set via
+            JS as a linear-gradient from the strength color to the input
+            background. transition:background .3s makes it animate as
+            the user types. The label min-width:80px reserves space so
+            the layout doesn't shift when the label text changes length. */
+.pw-strength-wrap{display:flex;align-items:center;gap:10px;margin-top:8px;}
+.pw-strength-bar{height:5px;border-radius:3px;flex:1;background:var(--bg-input);transition:background .3s;}
+.pw-strength-lbl{font-size:.72rem;color:var(--text-dim-aa);white-space:nowrap;min-width:80px;transition:color .3s;}
+
+/* 📌 WHAT: The password requirements checklist — each item turns lavender
+            with a green check when its condition is met.
+   📌 WHY:  transition:color .2s animates the color change as requirements
+            pass. The .met class (added by JS) switches the item and its
+            check mark from grey to the success colors. Providing a live
+            requirements list is better UX than a generic error after submit. */
+.pw-req-list{list-style:none;padding:0;margin:0 0 18px;display:flex;flex-direction:column;gap:8px;}
+.pw-req-item{display:flex;gap:8px;font-size:.82rem;color:var(--text-dim-aa);line-height:1.4;transition:color .2s;}
+.pw-req-item.met{color:var(--mist-aa);}
+.pw-req-check{font-size:.8rem;color:var(--text-dim-aa);flex-shrink:0;transition:color .2s;}
+.pw-req-item.met .pw-req-check{color:#4ade80;}
+
+
+/* ================================================================
+   ✅ CHAPTER 3 REVIEW — CSS: Components
+   ================================================================
+
+   You just read through every CSS component in the app. Here's
+   what to remember:
+
+   1. CSS composition: .btn + .btn-primary. Write shared rules once
+      in the base class, only differences in the modifier. Less code,
+      easier to change.
+   2. backdrop-filter:blur() creates the frosted glass card effect.
+      Only works when the element has a semi-transparent background.
+   3. text-overflow:ellipsis requires three properties together:
+      white-space:nowrap, overflow:hidden, and text-overflow:ellipsis.
+      The parent also needs min-width:0 if it's a flex child.
+   4. transform:translateX(-50%) + left:50% centers a fixed/absolute
+      element horizontally regardless of its width.
+   5. CSS animations use @keyframes to define what happens at each
+      percentage of a cycle, then animation: name duration easing
+      iterations to apply them.
+   6. The ::before touch target trick: a 44×44px invisible pseudo-
+      element expands the tappable area of a small button without
+      changing its visual size.
+   7. The .on class toggle: opacity:0 → opacity:1 animates. The
+      display:none → display:block pattern is for expand/collapse.
+   8. scroll-snap-type:x mandatory + scroll-snap-align:start creates
+      a CSS carousel that always lands on full slides.
+
+   COMMON MISTAKES TO AVOID
+   -------------------------
+   ⚠️  Don't remove backdrop-filter without also making the
+       background opaque. A blur on a solid background does nothing.
+   ⚠️  Don't forget position:relative on the parent when using
+       position:absolute on the ::before pseudo-element.
+   ⚠️  Don't use display:none for show/hide if you want transitions —
+       you can't transition display. Use opacity or height instead.
+
+   COMING UP NEXT
+   --------------
+   Chapter 4 covers the JavaScript foundation — the state object,
+   localStorage persistence, and the screen navigation system that
+   makes all those CSS classes actually work.
+
+================================================================ */

@@ -1,0 +1,425 @@
+/* ================================================================
+   📖 STUDY GUIDE — css/base.css
+   Other You: Multiverse Date Night
+   ================================================================
+
+   WHAT THIS FILE DOES
+   -------------------
+   Applies global CSS rules that affect every element on the page
+   before any component-specific styles begin. Also defines the
+   accessibility foundations: the keyboard focus ring, the skip
+   link, and the screen-reader-only utility class. These rules are
+   purposefully separated from components because they apply
+   unconditionally — they must be present no matter what content
+   is on the screen.
+
+   WHAT YOU'LL LEARN IN THIS FILE
+   --------------------------------
+   - The CSS reset — why browser defaults must be cleared before
+     you can build your own layout system
+   - box-sizing: border-box — the most important CSS rule in any
+     codebase (and why it's missing from your mental model if you're
+     a beginner)
+   - @media prefers-reduced-motion — how to respect users who
+     experience motion sickness from screen animations (WCAG 2.3.3)
+   - :focus-visible — the modern, correct approach to keyboard focus
+     rings that doesn't break mouse-click aesthetics
+   - Skip links — how a visually hidden element becomes visible on
+     keyboard focus to help users jump past repetitive navigation
+   - .sr-only — the technique for hiding content visually while
+     keeping it in the accessibility tree for screen readers
+
+   HOW IT FITS IN THE ARCHITECTURE
+   ---------------------------------
+   Load order: tokens.css → THIS FILE → layout.css → components.css
+
+   Depends on: tokens.css (uses var(--bg), var(--text-aa), var(--font-b),
+               var(--portal-1), var(--portal-2) etc.)
+   Used by: everything — these rules apply to ALL elements on the page
+
+   NOTE ON SECTION NUMBERING
+   --------------------------
+   This file contains Sections 3, 6, and 7 from Chapter 2 of the
+   original single-file app. Sections 1–2 (design tokens) live in
+   tokens.css. Sections 4–5 (screen layout + chrome) live in
+   layout.css. The section numbers below are kept as written in
+   the original so cross-references with other files stay accurate.
+
+================================================================ */
+
+
+/* ================================================================
+   📚 SECTION 3: Global Reset & Base Styles
+   ================================================================
+
+   WHAT THIS SECTION DOES
+   -----------------------
+   Four rules that affect every element on the page, before any
+   component styling begins. These are "global" rules: they apply
+   to the whole document and would be dangerous to skip.
+
+   KEY CONCEPTS IN THIS SECTION
+   -----------------------------
+   → box-sizing: border-box
+     This is the single most important CSS fix in existence.
+     By default, CSS uses "content-box" sizing: if you give an
+     element width:200px and padding:20px, the element is actually
+     240px wide (200px content + 20px each side). This surprises
+     almost everyone. border-box changes the calculation: width
+     includes padding and border. width:200px stays 200px, always.
+     The * selector applies this to every element at once. Every
+     serious CSS codebase does this — it's essentially mandatory.
+
+   → margin: 0; padding: 0
+     Browsers have their own default stylesheets that add space
+     around headings, paragraphs, lists, etc. Before you can
+     build your own spacing system, you need to zero out those
+     defaults so you're starting from a clean slate.
+
+   → -webkit-tap-highlight-color: transparent
+     On iOS and older Android browsers, tapping a button or link
+     flashes a blue/grey highlight over it. This interferes with
+     custom active states (like our .btn:active scale animation).
+     Setting it to transparent disables the native flash globally.
+
+   → prefers-reduced-motion
+     Some people experience nausea, dizziness, or migraines from
+     screen animations — a condition called vestibular disorder.
+     OS settings let them request reduced motion. This media query
+     respects that by cutting ALL animation and transition durations
+     to 0.01ms (effectively instant). The !important flags override
+     any specific durations set on individual components.
+
+   → overflow: hidden on html and body
+     Other You is a full-screen SPA. The entire page should never
+     scroll — each screen manages its own internal scrolling.
+     overflow:hidden on html and body prevents the page itself
+     from scrolling while still allowing individual .screen
+     elements to scroll their own content.
+
+   → 100dvh vs 100vh
+     vh = "viewport height" — 1vh is 1% of the browser window's
+     height. dvh = "dynamic viewport height" — it accounts for
+     browser UI that appears and disappears (like iOS Safari's
+     address bar, which hides when you scroll). 100dvh on #app
+     means the app always fills exactly the visible area,
+     not the theoretical full height. This prevents the app from
+     being taller than the visible area on mobile browsers.
+
+   → z-index layering
+     CSS stacking context: #bg has z-index:0 (background layer),
+     #app has z-index:1 (content layer, sits above the canvas).
+     Later in Chapter 3, the bottom nav has z-index:100, modals
+     have z-index:200, and the backup onboarding has z-index:300.
+     This deliberate stacking hierarchy ensures elements always
+     appear in the correct visual order.
+
+================================================================ */
+
+/* 📌 WHAT: Universal box model, reset, and tap highlight removal.
+   📌 WHY:  box-sizing:border-box makes width calculations intuitive
+            (padding included, not added). margin/padding reset gives
+            us a clean slate before applying our own spacing. The tap
+            highlight removal prevents native blue/grey flash on touch
+            devices, which would clash with our custom button styles.
+
+   📌 NOTE: "Theme-color meta is also updated via JS — see the canvas
+            IIFE at the bottom of the file" — this comment existed in
+            the original code here as a reminder that the <meta
+            name="theme-color"> tag in the <head> is also updated
+            programmatically when the user's color scheme changes. */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+
+/* 📌 WHAT: Cuts all animation and transition duration to near-zero
+            when the user has enabled "Reduce Motion" in their OS.
+   📌 WHY:  Screen animations can cause genuine physical discomfort
+            for people with vestibular disorders (dizziness, nausea,
+            migraines). "Reduce Motion" is an OS accessibility setting.
+            Respecting it is a WCAG 2.3.3 requirement — and the
+            right thing to do. The !important overrides any specific
+            duration set on individual components so nothing slips
+            through. 0.01ms is used instead of 0ms because some
+            browsers treat 0ms as "don't animate" but still hold
+            the transition step — 0.01ms ensures it completes. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration:        0.01ms !important;
+    animation-iteration-count: 1      !important;
+    transition-duration:       0.01ms !important;
+    scroll-behavior:           auto   !important;
+  }
+}
+
+/* 📌 WHAT: Sets the base height, background, text, and font for the
+            whole page. overflow:hidden prevents the page from
+            scrolling — screen-level scrolling is handled per screen.
+   📌 WHY:  height:100% on both html AND body is required because they
+            don't inherit height from each other by default. Without
+            both, the "100%" height on child elements would calculate
+            against 0 and the layout would collapse. */
+html,body{height:100%;background:var(--bg);color:var(--text-aa);font-family:var(--font-b);overflow:hidden;}
+
+/* 📌 WHAT: The animated starfield canvas — fixed full-screen behind
+            everything else, z-index:0.
+   📌 WHY:  position:fixed removes it from document flow so content
+            scrolls over it. pointer-events:none means mouse/touch
+            events pass through to elements above it. inset:0 is
+            shorthand for top:0; right:0; bottom:0; left:0 — fills
+            the entire viewport. */
+#bg{position:fixed;inset:0;z-index:0;pointer-events:none;}
+
+/* 📌 WHAT: The main app container — all 13 screens live inside this.
+   📌 WHY:  position:relative and z-index:1 lifts #app above the #bg
+            canvas. height:100dvh uses "dynamic viewport height" —
+            dvh accounts for browser UI that appears/disappears (like
+            iOS Safari's address bar). display:flex + flex-direction:
+            column makes screens stack vertically. overflow:hidden
+            clips anything that escapes the viewport. */
+#app{position:relative;z-index:1;height:100dvh;display:flex;flex-direction:column;overflow:hidden;}
+
+/* ================================================================
+   📚 SECTION 6: Keyboard Focus Styles
+   ================================================================
+
+   WHAT THIS SECTION DOES
+   -----------------------
+   Defines the visible ring that appears around focused elements
+   when a user navigates with the keyboard (Tab key). This is
+   critical for accessibility — without it, keyboard users can't
+   tell where they are on the page.
+
+   KEY CONCEPTS IN THIS SECTION
+   -----------------------------
+   → Why focus styles matter
+     Not everyone uses a mouse. Power users, people with motor
+     disabilities, and screen reader users navigate with the
+     keyboard. The Tab key moves focus from element to element.
+     Without a visible focus indicator, they're navigating blind.
+     Removing the focus outline is one of the most common — and
+     most damaging — accessibility mistakes on the web.
+     WCAG 2.4.7 (Focus Visible) requires that keyboard focus be
+     visible. It's not optional.
+
+   → :focus-visible vs :focus
+     :focus fires whenever an element is focused — including when
+     a mouse user clicks a button. This causes a focus ring to
+     flash on click, which many designers find unsightly.
+     :focus-visible is smarter: the browser only applies it when
+     it determines the user is navigating by keyboard. Click with
+     a mouse → no ring. Navigate with Tab → ring appears.
+     This is the modern, correct approach. Best of both worlds.
+
+   → outline-offset
+     Adds breathing room between the element's edge and the focus
+     ring. Without it, the ring overlaps the element's border,
+     making it hard to see. 3px gives the ring space to breathe
+     without being distractingly large.
+
+   → Two rules for two shapes
+     The base :focus-visible uses border-radius:4px (subtle rounding
+     for non-button elements like links and text areas). The second
+     rule overrides this for all pill-shaped buttons with
+     border-radius:100px — matching their rounded shape. A square
+     focus ring around a round pill button looks wrong.
+
+   WHY WE DID IT THIS WAY
+   -----------------------
+   It would be simpler to write outline:none { everywhere and be
+   done with it — which is exactly what many codebases do, silently
+   breaking keyboard accessibility for every user who relies on it.
+   We chose the right approach instead.
+
+================================================================ */
+
+/* 📌 WHAT: Default focus ring — subtle purple, slightly offset,
+            with gentle rounding to match most elements.
+   📌 WHY:  portal-2 (#a855f7, the lighter violet) provides strong
+            contrast against both dark and light backgrounds. The
+            2px outline at 3px offset is visible without being
+            garish. Applied via :focus-visible so it only shows
+            for keyboard navigation, not mouse clicks. */
+:focus-visible {
+  outline: 2px solid var(--portal-2);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* 📌 WHAT: Override for pill-shaped buttons — uses border-radius:100px
+            so the focus ring follows the rounded pill shape.
+   📌 WHY:  A 4px-rounded square ring around a fully-round pill looks
+            wrong. This makes the ring hug the button's actual shape.
+            All interactive pill elements are listed here explicitly
+            rather than using a wildcard — this is intentional, so
+            non-pill elements don't accidentally get the rounded ring. */
+.btn:focus-visible,
+.nb:focus-visible,
+.tag:focus-visible,
+.topbar-action:focus-visible,
+.topbar-back:focus-visible,
+.share-btn:focus-visible,
+.settings-row:focus-visible,
+.ccard:focus-visible,
+.prow:focus-visible,
+.slot-nav-btn:focus-visible,
+.slot-lock-btn:focus-visible,
+.copy-btn:focus-visible,
+.btn-spin-again:focus-visible,
+.btn-accept-date:focus-visible,
+.btn-accept:focus-visible,
+.avatar-circle:focus-visible {
+  outline: 2px solid var(--portal-2);
+  outline-offset: 3px;
+  border-radius: 100px;
+}
+
+/* ================================================================
+   📚 SECTION 7: Skip Link
+   ================================================================
+
+   WHAT THIS SECTION DOES
+   -----------------------
+   Styles a visually hidden link that becomes visible when a
+   keyboard user presses Tab on the page for the first time.
+   It's the very first focusable element in the HTML (see Section
+   6 of Chapter 1), and it lets the user jump straight past the
+   bottom nav to the main content.
+
+   KEY CONCEPTS IN THIS SECTION
+   -----------------------------
+   → The skip link problem
+     In a SPA with a bottom nav, every time a new screen shows, the
+     keyboard focus resets. A keyboard user navigating for the first
+     time would have to Tab through all five nav buttons before
+     reaching the screen content. That's annoying once. Over a
+     whole session, it's exhausting.
+
+     The skip link solves this: Tab once → "Skip to main content"
+     appears → Enter → focus jumps directly to #app. It takes one
+     extra press to skip, instead of five mandatory presses.
+     WCAG 2.4.1 (Bypass Blocks) requires this pattern on any page
+     with repeated navigational blocks.
+
+   → The hide-until-focused trick
+     top: -100% moves the element off the top of the screen —
+     completely invisible and out of the layout flow. When :focus
+     fires (user presses Tab and focus lands here), top: 0 snaps it
+     to the top of the page. The transition: top .15s makes it slide
+     in smoothly. When the user presses Tab again (moving focus away),
+     it slides back off screen.
+
+   → Why not display:none?
+     display:none removes the element from the accessibility tree —
+     screen readers and keyboard focus would skip it entirely,
+     defeating the purpose. position:absolute; top:-100% makes it
+     visually invisible while keeping it in the accessibility tree.
+     This is an important distinction.
+
+   ⭐ GREAT PATTERN: This is the canonical skip link implementation.
+      Used on nearly every well-built accessible website. Clean,
+      dependency-free, and effective.
+
+================================================================ */
+
+/* 📌 WHAT: Hidden off the top of the screen until it receives focus.
+   📌 WHY:  position:absolute and top:-100% keeps it invisible while
+            preserving its place in the focus order. z-index:9999
+            ensures it appears above absolutely everything else when
+            it does come into view. The purple background and white
+            text meet WCAG AA contrast. border-radius rounded only on
+            the bottom corners — it appears to slide DOWN from the top
+            edge, so the top stays flush with the screen edge. */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 12px;
+  z-index: 9999;
+  background: var(--portal-1);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 0 0 10px 10px;
+  font-family: var(--font-b);
+  font-size: .9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: top .15s;
+}
+
+/* 📌 WHAT: When focused (Tab key lands here), slide into view.
+   📌 WHY:  top:0 moves it to the visible top of the page.
+            The transition from top:-100% to top:0 creates the
+            slide-in effect. The white outline confirms focus visually
+            (a focus ring on a focus ring — we ensure the ring itself
+            is visible against the purple background). */
+.skip-link:focus {
+  top: 0;
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* ================================================================
+   ✅ CHAPTER 2 REVIEW — CSS: Design System
+   ================================================================
+
+   You just read through the complete CSS foundation. Here's what
+   to remember:
+
+   1. CSS custom properties (--name: value) create a token system.
+      var(--name) reads them. Change one token, update everything.
+   2. :root defines app-wide scope. Variables cascade down.
+   3. Semantic names (--bg, --text-aa) survive theme switching.
+      Descriptive names (--dark-purple) don't.
+   4. Light mode works by redefining the same token names inside
+      @media (prefers-color-scheme: light). The rest of the CSS
+      never needs to change.
+   5. box-sizing: border-box on * is mandatory in every codebase.
+      Width includes padding, not plus padding.
+   6. The Flexbox Scrolling Trap: min-height:auto on flex items
+      prevents overflow-y:auto from working. Fix: min-height:0.
+   7. :focus-visible shows the keyboard focus ring only during
+      keyboard navigation, not on mouse clicks. Never use
+      outline:none without a replacement.
+   8. The skip link uses top:-100% (not display:none) so it stays
+      in the focus order while hidden off-screen.
+
+   COMMON MISTAKES TO AVOID
+   -------------------------
+   ⚠️  Never write outline:none without adding a replacement
+       focus style. This breaks keyboard accessibility completely.
+   ⚠️  Don't skip box-sizing:border-box. Every sizing calculation
+       will be wrong without it.
+   ⚠️  If scrolling isn't working inside a flex child, min-height:0
+       is almost certainly the fix.
+
+   COMING UP NEXT
+   --------------
+   Chapter 3 covers the CSS components — every class that makes
+   a specific UI element look the way it does. We start with the
+   button system, then move through cards, forms, personas, the
+   slot machine, modals, and everything else.
+
+================================================================ */
+
+/* ── Screen-reader-only utility ──────────────────────────────────
+   📌 WHAT: Makes text invisible on screen but readable by screen readers.
+   📌 WHY:  display:none and visibility:hidden both hide content from
+            screen readers too — that defeats the purpose. This trick
+            squeezes the element to 1×1px, moves it off-screen with
+            a negative margin, clips it to nothing, and prevents it
+            from wrapping. The text occupies zero visible space but
+            stays in the DOM's accessibility tree.
+
+            Used for: labelling icon-only buttons, announcing slide
+            position to screen readers, the modal's sr-only title.
+            Never use display:none when you want screen readers to
+            hear something. ─────────────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
