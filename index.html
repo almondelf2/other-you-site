@@ -1,551 +1,1733 @@
+<!-- ================================================================
+   📖 STUDY GUIDE — index.html
+   Other You: Multiverse Date Night
+   ================================================================
+
+   WHAT THIS FILE DOES
+   -------------------
+   This is the HTML shell of the app — the skeleton. It defines
+   the document structure, loads external resources (fonts, CDN
+   libraries), and contains all 13 app screens as static HTML.
+   No CSS is written here and no JavaScript logic runs here.
+   Those two layers live in separate files and are loaded via
+   <link> and <script> tags at the bottom of this file.
+
+   WHAT YOU'LL LEARN IN THIS FILE
+   --------------------------------
+   - How an HTML document is structured from top to bottom
+   - PWA wiring — the manifest link, meta tags, and service worker
+     that make a website installable as a native-feeling app
+   - Open Graph meta tags — how link previews work on iMessage,
+     WhatsApp, Slack, and Discord
+   - Import maps — how to resolve ES module package names in the
+     browser without a build tool
+   - The Single-Page Application (SPA) pattern — all 13 screens
+     exist in the HTML simultaneously; only one has class="active"
+   - Semantic HTML — why <main>, <button>, and <a> matter for
+     screen readers and keyboard users
+   - ARIA attributes — aria-hidden, aria-label, aria-live,
+     aria-current, role="dialog" — what they do and why each one is here
+
+   HOW THIS FILE CONNECTS TO THE REST OF THE APP
+   -----------------------------------------------
+   This file loads 11 other files that together make the full app:
+
+   CSS (loaded in the <head>, order matters):
+     css/tokens.css    ← design tokens — read this first
+     css/base.css      ← global reset + focus + skip link
+     css/layout.css    ← screen containers + topbar + bottom nav
+     css/components.css ← every component: buttons, cards, forms…
+
+   JavaScript (loaded before </body>):
+     js/supabase.js    ← ES module bridge (type="module")
+     js/state.js       ← all variable declarations — loads first
+     js/data.js        ← localStorage, crypto, Supabase data
+     js/render.js      ← DOM-building render functions
+     js/navigation.js  ← showScreen, goBack, setNav, goMain
+     js/handlers.js    ← event handlers + Supabase coordinators
+     js/init.js        ← canvas, service worker, startup — loads last
+
+   RECOMMENDED READING ORDER
+   --------------------------
+   Start here (Chapter 1 in this file) to understand the HTML
+   structure. Then read the CSS files in load order: tokens →
+   base → layout → components. Then the JS files: state →
+   data → render → navigation → handlers → init.
+
+   Each file has its own STUDY GUIDE header that explains what
+   it does, what you'll learn, and how it connects to the others.
+
+   PREREQUISITES
+   -------------
+   No prior knowledge needed — this is the starting point.
+   Everything builds from what you read here.
+
+================================================================ -->
+
+
+<!-- ================================================================
+   📚 SECTION 1: The Document Foundation
+   ================================================================
+
+   WHAT THIS SECTION DOES
+   -----------------------
+   The very first lines of any HTML file answer the browser's most
+   basic questions: what kind of document is this, what human
+   language is it in, and how should characters be interpreted?
+   Get any of these wrong and the whole page can break in subtle,
+   hard-to-diagnose ways.
+
+   KEY CONCEPTS IN THIS SECTION
+   -----------------------------
+   → DOCTYPE
+     The first line of every HTML file — no exceptions. It tells the
+     browser: "This is a modern HTML5 document. Use current standards."
+     Without it, browsers fall into "quirks mode" — a compatibility
+     mode that mimics broken behavior from the 1990s. It causes
+     layouts to calculate differently, properties to be ignored, and
+     bugs that are almost impossible to track down.
+
+   → lang attribute
+     <html lang="en"> declares the document's primary language as
+     English. Screen readers use it to choose the right
+     pronunciation voice. Search engines use it for localization.
+     Translation tools use it as the source language. One small
+     attribute does an enormous amount of quiet, important work.
+
+   → charset
+     Tells the browser how to translate bytes into readable text.
+     UTF-8 can represent every character in every human language,
+     plus emoji, plus mathematical and special symbols. It must be
+     the FIRST tag inside <head> — before anything else — because
+     the browser needs it before it reads any other character.
+
+================================================================ -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- 📌 WHAT: Declares the character encoding for this document.
+     📌 WHY:  UTF-8 supports every language, emoji, and special
+              symbol. Placed first because the browser needs it
+              before it can safely read any other character on
+              the page. Without it the browser guesses — and often
+              guesses wrong, turning special characters into
+              gibberish like â€™ instead of '. -->
 <meta charset="UTF-8">
+
+
+<!-- ================================================================
+   📚 SECTION 2: Viewport & Device Integration
+   ================================================================
+
+   WHAT THIS SECTION DOES
+   -----------------------
+   Tells mobile browsers how to scale the page, and wires up the
+   app's native device integration: status bar color, home screen
+   icons, and the "installed app" behavior on iOS.
+
+   KEY CONCEPTS IN THIS SECTION
+   -----------------------------
+   → The viewport meta tag
+     Before this tag existed, mobile browsers would render websites
+     at ~980px wide (desktop width) and zoom out to fit the screen
+     — making everything tiny. The viewport tag says: "Match your
+     width to the actual device screen width, and start at 100%
+     zoom." This is the single most important line for making a
+     website work on phones.
+
+   → Why maximum-scale is intentionally absent
+     Some developers add maximum-scale=1.0 to "prevent zooming."
+     This sounds UX-friendly but is an accessibility violation.
+     WCAG 2.1 rule 1.4.4 (Resize Text) requires that users can
+     zoom to 200% without losing content. Users with low vision
+     depend on pinch-to-zoom to read text. We removed this
+     restriction in the audit that produced this study guide.
+
+   → theme-color
+     Colors the browser's UI chrome (the status bar on Android,
+     the address bar in some browsers) to match the app. When the
+     app is open, the status bar shows the same deep purple-black
+     as the background — making it feel like a native app, not a
+     website. JavaScript updates this dynamically for light/dark
+     mode (see the canvas section in Chapter 7).
+
+   → Apple PWA meta tags
+     iOS Safari has its own system for making websites feel native.
+     apple-mobile-web-app-capable enables standalone mode (hides
+     the address bar when launched from the home screen).
+     apple-mobile-web-app-status-bar-style sets the status bar
+     appearance in that mode. "black-translucent" lets the app's
+     background color show through the status bar, creating a
+     fully immersive look on iPhone and iPad.
+
+================================================================ -->
+
+<!-- 📌 WHAT: Sets the layout width to match the actual device screen.
+     📌 WHY:  Without this, iPhones and Androids would render the
+              page at desktop width (~980px) and zoom out — making
+              every element tiny. This tells browsers: "be as wide
+              as the physical screen." initial-scale=1.0 means start
+              at 100% zoom, not zoomed out. maximum-scale is absent
+              intentionally — users with low vision need pinch-to-zoom
+              (WCAG 1.4.4 Resize Text). -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- 📌 WHAT: Colors the Android status bar (clock, signal icons) to
+              match the app's dark background.
+     📌 WHY:  When the status bar matches the app background, the
+              whole experience feels native instead of "website in
+              a browser." JavaScript also updates this value when
+              the device switches between dark and light mode. -->
 <meta name="theme-color" content="#0d0818">
+
+<!-- 📌 WHAT: The standard browser tab icon. Shown in the tab strip
+              and bookmarks bar. -->
 <link rel="icon" href="assets/favicon.ico">
+
+<!-- 📌 WHAT: The icon used when a user saves the page to their
+              iPhone or iPad home screen.
+     📌 WHY:  Without this, iOS generates a screenshot thumbnail
+              as the icon — low-quality and inconsistent. This
+              dedicated 180×180px PNG gives Other You a proper,
+              designed home screen icon on Apple devices. -->
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-<meta name="description" content="Other You is a private app for couples to explore each other's alternate selves — the roads not taken, the versions that were forgotten. Go on multiverse date nights.">
-<meta property="og:title" content="Other You · Multiverse Date Night">
-<meta property="og:description" content="A private app for couples to date each other's alternate selves — the roads not taken, the versions that almost were.">
-<meta property="og:url" content="https://www.other-you.app">
-<meta property="og:type" content="website">
-<meta property="og:image" content="https://www.other-you.app/assets/og-image.png">
-<meta property="og:image:width" content="1200">
+
+<!-- 📌 WHAT: Enables "standalone" mode when Other You is launched
+              from the iOS home screen.
+     📌 WHY:  With this tag, iOS hides Safari's address bar and
+              navigation controls when the app is opened from the
+              home screen icon. The result looks identical to a
+              native iOS app — no browser chrome at all. Android
+              achieves the same thing through manifest.json's
+              display: "standalone" field. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+<!-- 📌 WHAT: Controls the iOS status bar appearance in standalone mode.
+     📌 WHY:  "black-translucent" lets the app's background color
+              show behind the status bar (the bar with clock and
+              signal strength). The dark purple-black background
+              bleeds up into the status bar for a fully immersive
+              look. The alternative — "default" — renders a white
+              bar that would clash harshly with the dark UI. -->
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+
+<!-- ================================================================
+   📚 SECTION 3: Social Sharing — Open Graph
+   ================================================================
+
+   WHAT THIS SECTION DOES
+   -----------------------
+   When someone shares the app's URL via iMessage, WhatsApp,
+   Twitter, Slack, Discord, or any messaging platform, the platform
+   fetches these tags and renders a rich preview card: a title, a
+   description, and a large image. Without these tags, the link
+   shows up as a bare URL with no visual context.
+
+   KEY CONCEPTS IN THIS SECTION
+   -----------------------------
+   → Open Graph (og:)
+     A protocol originally created by Facebook in 2010. It uses
+     <meta> tags with a "property" attribute (instead of the usual
+     "name" attribute) to define structured metadata about a page.
+     Despite its Facebook origins, Open Graph is now supported by
+     every major platform — WhatsApp, Twitter/X, iMessage, Slack,
+     Discord, LinkedIn, all of them.
+
+   → Why this matters for Other You
+     Other You spreads person-to-person: one partner sends the link
+     to the other. That moment — the link preview in a text thread
+     — is often a new user's very first impression of the app.
+     A rich, beautiful preview card is more likely to get tapped
+     than a bare URL.
+
+   → og:image dimensions
+     1200×630 pixels is the "golden ratio" for OG images — it
+     looks correct on every platform's preview layout. We declare
+     the dimensions explicitly so platforms don't have to download
+     the image just to find out how big it is.
+
+================================================================ -->
+
+<!-- 📌 WHAT: The title shown in the link preview card. -->
+<meta property="og:title"        content="Other You · Multiverse Date Night">
+<!-- 📌 WHAT: The description shown under the title in the preview. -->
+<meta property="og:description"  content="A private app for couples to date each other's alternate selves — the roads not taken, the versions that almost were.">
+<!-- 📌 WHAT: The canonical URL for this page. -->
+<meta property="og:url"          content="https://pwa.other-you.app">
+<!-- 📌 WHAT: Declares this as a website (vs. an article, video, etc.). -->
+<meta property="og:type"         content="website">
+<!-- 📌 WHAT: The preview image — the visual centrepiece of the share card. -->
+<meta property="og:image"        content="https://pwa.other-you.app/assets/og-image.png">
+<meta property="og:image:width"  content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Other You · Multiverse Date Night">
+<!-- 📌 WHAT: Text description of the image for screen readers and
+              platforms that can't render it. -->
+<meta property="og:image:alt"    content="Other You · Multiverse Date Night">
+
+<!-- 📌 WHAT: The page title — appears in the browser tab and bookmarks. -->
 <title>Other You · Multiverse Date Night</title>
-<link rel="manifest" href="manifest.json">
-<link rel="stylesheet" href="site.css">
-<style>
-/* ── PAGE-SPECIFIC ── */
-/* INSTALL INSTRUCTIONS */
-.install-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-top: 36px;
-}
-@media (max-width: 640px) { .install-grid { grid-template-columns: 1fr; } }
 
-.install-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 26px 24px;
-  backdrop-filter: blur(8px);
-}
-.install-os {
-  display: flex; align-items: center; gap: 9px;
-  font-size: .82rem; font-weight: 500; color: var(--cream);
-  margin-bottom: 18px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--border);
-}
-.install-steps {
-  list-style: none;
-  counter-reset: steps;
-  display: flex; flex-direction: column; gap: 11px;
-  margin-bottom: 16px;
-}
-.install-steps li {
-  counter-increment: steps;
-  display: flex; gap: 12px;
-  font-size: .85rem; color: var(--text-dim); line-height: 1.55;
-}
-.install-steps li::before {
-  content: counter(steps);
-  font-family: var(--font-d);
-  font-size: 1.1rem;
-  color: var(--gold);
-  min-width: 20px;
-  line-height: 1.3;
-  flex-shrink: 0;
-}
-.install-steps strong { color: var(--mist); font-weight: 500; }
-.install-url {
-  font-family: monospace;
-  font-size: .82rem;
-  background: rgba(91,58,140,.2);
-  border: 1px solid var(--border);
-  border-radius: 5px;
-  padding: 1px 6px;
-  color: var(--mist);
-  white-space: nowrap;
-}
-.install-icon {
-  font-size: 1rem;
-  vertical-align: middle;
-}
-.install-note {
-  font-size: .75rem;
-  color: var(--text-dim);
-  line-height: 1.55;
-  padding-top: 14px;
-  border-top: 1px solid var(--border);
-  opacity: .85;
-}
-.install-footer {
-  text-align: center;
-  font-size: .88rem;
-  color: var(--text-dim);
-  line-height: 1.7;
-  max-width: 560px;
-  margin: 32px auto 0;
-}
 
-/* HERO */
-.hero {
-  min-height: min(100dvh, 900px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: calc(var(--nav-h) + 48px) 28px 64px;
-  position: relative;
-}
-.oy-logo-hero {
-  width: 300px;
-  height: 300px;
-  margin: 0 auto 40px;
-  flex-shrink: 0;
-}
-.oy-logo-hero-img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-}
+<!-- ================================================================
+   📚 SECTION 4: External Resources
+   ================================================================
 
-.hero-title {
-  font-family: var(--font-d);
-  font-size: clamp(3rem, 10vw, 5.5rem);
-  font-weight: 300;
-  line-height: 1.05;
-  color: var(--cream);
-  margin-bottom: 8px;
-}
-.hero-title em { font-style: italic; color: var(--gold); }
-.hero-sub {
-  font-family: var(--font-d);
-  font-size: clamp(1rem, 3vw, 1.3rem);
-  font-weight: 300;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  margin-bottom: 24px;
-}
-.hero-hook {
-  font-size: clamp(.95rem, 2.5vw, 1.1rem);
-  color: var(--text-dim);
-  line-height: 1.75;
-  max-width: 520px;
-  margin: 0 auto 40px;
-}
-.hero-hook strong { color: var(--mist); font-weight: 400; }
-.hero-actions { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+   WHAT THIS SECTION DOES
+   -----------------------
+   Loads the external systems the app depends on: the Supabase
+   client for cloud sync, the fonts that define the app's visual
+   voice, and two CDN libraries for QR codes and emoji picking.
+   These load before the CSS and JavaScript so they're available
+   when the rest of the page needs them.
 
-/* WHAT IS THIS */
-.what-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-top: 40px;
-}
-@media (max-width: 640px) { .what-grid { grid-template-columns: 1fr; } }
+   KEY CONCEPTS IN THIS SECTION
+   -----------------------------
+   → ES Modules and the Import Map
+     JavaScript has two ways to load code. The old "classic" way
+     uses plain <script> tags. The newer "module" way uses
+     import/export syntax and keeps code isolated by default —
+     variables in a module don't leak into the global scope.
 
-.what-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 24px;
-  backdrop-filter: blur(8px);
-}
-.what-card-icon { font-size: 1.8rem; margin-bottom: 12px; }
-.what-card-title {
-  font-family: var(--font-d);
-  font-size: 1.15rem;
-  color: var(--cream);
-  margin-bottom: 6px;
-}
-.what-card-text { font-size: .85rem; color: var(--text-dim); line-height: 1.65; }
+     An "import map" is a JSON block that tells the browser where
+     to find modules by name. Without it, a statement like:
+       import { createClient } from '@supabase/supabase-js'
+     ...fails because the browser doesn't know what that name
+     means. The import map resolves it: "look for that package at
+     this CDN URL."
 
-/* HOW IT WORKS */
-.steps { display: flex; flex-direction: column; gap: 0; margin-top: 40px; }
-.step {
-  display: flex; gap: 24px; align-items: flex-start;
-  padding: 28px 0;
-  border-bottom: 1px solid var(--border);
-}
-.step:last-child { border-bottom: none; }
-.step-num {
-  font-family: var(--font-d);
-  font-size: 3rem; font-weight: 300;
-  color: var(--gold); line-height: 1;
-  min-width: 52px;
-  flex-shrink: 0;
-}
-.step-title {
-  font-family: var(--font-d);
-  font-size: 1.25rem; color: var(--cream);
-  margin-bottom: 6px;
-}
-.step-text { font-size: .88rem; color: var(--text-dim); line-height: 1.65; }
+   → Why Supabase is in a module but used in a classic script
+     The main app script (at the bottom of this file) is a classic
+     script — it doesn't support ES module syntax. The solution:
+     a tiny module script imports createClient and places it on
+     the window object (window._supabaseCreateClient), where the
+     classic script can reach it. You'll see this bridge used in
+     Chapter 7.
 
-/* FEATURE HIGHLIGHTS */
-.features {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-  margin-top: 40px;
-}
-@media (max-width: 720px) { .features { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 480px) { .features { grid-template-columns: 1fr; } }
+   → preconnect
+     <link rel="preconnect> opens a TCP connection to a server
+     early — before the browser even knows it needs a resource
+     from there. When the font stylesheet later requests resources
+     from fonts.googleapis.com, the connection is already warm,
+     saving hundreds of milliseconds.
 
-.feature {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 22px 20px;
-  backdrop-filter: blur(6px);
-}
-.feature-icon { font-size: 1.5rem; margin-bottom: 10px; }
-.feature-title { font-size: .9rem; font-weight: 500; color: var(--cream); margin-bottom: 4px; }
-.feature-text { font-size: .78rem; color: var(--text-dim); line-height: 1.6; }
+   → display=swap (Google Fonts)
+     The &display=swap parameter tells the browser: show text in
+     a fallback font immediately, then swap in the custom font when
+     it arrives. Without it, text is invisible during font loading
+     — a jarring experience called FOIT (Flash of Invisible Text).
 
-/* EXPLORE LINKS */
-.explore-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-top: 40px;
-}
-@media (max-width: 580px) { .explore-grid { grid-template-columns: 1fr; } }
+================================================================ -->
 
-.explore-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 28px;
-  display: flex; flex-direction: column; gap: 12px;
-  text-decoration: none;
-  backdrop-filter: blur(8px);
-  transition: background .2s, border-color .2s, transform .2s;
+<!-- 📌 WHAT: Tells the browser how to find the Supabase JavaScript
+              package by its package name.
+     📌 WHY:  Without this, the import statement in the module script
+              below would fail — the browser wouldn't know where to
+              look for '@supabase/supabase-js'. This map resolves
+              the package name to its actual CDN URL. -->
+<script type="importmap">
+{
+  "imports": {
+    "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
+  }
 }
-.explore-card:hover {
-  background: var(--bg-card-h);
-  border-color: var(--border-h);
-  transform: translateY(-3px);
-}
-.explore-icon { font-size: 1.8rem; }
-.explore-label {
-  font-size: .65rem;
-  text-transform: uppercase;
-  letter-spacing: .14em;
-  color: var(--gold);
-}
-.explore-title {
-  font-family: var(--font-d);
-  font-size: 1.3rem;
-  color: var(--cream);
-  line-height: 1.2;
-}
-.explore-text { font-size: .83rem; color: var(--text-dim); line-height: 1.6; flex: 1; }
-.explore-arrow { color: var(--gold); font-size: .85rem; align-self: flex-start; }
+</script>
 
-/* CTA BAND */
-.cta-band {
-  background: linear-gradient(135deg, rgba(91,58,140,.25), rgba(124,58,237,.15));
-  border: 1px solid rgba(155,126,200,.2);
-  border-radius: 24px;
-  padding: 56px 40px;
-  text-align: center;
-  margin: 0 auto;
-  max-width: 700px;
-}
-.cta-band .display-title { margin-bottom: 16px; }
-.cta-band .lead { margin: 0 auto 32px; text-align: center; }
-@media (max-width: 480px) { .cta-band { padding: 40px 24px; } }
+<!-- 📌 WHAT: Links this page to manifest.json — its PWA identity card.
+     📌 WHY:  This single line is what makes the browser treat Other
+              You as a Progressive Web App. Without it there's no
+              "Add to Home Screen" prompt, no install experience,
+              and no PWA features. Everything in manifest.json only
+              matters because of this link. -->
+<link rel="manifest" href="/manifest.json">
 
-/* .reveal and .reveal-d1 through .reveal-d6 are defined in site.css */
-</style>
+<!-- 📌 WHAT: Opens a network connection to the Google Fonts server early.
+     📌 WHY:  The TCP handshake (the "hello, I want to connect" process
+              between the browser and server) takes time. preconnect
+              does this work before the browser even sees the font
+              stylesheet request below, so when that request arrives
+              the connection is already open. This is a performance
+              technique called "preconnect" — it shaves real
+              milliseconds off the font loading time. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<!-- 📌 WHAT: Loads the two typefaces that define Other You's visual voice.
+     📌 WHY:  Cormorant Garamond (the serif) gives the app its literary,
+              editorial quality — used for all headings and persona
+              names. DM Sans (the sans-serif) keeps interface text
+              clean, readable, and modern. Together they create a
+              deliberate contrast: poetic vs. functional. The
+              &display=swap at the end prevents invisible text during
+              font loading — text shows immediately in a fallback
+              font, then the custom font swaps in once loaded. -->
+<link
+  href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap"
+  rel="stylesheet"
+>
+
+<!-- ================================================================
+   📚 SECTION 5: CDN Libraries
+   ================================================================
+
+   WHAT THIS SECTION DOES
+   -----------------------
+   Loads two third-party libraries from CDNs (Content Delivery
+   Networks — servers optimized for distributing JavaScript files
+   globally). These live at the bottom of the <head>, after the
+   import map and fonts, so the browser can start those requests
+   while it still parses the HTML above.
+
+   KEY CONCEPTS IN THIS SECTION
+   -----------------------------
+   → CDN (Content Delivery Network)
+     Instead of hosting a JavaScript library yourself, a CDN hosts
+     it on servers all over the world. The browser downloads the
+     file from whichever server is geographically closest — faster
+     than a single origin server. CDNs also cache aggressively, so
+     if a user has visited any other site that uses the same
+     library version from the same CDN, it may already be in their
+     browser cache. Instant load, zero cost.
+
+   → QRCode.js
+     A library that generates QR codes entirely in the browser —
+     no server needed. We use it in the Connect screen to render
+     QR codes from invite URLs, so partners can scan instead of
+     copy-pasting a long link. Loaded as a classic script so it
+     attaches itself to window.QRCode, which our JS can call directly.
+
+   → emoji-mart
+     A full emoji browser with search and category filtering, built
+     as a web component (a custom HTML element). Used in the avatar
+     picker flow when a user wants to choose an emoji as their
+     persona avatar. It needs both a JS bundle and its own CSS
+     stylesheet to render correctly.
+
+================================================================ -->
+
+<!-- 📌 WHAT: QR code generator — called as window.QRCode in our JS.
+     📌 WHY:  Lets users share invite links by showing a scannable
+              QR code instead of requiring them to copy a long URL. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<!-- 📌 WHAT: Emoji browser — renders a <em-emoji-picker> web component.
+     📌 WHY:  Used in the avatar picker flow so users can browse
+              and search all emojis when choosing a persona avatar. -->
+<script src="https://cdn.jsdelivr.net/npm/emoji-mart@5/dist/browser.js"></script>
+<!-- 📌 WHAT: Stylesheet for emoji-mart — controls the picker's appearance. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emoji-mart@5/dist/emoji-mart.css">
+
+<!-- ================================================================
+   📚 SECTION 6: Local Stylesheets
+   ================================================================
+
+   WHAT THIS SECTION DOES
+   -----------------------
+   Loads the app's four CSS files in order. Each file builds on
+   the previous: tokens define the design system, base resets
+   the browser defaults, layout defines screen structure, and
+   components styles every UI element.
+
+   ORDER MATTERS:
+   - tokens.css must load first — all other CSS reads from its variables
+   - base.css must load after tokens — it uses those variables
+   - layout.css uses variables too — same requirement
+   - components.css uses everything above — loads last
+
+================================================================ -->
+
+<!-- 📌 WHAT: CSS custom properties (design tokens) + light/dark themes.
+     📌 WHY:  Every color, font, and spacing value in the app is
+              defined here as a named CSS variable. Loads first so
+              all other CSS can read from it. -->
+<link rel="stylesheet" href="css/tokens.css">
+
+<!-- 📌 WHAT: Global reset, base element styles, focus rings, skip link,
+              and the .sr-only accessibility utility.
+     📌 WHY:  These rules affect every element on the page and must
+              be applied before any component-specific styles. -->
+<link rel="stylesheet" href="css/base.css">
+
+<!-- 📌 WHAT: Screen layout system (.screen, .screen.active) and
+              structural chrome (topbar, bottom nav).
+     📌 WHY:  The layout rules establish the spatial structure that
+              all 13 screens live inside. -->
+<link rel="stylesheet" href="css/layout.css">
+
+<!-- 📌 WHAT: Every UI component — buttons, cards, forms, slot machine,
+              modals, toasts, settings, history, backup UI.
+     📌 WHY:  Component styles read from the tokens defined above.
+              Loads last so it can safely override base styles where
+              needed. -->
+<link rel="stylesheet" href="css/components.css">
 </head>
+
+
+<!-- ================================================================
+   📖 CHAPTER 1 — Part 2: HTML Screens
+   ================================================================
+
+   WHAT THIS SECTION DOES
+   -----------------------
+   Everything below is the visible structure of the app — the HTML
+   that the browser parses into a tree of elements, which CSS then
+   styles and JavaScript then drives. This is the skeleton. CSS is
+   the skin. JavaScript is the nervous system.
+
+   KEY CONCEPTS IN THIS SECTION
+   -----------------------------
+   → How a Single-Page App (SPA) works
+     Traditional websites navigate by loading new HTML files:
+     click a link → browser requests a new page → new page loads.
+     Other You never does this. All 13 screens exist in the HTML
+     simultaneously. Only ONE has the CSS class "active" at a time
+     (which sets display:flex). The other 12 have display:none.
+     When you "navigate," JavaScript just moves the "active" class.
+     No network request. No page reload. Instant.
+
+     This is called a Single-Page Application (SPA). The user
+     perceives navigation as normal — but the browser never leaves
+     index.html.
+
+   → Semantic HTML
+     HTML has many elements that carry meaning beyond their visual
+     appearance: <main> marks the primary content area, <nav> marks
+     navigation, <button> marks something clickable that triggers
+     an action, <a> marks a link that goes somewhere, <h1>–<h6>
+     mark headings in order of importance.
+
+     Using semantic elements correctly matters for three reasons:
+     1. Screen readers use them to help blind users navigate
+     2. Search engines use them to understand page structure
+     3. Keyboard users rely on focusable elements like <button>
+
+   → ARIA (Accessible Rich Internet Applications)
+     When HTML semantics aren't enough — especially in a dynamic
+     SPA where things appear, disappear, and change state — ARIA
+     attributes bridge the gap for assistive technology:
+     - aria-hidden="true": "ignore this element entirely"
+     - aria-label="text": "announce this text as the element's name"
+     - aria-live="polite": "announce changes to this element"
+     - role="dialog": "this is a dialog box"
+     - aria-modal="true": "treat this dialog as truly modal"
+     - aria-current="page": "this is the active navigation item"
+     You'll see these throughout the HTML below — each one has an
+     inline comment explaining why it's there.
+
+================================================================ -->
+
+<!-- ┌─────────────────────────────────────────────────────────────┐
+     │  💡 CONCEPT: The Single-Page Application Pattern           │
+     ├─────────────────────────────────────────────────────────────┤
+     │                                                             │
+     │  Look at the HTML below. You'll see 13 <div> elements all   │
+     │  with class="screen". They're all sitting in the DOM at      │
+     │  the same time, right next to each other.                   │
+     │                                                             │
+     │  Only one has class="screen active" — that's the one the    │
+     │  user sees. CSS rule: .screen { display: none } and         │
+     │  .screen.active { display: flex }.                          │
+     │                                                             │
+     │  When you tap "Date" in the nav bar, JavaScript does this:  │
+     │    1. Remove .active from the current screen                │
+     │    2. Add .active to #match-screen                          │
+     │    3. Done.                                                  │
+     │                                                             │
+     │  No page load. No server request. No flicker. The switch     │
+     │  happens in under a millisecond.                            │
+     │                                                             │
+     │  This is why the whole app can live in one HTML file: all   │
+     │  the "pages" are pre-built and waiting. Navigation is just   │
+     │  flipping a CSS class. You'll see this in action in the     │
+     │  showScreen() function in Chapter 4.                        │
+     └─────────────────────────────────────────────────────────────┘ -->
+
 <body>
 
-<!-- Skip link: the very first Tab stop on the page. Keyboard users press Enter to
-     jump past the navigation directly to the main content. Invisible until focused. -->
-<a href="#main-content" class="skip-link">Skip to main content</a>
+<!-- ================================================================
+   📚 SECTION 6: Accessibility Infrastructure
+   ================================================================
 
-<!-- aria-hidden tells screen readers to ignore this element entirely.
-     The canvas is a visual decoration — it has no meaningful content. -->
-<canvas id="site-bg" aria-hidden="true"></canvas>
+   WHAT THIS SECTION DOES
+   -----------------------
+   Three elements that don't look like much but carry serious
+   accessibility weight: a skip link for keyboard users, a
+   decorative canvas background, and the <main> landmark.
 
-<!-- ══ NAV ══ -->
-<!-- role="navigation" is redundant on <nav> but kept for older assistive tech. -->
-<nav class="site-nav" role="navigation" aria-label="Main navigation">
-  <a href="index.html" class="nav-logo" aria-label="Other You home">
-    Other <em>You</em>
-    <small>Multiverse Date Night</small>
-  </a>
-  <ul class="nav-links" role="list">
-    <li><a href="index.html" class="active">Home</a></li>
-    <li><a href="how-it-works.html">How It Works</a></li>
-    <li><a href="roadmap.html">Roadmap</a></li>
-    <li><a href="contact.html">Contact</a></li>
-    <li><a href="https://pwa.other-you.app" class="nav-cta">Open App</a></li>
-  </ul>
-  <!-- aria-controls links this button to the menu it opens.
-       aria-expanded reflects whether the menu is currently open (managed by site.js). -->
-  <button class="nav-hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24" aria-hidden="true">
-      <path d="M3 6h18M3 12h18M3 18h18"/>
-    </svg>
+   WHY THIS COMES FIRST
+   ---------------------
+   Accessibility infrastructure must be in the DOM before anything
+   the user interacts with. The skip link needs to be the FIRST
+   focusable element on the page so keyboard users hit it
+   immediately when they press Tab.
+
+================================================================ -->
+
+<!-- 📌 WHAT: A visually hidden link that keyboard/screen-reader users
+              see when they press Tab on the page for the first time.
+     📌 WHY:  Without this, a keyboard user navigating to Other You
+              would have to Tab through every bottom nav button before
+              reaching the actual content — every single time they
+              visit. The skip link lets them jump straight to #app
+              with one press. Required by WCAG 2.4.1 (Bypass Blocks).
+              The .skip-link CSS class hides it off-screen until it
+              receives focus; see Chapter 2 for those styles. -->
+<a href="#app" class="skip-link">Skip to main content</a>
+
+<!-- 📌 WHAT: The animated starfield canvas rendered behind all screens.
+     📌 WHY:  This is purely decorative — drifting particles and two
+              radial gradients that give the app its cosmic, dark-space
+              feel. aria-hidden="true" removes it from the accessibility
+              tree entirely, so screen readers skip it. Announcing a
+              decorative animation would confuse and annoy blind users.
+              The canvas is drawn by a self-contained IIFE in Chapter 7. -->
+<canvas id="bg" aria-hidden="true"></canvas>
+
+<!-- 📌 WHAT: The primary content landmark for the entire app.
+     📌 WHY:  <main> is a semantic HTML5 landmark element. Screen
+              readers present landmarks like a table of contents:
+              "main, navigation, header…" so users can jump between
+              sections without reading every element. Using <main>
+              (rather than a generic <div>) means blind users can
+              skip directly to the app content with one gesture.
+              There must be exactly ONE <main> per page.
+              This element also receives the skip link's target (#app). -->
+<main id="app">
+
+<!-- ================================================================
+   📚 SECTION 7: Screen — Welcome / Tutorial
+   ================================================================
+
+   WHAT THIS SCREEN IS
+   --------------------
+   The first thing a brand-new user sees. A horizontal carousel of
+   4 slides that introduces the concept of Other You and walks the
+   user through the three steps: build personas, connect with a
+   partner, go on a date. It also offers a direct "skip intro"
+   path and a demo mode for users who want to explore before
+   committing.
+
+   WHEN IT APPEARS
+   ----------------
+   On first load, when localStorage has no saved user. After
+   clearAllData() resets the app. After exitDemo() exits demo mode.
+
+   HOW IT WORKS
+   -------------
+   The four <div class="wslide"> elements are laid out side-by-side
+   in a horizontal flex row inside .w-slides. CSS scroll-snap-type
+   locks scrolling to whole slides (no partial scroll). JavaScript's
+   nextSlide() / prevSlide() scroll programmatically, and the dot
+   indicators animate to show which slide is active.
+
+================================================================ -->
+<!-- ══════════ WELCOME / TUTORIAL ══════════ -->
+<div id="welcome-screen" class="screen active" style="padding-bottom:0;">
+  <div class="w-slides" id="wslides">
+
+    <!-- Slide 0: Hero -->
+    <div class="wslide">
+      <div class="oy-logo-hero">
+        <img
+          src="assets/logo-icon.svg"
+          alt="Other You"
+          class="oy-logo-hero-img"
+          width="160"
+          height="160"
+        >
+      </div>
+      <div class="slide-title">Other <em>You</em></div>
+      <p class="slide-body"><strong>Multiverse Date Night</strong><br><br>Somewhere in the multiverse, all the versions of you are waiting to meet all the versions of them.</p>
+      <div class="slide-dot-row"><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
+      <div class="slide-actions">
+        <button class="btn btn-primary btn-block" onclick="nextSlide()">How it works →</button>
+        <button class="btn btn-ghost btn-block btn-sm" onclick="startDemo()">✦ Try the demo first</button>
+        <button class="btn btn-ghost btn-block btn-sm" onclick="showSetup()">I'm ready — skip intro</button>
+      </div>
+    </div>
+
+    <!-- Slide 1: How it works 1 -->
+    <div class="wslide">
+      <div class="slide-icon">🌀</div>
+      <div class="slide-step">Step 1</div>
+      <div class="slide-title" style="font-size:1.8rem;">Build your<br><em>other yous</em></div>
+      <div class="hiw-card">
+        <div class="hiw-num">01</div>
+        <div class="hiw-heading">Think of a crossroads</div>
+        <div class="hiw-text">Your goth phase that never ended. The year you almost quit your job to travel. The artist, the athlete, the activist — every version of you that almost was.</div>
+      </div>
+      <div class="slide-dot-row"><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
+      <div class="slide-actions">
+        <button class="btn btn-primary btn-block" onclick="nextSlide()">Next →</button>
+        <button class="btn btn-ghost btn-block btn-sm" onclick="prevSlide()">← Back</button>
+      </div>
+    </div>
+
+    <!-- Slide 2: How it works 2 -->
+    <div class="wslide">
+      <div class="slide-icon">🔗</div>
+      <div class="slide-step">Step 2</div>
+      <div class="slide-title" style="font-size:1.8rem;">Connect with<br><em>your partner</em></div>
+      <div class="hiw-card">
+        <div class="hiw-num">02</div>
+        <div class="hiw-heading">A private universe for two</div>
+        <div class="hiw-text">Share a QR code or private link. No followers, no feed, no algorithm. This app exists only between you two — completely private.</div>
+      </div>
+      <div class="slide-dot-row"><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
+      <div class="slide-actions">
+        <button class="btn btn-primary btn-block" onclick="nextSlide()">Next →</button>
+        <button class="btn btn-ghost btn-block btn-sm" onclick="prevSlide()">← Back</button>
+      </div>
+    </div>
+
+    <!-- Slide 3: How it works 3 + CTA -->
+    <div class="wslide">
+      <div class="slide-icon">✨</div>
+      <div class="slide-step">Step 3</div>
+      <div class="slide-title" style="font-size:1.8rem;">Go on a<br><em>multiverse date</em></div>
+      <div class="hiw-card">
+        <div class="hiw-num">03</div>
+        <div class="hiw-heading">Two of your personas meet</div>
+        <div class="hiw-text">Get matched for the night. Go on a date as those two versions of you. Say the things your real yous never think to.</div>
+      </div>
+      <div class="slide-dot-row"><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
+      <div class="slide-actions">
+        <button class="btn btn-primary btn-block" onclick="showSetup()">Begin your journey →</button>
+        <button class="btn btn-ghost btn-block btn-sm" onclick="startDemo()">✦ Try the demo first</button>
+      </div>
+    </div>
+
+  </div><!-- /wslides -->
+</div>
+
+<!-- ================================================================
+   📚 SECTION 8: Screen — Setup (Identity)
+   ================================================================
+
+   WHAT THIS SCREEN IS
+   --------------------
+   Step 1 of the first-time setup flow. The user enters their real
+   name and an optional one-line bio. This creates their "real self"
+   identity — the baseline that their alternate personas branch from.
+   The name is shown to their partner (e.g. "Connected with Jordan")
+   but the bio is kept local.
+
+   WHEN IT APPEARS
+   ----------------
+   When the user taps "I'm ready — skip intro" on the welcome screen,
+   or "Begin your journey" on the last tutorial slide.
+
+   ACCESSIBILITY NOTE
+   -------------------
+   Every <input> here has a <label for="id"> that matches the input's
+   id attribute. This wires the label to the field: when a screen
+   reader focuses the input, it announces the label text. Without
+   this connection, a blind user hears only "text field" with no
+   context about what to type.
+
+================================================================ -->
+<!-- ══════════ SETUP ══════════ -->
+<div id="setup-screen" class="screen">
+  <div class="topbar">
+    <span class="topbar-logo">Other <em>You</em><small>Multiverse Date Night</small></span>
+  </div>
+  <div class="setup-top">
+    <button class="setup-back" onclick="showScreen('welcome-screen')">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" width="15" height="15"><path d="M12 5l-7 5 7 5"/></svg>Back
+    </button>
+    <div class="setup-step">Step 1 of 2 · Your Real Self</div>
+    <div class="setup-h">Who are you,<br>in this universe?</div>
+    <p class="setup-sub">Your partner will see this name. Everything else is just between the app and your device.</p>
+  </div>
+  <!-- 📖 ACCESSIBILITY: <label for="id"> links the label text to its input.
+       When a screen reader focuses the input, it reads the label aloud.
+       Without this link, a blind user hears only "text field" with no context.
+       The "for" value must exactly match the input's "id" attribute. -->
+  <div class="setup-form">
+    <div class="fgroup">
+      <label for="real-name" class="flabel">Your name</label>
+      <input type="text" id="real-name" class="finput" placeholder="e.g. Jordan" maxlength="30" autocomplete="name">
+    </div>
+    <div class="fgroup">
+      <label for="real-bio" class="flabel">One line about the everyday you (optional)</label>
+      <textarea id="real-bio" class="finput" placeholder="The you that shows up every morning…" maxlength="120"></textarea>
+    </div>
+    <button class="btn btn-primary btn-block" onclick="saveIdentity()">Continue →</button>
+    <div class="divider">or</div>
+    <button class="btn btn-ghost btn-block btn-sm" onclick="startDemo()">✦ Try the demo to see how this works</button>
+  </div>
+</div>
+
+<!-- ================================================================
+   📚 SECTION 9: Screen — Personas List
+   ================================================================
+
+   WHAT THIS SCREEN IS
+   --------------------
+   The user's collection of alternate selves — each represented as
+   a tappable row showing the persona's emoji or photo, name, and
+   a preview of their origin story. Users can tap any persona to
+   edit it, or tap the "Add another version of yourself" button to
+   create a new one. Up/down arrow buttons let them reorder personas
+   (which affects the slot machine draw order on the Match screen).
+
+   WHEN IT APPEARS
+   ----------------
+   After setup completes (goMain()). Accessible via the "Profiles"
+   tab in the bottom nav. The tab shows a small badge with the count
+   of personas as a quick visual cue.
+
+   NOTE ON DEMO MODE
+   ------------------
+   In demo mode, persona rows show a "view" chevron instead of edit
+   controls, and the "Add" button is hidden. Tapping a row opens a
+   read-only modal via viewDemoPersona() instead of the edit form.
+   The "Exit demo" button appears in the topbar.
+
+================================================================ -->
+<!-- ══════════ PERSONAS LIST ══════════ -->
+<div id="personas-screen" class="screen">
+  <div class="topbar">
+    <span class="topbar-logo">Other <em>You</em><small>Multiverse Date Night</small></span>
+    <div style="display:flex;gap:8px;">
+      <button class="topbar-action" id="exit-demo-btn" style="display:none;color:var(--gold-aa);border-color:rgba(212,169,106,.35);" onclick="exitDemo()">← Exit demo</button>
+      <button class="topbar-action" onclick="openDemoModal()">✦ Demo</button>
+    </div>
+  </div>
+  <div id="pb-personas"></div>
+  <div class="sh"><span class="sh-title">Your Yous</span><span class="sh-sub" id="pc"></span></div>
+  <div id="demo-cta-personas"></div>
+  <div style="padding:4px 24px;display:flex;flex-direction:column;gap:11px;" id="plist"></div>
+  <div style="height:12px;"></div>
+  <button class="padd" onclick="showCreatePersona(null)">
+    <div class="padd-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><path d="M10 4v12M4 10h12"/></svg></div>
+    Add another version of yourself
   </button>
+  <div class="sp"></div>
+</div>
+
+<!-- ================================================================
+   📚 SECTION 10: Screen — Create / Edit Persona
+   ================================================================
+
+   WHAT THIS SCREEN IS
+   --------------------
+   The persona creation and editing form. A single screen handles
+   both creating new personas and editing existing ones — the same
+   HTML, pre-populated with existing data when editing. Contains:
+   an avatar circle (tapping opens the avatar picker flow), a name
+   field, an origin story textarea, a "who are they now?" textarea,
+   a trait tag grid (preset + custom), and save/delete buttons.
+
+   WHEN IT APPEARS
+   ----------------
+   When the user taps "Add another version of yourself" (creating
+   new, editIdx = null) or taps an existing persona row (editing,
+   editIdx = the array index). The JavaScript function
+   showCreatePersona(idx) populates the form fields before
+   navigating here.
+
+   HOW THE TRAIT SYSTEM WORKS
+   ---------------------------
+   The trait grid uses role="group" aria-labelledby on the container
+   and <button> elements (not checkboxes) for each trait. Each tap
+   calls toggleTag(this), which adds/removes the trait from the
+   selTraits array and toggles the visual .on class. Custom traits
+   are handled by a separate input + "Add" button pair that pushes
+   values into the selCustomTraits array and renders pill buttons
+   dynamically via refreshCustomTags().
+
+================================================================ -->
+<!-- ══════════ CREATE / EDIT PERSONA ══════════ -->
+<div id="create-screen" class="screen">
+  <div class="topbar">
+    <span class="topbar-logo">Other <em>You</em><small>Multiverse Date Night</small></span>
+  </div>
+  <div class="setup-top">
+    <button class="setup-back" onclick="showScreen('personas-screen')">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" width="15" height="15"><path d="M12 5l-7 5 7 5"/></svg>Back
+    </button>
+    <div class="setup-step" id="create-step">New Persona</div>
+    <div class="setup-h" id="create-h">A version<br>of you</div>
+    <p class="setup-sub">Think of a turning point — a choice, a phase, a dream. Who would you be if that path hadn't ended?</p>
+  </div>
+  <div class="setup-form">
+
+    <!-- Avatar circle — tapping opens the avatar source picker (Part 2 of avatar system) -->
+    <div class="avatar-circle-wrap">
+      <button class="avatar-circle" id="persona-avatar-circle" onclick="openAvatarSourcePicker()" aria-label="Change avatar">
+        <div class="avatar-circle-inner" id="persona-avatar-inner">✨</div>
+        <div class="avatar-edit-badge" aria-hidden="true">
+          <svg viewBox="0 0 16 16" fill="none" stroke="#0d0818" stroke-width="1.8" width="11" height="11">
+            <path d="M11 2l3 3-8 8H3v-3l8-8z"/>
+          </svg>
+        </div>
+      </button>
+      <span class="avatar-circle-hint">Tap to change avatar</span>
+    </div>
+
+    <!-- Name -->
+    <div class="fgroup">
+      <label for="p-name" class="flabel">This persona's name</label>
+      <input type="text" id="p-name" class="finput name-input" placeholder="A real name, an archetype, or both — e.g. Raven · The Wanderer · Noa" maxlength="30" autocomplete="off">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;">
+        <span style="font-size:.72rem;color:var(--text-dim);line-height:1.5;">Your real name, a nickname, an archetype,<br>or something like <em style="color:var(--mist);">Noa — The Musician</em></span>
+        <button onclick="suggestArchetypeName()" style="flex-shrink:0;margin-left:12px;background:rgba(212,169,106,.1);border:1px solid rgba(212,169,106,.28);border-radius:100px;padding:6px 13px;font-size:.72rem;color:var(--gold);cursor:pointer;font-family:var(--font-b);-webkit-appearance:none;white-space:nowrap;">✦ Inspire me</button>
+      </div>
+    </div>
+
+    <!-- Origin -->
+    <div class="fgroup">
+      <label for="p-origin" class="flabel">The crossroads that created them</label>
+      <textarea id="p-origin" class="finput" placeholder="e.g. 'The year I almost dropped everything to move to Berlin and make music…'" maxlength="200"></textarea>
+    </div>
+
+    <!-- Description -->
+    <div class="fgroup">
+      <label for="p-desc" class="flabel">Who are they now?</label>
+      <textarea id="p-desc" class="finput" placeholder="What do they care about? What's their vibe? What would you find in their apartment?" maxlength="300"></textarea>
+    </div>
+
+    <!-- Traits — 📖 Use <fieldset>/<legend> when labeling a GROUP of controls
+         (checkboxes, radio buttons, or related toggle buttons) rather than
+         a single input. It tells screen readers "these buttons all belong together." -->
+    <div class="fgroup">
+      <label class="flabel" id="traits-label">Character traits <span style="color:var(--text-dim-aa);font-weight:300;">(up to 6)</span></label>
+      <div class="trait-helper">
+        <strong>Think of these as your persona's personality at a glance</strong> — a quick way to signal to your date who they're spending the evening with. Use the suggestions below, or write your own. They can be single words <em>or</em> short phrases like <em style="color:var(--mist-aa);">"tough on the outside, soft on the inside"</em> or <em style="color:var(--mist-aa);">"cries at commercials"</em>.
+      </div>
+      <!-- aria-labelledby points to the label above, so screen readers
+           announce "Character traits group" when focus enters. -->
+      <div class="tags" id="trait-tags" role="group" aria-labelledby="traits-label">
+        <button class="tag" onclick="toggleTag(this)">Dreamer</button>
+        <button class="tag" onclick="toggleTag(this)">Rebellious</button>
+        <button class="tag" onclick="toggleTag(this)">Tender</button>
+        <button class="tag" onclick="toggleTag(this)">Intellectual</button>
+        <button class="tag" onclick="toggleTag(this)">Wild</button>
+        <button class="tag" onclick="toggleTag(this)">Spiritual</button>
+        <button class="tag" onclick="toggleTag(this)">Ambitious</button>
+        <button class="tag" onclick="toggleTag(this)">Melancholy</button>
+        <button class="tag" onclick="toggleTag(this)">Playful</button>
+        <button class="tag" onclick="toggleTag(this)">Brooding</button>
+        <button class="tag" onclick="toggleTag(this)">Joyful</button>
+        <button class="tag" onclick="toggleTag(this)">Mysterious</button>
+        <button class="tag" onclick="toggleTag(this)">Grounded</button>
+        <button class="tag" onclick="toggleTag(this)">Fierce</button>
+        <button class="tag" onclick="toggleTag(this)">Nostalgic</button>
+        <button class="tag" onclick="toggleTag(this)">Free-spirited</button>
+        <div id="custom-tags-inline"></div>
+      </div>
+      <div class="custom-tag-row">
+        <!-- aria-label gives this input an accessible name since there's
+             no visible <label> next to it. The button beside it is labelled
+             separately. -->
+        <input type="text" id="custom-tag-input" class="custom-tag-input" placeholder="Add your own… e.g. "cries at commercials"" maxlength="50" autocomplete="off" aria-label="Add a custom trait" onkeydown="if(event.key==='Enter'){event.preventDefault();addCustomTag();}">
+        <button class="custom-tag-add" onclick="addCustomTag()">+ Add</button>
+      </div>
+    </div>
+
+    <button id="save-persona-btn" class="btn btn-primary btn-block" onclick="savePersona()" style="margin-top:6px;">Save this version of you</button>
+    <div id="delete-persona-row" style="display:none;margin-top:10px;text-align:center;">
+      <button onclick="confirmDeletePersona()" style="background:none;border:none;cursor:pointer;font-size:.78rem;color:var(--text-dim-aa);font-family:var(--font-b);padding:8px 16px;border-radius:100px;border:1px solid var(--border-soft);">✕ Remove this persona</button>
+    </div>
+  </div>
+  <div class="sp"></div>
+</div>
+
+<!-- ================================================================
+   📚 SECTION 11: Screen — Avatar Source Picker (Level 1)
+   ================================================================
+
+   WHAT THIS SCREEN IS
+   --------------------
+   The first step of a two-level avatar selection flow. Shows the
+   currently selected avatar as a large preview, then four options
+   to change it: emoji browser, photo library, file picker, and
+   camera. Each option leads somewhere different — emoji opens the
+   emoji browser screen (level 2); the others trigger hidden
+   <input type="file"> elements.
+
+   WHEN IT APPEARS
+   ----------------
+   When the user taps the avatar circle on the Create/Edit Persona
+   screen. openAvatarSourcePicker() pushes "create-screen" onto
+   navStack first, so the Back button correctly returns to the form.
+
+   HOW THE FILE INPUTS WORK
+   -------------------------
+   The three file inputs (photo, file, camera) are hidden with
+   display:none and triggered programmatically via .click() when
+   the corresponding option button is tapped. This is a common
+   pattern for custom-styled file pickers — you show your own
+   designed button but delegate the actual file-open dialog to
+   the native browser input. capture="environment" on the camera
+   input tells the browser to open the rear-facing camera directly.
+
+================================================================ -->
+<!-- ══════════ AVATAR SOURCE PICKER ══════════ -->
+<!-- Level 1 of the avatar picker flow. Shows the current avatar as a
+     preview, then four options: emoji browser, photo library, file, camera.
+     Pushed onto navStack from openAvatarSourcePicker() so Back works. -->
+<div id="avatar-source-screen" class="screen" aria-hidden="true">
+  <div class="topbar">
+    <button class="topbar-back" onclick="goBack()" aria-label="Go back">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M12 5l-7 5 7 5"/></svg>
+      Back
+    </button>
+    <span class="topbar-logo">Other <em>You</em><small>Change avatar</small></span>
+  </div>
+  <div style="padding:28px 24px 20px;">
+    <!-- Current avatar preview — updated by openAvatarSourcePicker() -->
+    <div class="avatar-src-preview" id="avatar-src-preview">✨</div>
+    <div class="settings-section-title" style="text-align:center;margin-bottom:16px;">Choose a source</div>
+    <div class="settings-card">
+      <!-- Option 1: Emoji browser -->
+      <button class="settings-row" onclick="openEmojiBrowser()">
+        <div class="avatar-src-icon">😊</div>
+        <div class="settings-row-info">
+          <div class="settings-row-title">Choose an emoji</div>
+          <div class="settings-row-desc">Browse or search all emojis</div>
+        </div>
+        <svg class="settings-row-arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16" aria-hidden="true"><path d="M7 5l5 5-5 5"/></svg>
+      </button>
+      <!-- Option 2: Photo library -->
+      <button class="settings-row" onclick="document.getElementById('avatar-photo-input').click()">
+        <div class="avatar-src-icon">🖼️</div>
+        <div class="settings-row-info">
+          <div class="settings-row-title">Choose a photo</div>
+          <div class="settings-row-desc">From your photo library</div>
+        </div>
+        <svg class="settings-row-arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16" aria-hidden="true"><path d="M7 5l5 5-5 5"/></svg>
+      </button>
+      <!-- Option 3: File -->
+      <button class="settings-row" onclick="document.getElementById('avatar-file-input').click()">
+        <div class="avatar-src-icon">📁</div>
+        <div class="settings-row-info">
+          <div class="settings-row-title">Choose a file</div>
+          <div class="settings-row-desc">Any image from your device</div>
+        </div>
+        <svg class="settings-row-arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16" aria-hidden="true"><path d="M7 5l5 5-5 5"/></svg>
+      </button>
+      <!-- Option 4: Camera -->
+      <button class="settings-row" onclick="document.getElementById('avatar-camera-input').click()">
+        <div class="avatar-src-icon">📷</div>
+        <div class="settings-row-info">
+          <div class="settings-row-title">Take a photo</div>
+          <div class="settings-row-desc">Use your camera now</div>
+        </div>
+        <svg class="settings-row-arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16" aria-hidden="true"><path d="M7 5l5 5-5 5"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+   📚 SECTION 12: Screen — Emoji Browser (Level 2)
+   ================================================================
+
+   WHAT THIS SCREEN IS
+   --------------------
+   The second level of the avatar picker flow, reached when the user
+   chooses "Choose an emoji" from the source picker. Contains the
+   emoji-mart v5 Picker web component, which renders a full scrollable
+   emoji grid with category tabs and a search bar.
+
+   HOW THE PICKER MOUNTS
+   ----------------------
+   The #emoji-picker-mount <div> starts empty. The first time this
+   screen is shown, openEmojiBrowser() creates a new EmojiMart.Picker
+   instance and appends it to #emoji-picker-mount. Subsequent visits
+   reuse the already-mounted picker (the "if already mounted, return"
+   guard in the JS). This matters because mounting an emoji picker
+   is relatively expensive — we only want to do it once.
+
+   WHEN AN EMOJI IS SELECTED
+   --------------------------
+   The picker's onEmojiSelect callback fires with the chosen emoji
+   object. The JS sets selEmoji to emoji.native (the actual emoji
+   character), clears selPhoto (a photo always takes priority over
+   an emoji when both are set), and calls _returnToPersonaForm() to
+   navigate back and update the avatar circle.
+
+================================================================ -->
+<!-- ══════════ EMOJI BROWSER ══════════ -->
+<!-- Level 2 of the avatar picker flow. Contains the emoji-mart Picker
+     component mounted into #emoji-picker-mount. The picker fills the
+     available screen height via flex and emoji-mart's own scroll. -->
+<div id="emoji-browser-screen" class="screen" aria-hidden="true">
+  <div class="topbar">
+    <button class="topbar-back" onclick="goBack()" aria-label="Go back">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M12 5l-7 5 7 5"/></svg>
+      Back
+    </button>
+    <span class="topbar-logo">Other <em>You</em><small>Choose an emoji</small></span>
+  </div>
+  <!-- emoji-mart Picker is mounted here by openEmojiBrowser() -->
+  <div id="emoji-picker-mount"></div>
+</div>
+
+<!-- Hidden file inputs for the avatar picker — triggered programmatically.
+     photo-input: opens photo library (no capture attribute).
+     file-input:  opens any file (no capture attribute, explicit accept).
+     camera-input: opens camera directly (capture="environment"). -->
+<input type="file" id="avatar-photo-input" accept="image/*" style="display:none;" onchange="handleAvatarFile(event)">
+<input type="file" id="avatar-file-input"  accept="image/*" style="display:none;" onchange="handleAvatarFile(event)">
+<input type="file" id="avatar-camera-input" accept="image/*" capture="environment" style="display:none;" onchange="handleAvatarFile(event)">
+
+<!-- ================================================================
+   📚 SECTION 13: Screen — Match (The Slot Machine)
+   ================================================================
+
+   WHAT THIS SCREEN IS
+   --------------------
+   The heart of the experience. Shows two "slots" side by side —
+   one for the user's persona, one for their partner's — separated
+   by a ✦ divider. A "Spin" button randomizes the selection with
+   a slot-machine animation, landing on a matched pair. The user
+   can then lock either slot (to keep a specific persona across
+   spins), manually scroll to pick a persona without spinning, and
+   ultimately accept the match to begin a date.
+
+   WHEN IT APPEARS
+   ----------------
+   Via the "Date" tab in the bottom nav, or the "See the match →"
+   card on the Home screen. It's one of the 5 main tabs.
+
+   HOW THE SLOT MACHINE WORKS
+   ---------------------------
+   The slot animation is entirely JavaScript-driven (see spinMatch()
+   in Chapter 5). During the spin, random emojis cycle on unlocked
+   slots at 80ms intervals for 22 ticks. At tick 22, the interval
+   clears, the chosen personas are set, and the confirmation section
+   below the slots renders. The slot-reel-spin CSS class (Chapter 3)
+   applies a vertical bounce animation to the avatar element.
+
+   SYNC INDICATOR
+   ---------------
+   The #sync-indicator in the topbar appears when a real-time Supabase
+   sync operation is in progress — a subtle "Syncing" label with a
+   pulsing dot. The partner's name appears in the slot-who label below
+   their slot once connected.
+
+================================================================ -->
+<!-- ══════════ MATCH ══════════ -->
+<div id="match-screen" class="screen">
+  <div class="topbar">
+    <button class="topbar-back" onclick="goBack()" aria-label="Go back">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M12 5l-7 5 7 5"/></svg>
+      Back
+    </button>
+    <span class="topbar-logo">Other <em>You</em><small>Multiverse Date Night</small></span>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <div class="sync-indicator" id="sync-indicator" title="Syncing with partner"><div class="sync-dot"></div><span>Syncing</span></div>
+      <button class="topbar-action" id="exit-demo-btn-match" style="display:none;color:var(--gold-aa);border-color:rgba(212,169,106,.35);" onclick="exitDemo()">← Exit demo</button>
+      <button class="topbar-action" onclick="openDemoModal()">✦ Demo</button>
+    </div>
+  </div>
+  <div id="pb-match"></div>
+  <div class="match-hero">
+    <div class="match-h">Your Next <em>Date</em></div>
+    <div class="match-sub" id="match-sub" aria-live="polite" aria-atomic="true">Spin to find your match</div>
+  </div>
+  <div id="demo-cta-match"></div>
+
+  <!-- Slot machine -->
+  <div class="slot-wrap" id="slot-wrap">
+    <div class="slot-col">
+      <div class="slot-avatar" id="slot-you-avatar"></div>
+      <div class="slot-name" id="slot-you-name">—</div>
+      <div class="slot-who">You</div>
+      <div class="slot-nav-row">
+        <button class="slot-nav-btn" onclick="manualScroll('you',-1)" id="you-prev" aria-label="Previous persona">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M13 5l-5 5 5 5"/></svg>
+        </button>
+        <button class="slot-lock-btn" id="you-lock" onclick="toggleLock('you')" aria-label="Lock your persona" aria-pressed="false" title="Lock">🔓</button>
+        <button class="slot-nav-btn" onclick="manualScroll('you',1)" id="you-next" aria-label="Next persona">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M7 5l5 5-5 5"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="slot-divider">✦</div>
+    <div class="slot-col">
+      <div class="slot-avatar" id="slot-them-avatar"></div>
+      <div class="slot-name" id="slot-them-name">—</div>
+      <div class="slot-who" id="slot-them-who">Partner</div>
+      <div class="slot-nav-row">
+        <button class="slot-nav-btn" onclick="manualScroll('them',-1)" id="them-prev" aria-label="Previous persona">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M13 5l-5 5 5 5"/></svg>
+        </button>
+        <button class="slot-lock-btn" id="them-lock" onclick="toggleLock('them')" aria-label="Lock partner persona" aria-pressed="false" title="Lock">🔓</button>
+        <button class="slot-nav-btn" onclick="manualScroll('them',1)" id="them-next" aria-label="Next persona">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M7 5l5 5-5 5"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="match-confirm-wrap">
+    <div class="match-confirm" id="match-confirm"></div>
+    <div class="match-action-row" id="match-action-row"></div>
+  </div>
+  <div class="sp"></div>
+</div>
+
+<!-- ================================================================
+   📚 SECTION 14: Screen — Connect (Partner Pairing)
+   ================================================================
+
+   WHAT THIS SCREEN IS
+   --------------------
+   The partner connection hub. Its content is entirely rendered by
+   JavaScript (renderConnect()), so the HTML here is just a shell
+   with a topbar and a #connect-body div. The rendered content
+   changes based on connection state:
+
+   STATE 1 — Unconnected: "Generate invite" button + "Join with code" input
+   STATE 2 — Invite pending: QR code, invite code, share buttons
+   STATE 3 — Connected: partner name, disconnect button
+   STATE 4 — Demo mode: a message explaining demo limitations
+
+   WHEN IT APPEARS
+   ----------------
+   Via the topbar back button from a sub-screen, or the "Connection"
+   card on the Home screen, or Settings. It doesn't have a dedicated
+   bottom nav tab — it's accessed contextually.
+
+   HOW PAIRING WORKS (overview)
+   -----------------------------
+   Partner A taps "Generate invite" → a pair record is created in
+   Supabase → an invite URL is generated with the encryption key in
+   the URL hash → Partner B opens the URL → reads the key from the
+   hash → both devices now share the same key → all messages are
+   encrypted with that key before being stored in Supabase.
+   Full details in Chapter 7.
+
+================================================================ -->
+<!-- ══════════ CONNECT ══════════ -->
+<div id="connect-screen" class="screen">
+  <div class="topbar">
+    <button class="topbar-back" onclick="goBack()" aria-label="Go back">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M12 5l-7 5 7 5"/></svg>
+      Back
+    </button>
+    <span class="topbar-logo">Other <em>You</em><small>Multiverse Date Night</small></span>
+  </div>
+  <div id="pb-connect"></div>
+  <div id="connect-body"></div>
+  <div class="sp"></div>
+</div>
+
+<!-- ================================================================
+   📚 SECTION 15: Screen — Home Dashboard
+   ================================================================
+
+   WHAT THIS SCREEN IS
+   --------------------
+   The landing screen after setup. Shows the user's name as a
+   greeting, two stats (your persona count + partner's persona count),
+   a prominent "See the match" action card, and three quick-action
+   cards for the most common destinations: Profiles, Connection, and
+   Settings. It's intentionally simple — a welcome mat, not a
+   command center.
+
+   WHEN IT APPEARS
+   ----------------
+   After the user completes setup (goMain()) or logs back in with
+   existing saved data. Accessible via the "Home" tab in the
+   bottom nav.
+
+   INTERACTIVE ELEMENTS AS BUTTONS
+   ---------------------------------
+   Notice that the "Your next match" card and all three quick-action
+   cards are <button> elements, not <div>s. This matters because:
+   - <div>s are not focusable by keyboard users
+   - <div>s are not announced as "button" by screen readers
+   - <div>s don't respond to Enter/Space key presses by default
+   Styling a <button> to look like a card is the correct approach.
+   Using a <div> with onclick for something clickable is a common
+   beginner mistake that breaks accessibility.
+
+================================================================ -->
+<!-- ══════════ HOME ══════════ -->
+<div id="home-screen" class="screen">
+  <div class="topbar">
+    <span class="topbar-logo">Other <em>You</em><small>Multiverse Date Night</small></span>
+    <div style="display:flex;gap:8px;">
+      <button class="topbar-action" id="exit-demo-btn-home" style="display:none;color:var(--gold-aa);border-color:rgba(212,169,106,.35);" onclick="exitDemo()">← Exit demo</button>
+      <button class="topbar-action" onclick="openDemoModal()">✦ Demo</button>
+    </div>
+  </div>
+  <div id="pb-home"></div>
+  <div class="home-greet">
+    <div class="home-greet-sub">Welcome back</div>
+    <div class="home-greet-name" id="hname">—</div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="stat-n" id="stat-you">0</div><div class="stat-l">Your Yous</div></div>
+    <div class="stat"><div class="stat-n" id="stat-them">—</div><div class="stat-l">Their Yous</div></div>
+  </div>
+  <!-- 📖 INTERACTIVE ELEMENTS MUST BE <button> or <a>, NOT <div>.
+       Screen readers and keyboard users cannot interact with divs —
+       they are ignored by keyboard focus and not announced as clickable.
+       Buttons are focusable, announce as "button", respond to Enter/Space.
+       Here we use <button> styled to look like a card. -->
+  <div class="home-section">
+    <button style="background:linear-gradient(135deg,rgba(91,58,140,.3),rgba(29,17,52,.65));border:1px solid rgba(155,126,200,.22);border-radius:17px;padding:20px;cursor:pointer;width:100%;text-align:left;font-family:inherit;" onclick="showScreen('match-screen');setNav('match')">
+      <div style="font-family:var(--font-d);font-size:1.25rem;color:var(--cream);margin-bottom:6px;">Your next match is ready ✦</div>
+      <div style="font-size:.8rem;color:var(--text-dim-aa);line-height:1.55;margin-bottom:14px;">Two versions of you two have never met. It's time they did.</div>
+      <span class="btn btn-gold btn-sm" aria-hidden="true">See the match →</span>
+    </button>
+  </div>
+  <div class="home-section">
+    <div style="font-family:var(--font-d);font-size:1.1rem;color:var(--cream);margin-bottom:10px;" aria-hidden="true">Quick actions</div>
+    <div style="display:flex;flex-direction:column;gap:9px;" role="list">
+      <button class="ccard" role="listitem" onclick="showScreen('personas-screen',true);setNav('personas')"><div class="ccard-icon" aria-hidden="true">🌀</div><div><div class="ccard-title">Manage personas</div><div class="ccard-desc">Add or edit your alternate personas.</div></div></button>
+      <button class="ccard" role="listitem" onclick="showScreen('connect-screen',true);setNav('connect')"><div class="ccard-icon" aria-hidden="true">🔮</div><div><div class="ccard-title">Connection</div><div class="ccard-desc">Invite your partner or manage your connection.</div></div></button>
+      <button class="ccard" role="listitem" onclick="showScreen('settings-screen',true);setNav('settings')"><div class="ccard-icon" aria-hidden="true">⚙️</div><div><div class="ccard-title">Settings &amp; backup</div><div class="ccard-desc">Export your data, import a backup, or clear your device.</div></div></button>
+    </div>
+  </div>
+  <div class="sp"></div>
+</div>
+
+<!-- ================================================================
+   📚 SECTION 16: Screen — Settings
+   ================================================================
+
+   WHAT THIS SCREEN IS
+   --------------------
+   Four sections: Backup & Sync (links to the backup screen),
+   Partner connection (shows connected partner or connect CTA),
+   About (links to the website's help pages), and Danger Zone
+   (clear all data). Settings rows are <button> elements styled
+   as rows, except for external links which are <a> elements.
+
+   WHEN IT APPEARS
+   ----------------
+   Via the "Settings" tab in the bottom nav. The partner connection
+   section is rendered dynamically by renderSettings() — it shows
+   different content depending on whether the user is connected,
+   disconnected, or in demo mode.
+
+   NOTE ON EXTERNAL LINKS
+   -----------------------
+   The "How Other You works" and "Send feedback" links use
+   <a target="_blank" rel="noopener noreferrer">. The rel attributes
+   are a security requirement:
+   - "noopener" prevents the new tab from accessing this page via
+     window.opener (a known security exploit)
+   - "noreferrer" prevents the referring URL from being sent to
+     the destination server
+   Always use both when linking to external sites with target="_blank".
+
+================================================================ -->
+<!-- ══════════ SETTINGS ══════════ -->
+<div id="settings-screen" class="screen">
+  <div class="topbar">
+    <button class="topbar-back" onclick="goBack()" aria-label="Go back">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M12 5l-7 5 7 5"/></svg>
+      Back
+    </button>
+    <span class="topbar-logo">Other <em>You</em><small>Multiverse Date Night</small></span>
+  </div>
+  <div id="pb-settings"></div>
+
+  <!-- BACKUP & SYNC -->
+  <div class="settings-section">
+    <div class="settings-section-title">Backup &amp; Sync</div>
+    <div class="settings-card">
+      <button class="settings-row" onclick="showScreen('backup-screen',true);renderBackupScreen();">
+        <div class="settings-row-icon" aria-hidden="true">💾</div>
+        <div class="settings-row-info">
+          <div class="settings-row-title">Backup &amp; Sync</div>
+          <div class="settings-row-desc" id="backup-settings-desc">Set up automatic backups and manage your data file.</div>
+        </div>
+        <svg class="settings-row-arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16" aria-hidden="true"><path d="M7 5l5 5-5 5"/></svg>
+      </button>
+    </div>
+    <!-- Hidden file input for restore on browsers without File System Access API -->
+    <input type="file" id="restore-file-input" accept=".json" style="display:none;" onchange="handleRestoreFileInput(event)">
+  </div>
+
+  <!-- PARTNER CONNECTION -->
+  <div class="settings-section">
+    <div class="settings-section-title">Partner connection</div>
+    <div class="settings-card" id="settings-partner-card">
+      <!-- rendered by renderSettings() -->
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="settings-section">
+    <div class="settings-section-title">About</div>
+    <!-- External links: use <a> with rel="noopener noreferrer" for security.
+         📖 "noopener" prevents the new tab from accessing this page via
+         window.opener (a security vulnerability). "noreferrer" hides the
+         referring URL from the destination site. Always use both. -->
+    <div class="settings-card">
+      <a class="settings-row" href="https://www.other-you.app/how-it-works.html" target="_blank" rel="noopener noreferrer">
+        <div class="settings-row-icon" aria-hidden="true">📖</div>
+        <div class="settings-row-info">
+          <div class="settings-row-title">How Other You works</div>
+          <div class="settings-row-desc">Learn about privacy, sync, device requirements, and what to expect.</div>
+        </div>
+        <svg class="settings-row-arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16" aria-hidden="true"><path d="M7 5l5 5-5 5"/></svg>
+      </a>
+      <a class="settings-row" href="https://www.other-you.app/contact.html" target="_blank" rel="noopener noreferrer">
+        <div class="settings-row-icon" aria-hidden="true">💌</div>
+        <div class="settings-row-info">
+          <div class="settings-row-title">Send feedback</div>
+          <div class="settings-row-desc">Ideas, bugs, or anything on your mind.</div>
+        </div>
+        <svg class="settings-row-arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16" aria-hidden="true"><path d="M7 5l5 5-5 5"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- DANGER ZONE -->
+  <div class="settings-section">
+    <div class="settings-section-title">Danger zone</div>
+    <div class="settings-card">
+      <button class="settings-row" onclick="confirmClearData()">
+        <div class="settings-row-icon" aria-hidden="true">🗑️</div>
+        <div class="settings-row-info">
+          <div class="settings-row-title" style="color:#f87171;">Clear all data</div>
+          <div class="settings-row-desc">Permanently deletes all personas and settings from this device. Export a backup first if you want to keep anything.</div>
+        </div>
+        <svg class="settings-row-arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16" aria-hidden="true"><path d="M7 5l5 5-5 5"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="settings-version">Other You · Multiverse Date Night · v0.3.0</div>
+  <div class="sp"></div>
+</div>
+
+<!-- ================================================================
+   📚 SECTION 17: Screen — Backup & Sync
+   ================================================================
+
+   WHAT THIS SCREEN IS
+   --------------------
+   A comprehensive backup management screen. Its content is fully
+   rendered by renderBackupScreen() in Chapter 6 — the HTML here
+   is just a topbar shell and an empty #backup-screen-body div.
+   The rendered content is browser-aware: Chrome/Edge get the full
+   File System Access API flow; Safari on iOS and Firefox get a
+   manual download fallback.
+
+   WHEN IT APPEARS
+   ----------------
+   When the user taps "Backup & Sync" in Settings. It's pushed onto
+   navStack so the Back button returns to Settings.
+
+   WHAT THE SCREEN CONTAINS (rendered by JS)
+   -------------------------------------------
+   - Status badge (up to date / paused / not configured)
+   - Action buttons (set location, change location, download, restore)
+   - Long-form educational prose explaining what backups are, why they
+     matter, how encryption works, password requirements, and
+     browser-specific instructions
+   - Troubleshooting section with answers to common questions
+
+   This screen doubles as user documentation — it's intentionally
+   thorough so users understand what they're protecting and why.
+
+================================================================ -->
+<!-- ══════════ BACKUP & SYNC ══════════ -->
+<!-- 📖 This screen is navigated to via showScreen('backup-screen', true) from
+     the Settings entry. The body is rendered by renderBackupScreen() which is
+     browser-aware — it shows different options for Chrome/Edge/Safari/iOS/Firefox. -->
+<div id="backup-screen" class="screen" aria-hidden="true">
+  <div class="topbar">
+    <button class="topbar-back" onclick="goBack()" aria-label="Go back">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M12 5l-7 5 7 5"/></svg>
+      Back
+    </button>
+    <span class="topbar-logo">Other <em>You</em><small>Multiverse Date Night</small></span>
+  </div>
+  <div id="backup-screen-body">
+    <!-- populated by renderBackupScreen() -->
+  </div>
+  <div class="sp"></div>
+</div>
+
+<!-- ================================================================
+   📚 SECTION 18: Overlay — Backup Onboarding
+   ================================================================
+
+   WHAT THIS IS
+   -------------
+   A full-screen blocking overlay (NOT a screen — it layers on top
+   of the rest of the UI) that appears the first time a user opens
+   Other You on a device. It walks through a 3-step flow:
+     Step 0: Why backups matter
+     Step 1: Create a password (with strength meter, requirements
+             checklist, and an "I understand" acknowledgment checkbox)
+     Step 2: Choose a save location (or download first backup on
+             browsers that don't support File System Access API)
+
+   WHY IT BLOCKS THE REST OF THE UI
+   ----------------------------------
+   Unlike regular screens, backup onboarding uses position:fixed
+   and z-index:300 — higher than the modal overlay (z-index:200).
+   This is intentional: the first-time setup should be completed
+   before the user dives into creating personas and connecting with
+   a partner. Their data needs a home before there's data to protect.
+
+   ROLE AND ARIA
+   --------------
+   role="dialog" aria-modal="true" marks this as a modal dialog
+   for screen readers. This tells assistive technology to treat
+   content behind the overlay as inaccessible while it's open —
+   matching the visual reality that the rest of the app is blocked.
+
+================================================================ -->
+<!-- ══════════ BACKUP ONBOARDING OVERLAY ══════════ -->
+<!-- 📖 This full-screen overlay blocks the rest of the UI and walks the user
+     through the backup concept + browser-specific setup the first time they
+     open the app on a device. z-index:300 keeps it above the modal overlay
+     (z-index:200) so it can never be hidden by an accidental modal open. -->
+<div id="backup-onboard" role="dialog" aria-modal="true" aria-label="Set up your backup">
+  <div class="backup-onboard-inner">
+    <div class="backup-onboard-dots" id="backup-dots"></div>
+    <div id="backup-onboard-steps"></div>
+    <div id="backup-onboard-btns"></div>
+  </div>
+</div>
+
+<!-- sync-indicator lives inside #match-screen topbar — removed duplicate here -->
+
+<!-- ================================================================
+   📚 SECTION 19: Screen — Date History
+   ================================================================
+
+   WHAT THIS SCREEN IS
+   --------------------
+   A log of all completed multiverse dates. Each entry shows the
+   two persona avatars, their names, whose personas they were, and
+   the date completed. Entries are expandable — tapping the row
+   reveals a detail panel with an edit button (to adjust the
+   completion date) and a "Mark as complete" option for accepted
+   dates not yet finished.
+
+   WHEN IT APPEARS
+   ----------------
+   Via the "History" tab in the bottom nav.
+
+   HOW EXPAND/COLLAPSE WORKS
+   --------------------------
+   History entries use the CSS .open class pattern: the
+   .history-entry-body has display:none by default; when the
+   entry gets .open added, CSS switches it to display:block.
+   This is a pure CSS show/hide toggled by JavaScript — the same
+   pattern used for screens (display:none / display:flex with .active).
+   The chevron icon also rotates 90° when .open is applied, giving a
+   visual cue that the row is expanded.
+
+   aria-expanded on the header button communicates the expanded state
+   to screen readers — "collapsed" vs "expanded" — so blind users
+   know there's more content available and whether it's showing.
+
+================================================================ -->
+<!-- ══════════ HISTORY ══════════ -->
+<div id="history-screen" class="screen">
+  <div class="topbar">
+    <button class="topbar-back" onclick="goBack()" aria-label="Go back">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M12 5l-7 5 7 5"/></svg>
+      Back
+    </button>
+    <span class="topbar-logo">Other <em>You</em><small>Multiverse Date Night</small></span>
+    <button class="topbar-action" id="exit-demo-btn-history" style="display:none;color:var(--gold-aa);border-color:rgba(212,169,106,.35);" onclick="exitDemo()">← Exit demo</button>
+  </div>
+  <div id="pb-history"></div>
+  <div class="match-hero" style="padding-bottom:8px;">
+    <div class="match-h">Date <em>History</em></div>
+    <div class="match-sub" id="history-sub">Your completed multiverse dates</div>
+  </div>
+  <div id="history-body"></div>
+  <div class="sp"></div>
+</div>
+
+</main><!-- /app -->
+
+<!-- ================================================================
+   📚 SECTION 20: Persistent UI — Bottom Nav, Modal, Toast
+   ================================================================
+
+   WHAT THIS SECTION DOES
+   -----------------------
+   Three elements that are always present in the DOM regardless of
+   which screen is active. Unlike screens, they don't hide —
+   they layer on top of the app content as persistent chrome.
+
+   THE BOTTOM NAV (#bnav)
+   -----------------------
+   A fixed-position bar at the bottom of the viewport with five
+   navigation buttons: Home, Profiles, Date, History, Settings.
+   It starts hidden (display:none) and only appears once the user
+   has completed setup — document.getElementById('bnav').classList
+   .add('on') in goMain() triggers display:flex via CSS.
+
+   The active tab is highlighted in gold via the .on class. The
+   aria-current="page" attribute mirrors this visually for screen
+   readers — when a tab is active, it announces as "current page."
+
+   env(safe-area-inset-bottom) in the padding accounts for the
+   "home indicator" bar on iPhone X and later models — the horizontal
+   swipe line at the bottom of the screen. Without this, the nav
+   buttons would be obscured by that system UI element.
+
+   THE MODAL OVERLAY (#overlay)
+   -----------------------------
+   A full-screen overlay that slides up from the bottom as a sheet.
+   Used for confirmations (delete persona, disconnect, clear data),
+   the demo preview, and the backup password prompt. The content is
+   injected dynamically by openModal(html) in Chapter 5.
+
+   The .overlay-bg click handler closes the modal so users can
+   dismiss by tapping outside — a universal mobile UX convention.
+   The Escape key also closes it (handled in a keydown listener in
+   Chapter 4). ARIA attributes make it a proper dialog for screen
+   readers. Focus management moves focus into the modal when it
+   opens and returns it to the trigger element when it closes.
+
+   THE TOAST (#toast)
+   -------------------
+   A floating status message that appears briefly then fades. Uses
+   role="alert" aria-live="polite" so screen readers announce the
+   message automatically without the user needing to focus it.
+   "polite" means "wait for the user to finish their current action,
+   then announce" — as opposed to "assertive" which interrupts
+   immediately. The toast() function in Chapter 5 drives this.
+
+================================================================ -->
+
+<!-- 📌 WHAT: The five-tab bottom navigation bar.
+     📌 WHY:  Fixed-position so it stays visible as content scrolls.
+              Uses <nav> (a semantic landmark) so screen readers can
+              jump directly to it. Hidden by default (displayed only
+              after setup) so new users don't see nav controls before
+              they've set up their identity. -->
+<!-- BOTTOM NAV -->
+<nav id="bnav">
+  <button class="nb" id="nb-home" onclick="showScreen('home-screen');setNav('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>Home</button>
+  <button class="nb" id="nb-personas" onclick="showScreen('personas-screen');setNav('personas')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>Profiles <span id="nb-badge" style="display:none;background:var(--iris);color:#fff;font-size:.5rem;border-radius:100px;padding:1px 6px;margin-left:3px;vertical-align:middle;line-height:1.6;"></span></button>
+  <button class="nb" id="nb-match" onclick="showScreen('match-screen');setNav('match')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s-8-5.686-8-11a8 8 0 0116 0c0 5.314-8 11-8 11z"/></svg>Date</button>
+  <button class="nb" id="nb-history" onclick="showScreen('history-screen');setNav('history')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8v4l3 3"/><path d="M3.05 11a9 9 0 1 0 .5-4"/><path d="M3 4v4h4"/></svg>History</button>
+  <button class="nb" id="nb-settings" onclick="showScreen('settings-screen');setNav('settings')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings</button>
 </nav>
-<nav class="nav-mobile" id="nav-mobile" aria-label="Mobile navigation">
-  <a href="index.html" class="active">Home</a>
-  <a href="how-it-works.html">How It Works</a>
-  <a href="roadmap.html">Roadmap</a>
-  <a href="contact.html">Contact</a>
-  <a href="https://pwa.other-you.app" class="nav-cta">Open App</a>
-</nav>
 
-<!-- id="main-content" is the skip link target. tabindex="-1" makes it
-     programmatically focusable (needed for the skip link to work in all browsers). -->
-<div class="page-wrap" id="main-content" tabindex="-1">
+<!-- ================================================================
+   ✅ CHAPTER 1 REVIEW — Head & HTML Screens
+   ================================================================
 
-  <!-- ══ HERO ══ -->
-  <section class="hero" aria-labelledby="hero-title">
-    <div class="oy-logo-hero">
-      <img
-        src="assets/logo-icon.svg"
-        alt="Other You"
-        class="oy-logo-hero-img"
-        width="300"
-        height="300"
-      >
-    </div>
+   You just read through the document foundation and all 13 HTML
+   screens. Here's what to remember:
 
-    <p class="hero-sub fade-up">Multiverse Date Night</p>
-    <h1 class="hero-title fade-up fade-up-1" id="hero-title">
-      Other <em>You</em>
-    </h1>
-    <p class="hero-hook fade-up fade-up-2">
-      Somewhere in the multiverse, <strong>all the versions of you</strong> are waiting
-      to meet all the versions of them. This is a private app for couples to go on
-      dates as their alternate selves — the roads not taken, the versions that were forgotten.
-    </p>
-    <div class="hero-actions fade-up fade-up-3">
-      <a href="https://pwa.other-you.app" class="btn btn-primary">Enter the App</a>
-      <a href="#what" class="btn btn-ghost">Learn more ↓</a>
-    </div>
-  </section>
+   1. DOCTYPE html is always first — it locks the browser into
+      modern standards mode. Never omit it.
 
-  <!-- ══ WHAT IS THIS ══ -->
-  <section class="section" id="what" aria-labelledby="what-title">
-    <div class="container">
-      <p class="eyebrow reveal">What is Other You?</p>
-      <h2 class="display-title reveal reveal-d1" id="what-title">
-        A deeper kind<br>of <em>knowing</em>
-      </h2>
-      <p class="lead reveal reveal-d2" style="margin-top:16px;">
-        The slight deviation of a persona gives opportunity to explore yourself and your relationship. Ask deeper questions and share parts of yourself that don't come up in the daily routine.
-      </p>
+   2. Every meta tag in the <head> answers a specific question.
+      viewport → "how wide should the page be on a phone?"
+      charset  → "how do I decode these bytes into characters?"
+      og:*     → "what should a link preview show when shared?"
+      manifest → "where is this PWA's identity card?"
 
-      <div class="what-grid">
-        <div class="what-card reveal reveal-d1">
-          <div class="what-card-icon" aria-hidden="true">🎭</div>
-          <div class="what-card-title">Your alternate selves</div>
-          <div class="what-card-text">Think of a crossroads in your life — a choice you didn't take, a phase that ended too soon. Create a persona for that version of you. Nickname, origin story, personality traits, character tags, and a photo so you can dress up for your date.</div>
-        </div>
-        <div class="what-card reveal reveal-d2">
-          <div class="what-card-icon" aria-hidden="true">🎰</div>
-          <div class="what-card-title">Personas get matched</div>
-          <div class="what-card-text">The app pairs one of your alternate selves with one of theirs. Spin until the combination feels right, then accept and go on a date. Every pairing tells a different story.</div>
-        </div>
-        <div class="what-card reveal reveal-d3">
-          <div class="what-card-icon" aria-hidden="true">💬</div>
-          <div class="what-card-title">Explore new conversations</div>
-          <div class="what-card-text">Most couples know each other well. But do they know the version who almost became a musician? The one who got arrested at a protest in college? The one who still writes poetry at midnight?</div>
-        </div>
-        <div class="what-card reveal reveal-d4">
-          <div class="what-card-icon" aria-hidden="true">🕰</div>
-          <div class="what-card-title">Date history</div>
-          <div class="what-card-text">Every completed date is saved. Browse through which versions of yourselves have met, and when — a record of the alternate universe you've built together.</div>
-        </div>
-      </div>
-    </div>
-  </section>
+   3. All 13 screens exist in the HTML simultaneously. Only one
+      has class="active". CSS hides the rest. JavaScript moves
+      the .active class to navigate. This is the SPA pattern.
 
-  <div class="divider"></div>
+   4. Semantic elements (<main>, <nav>, <button>, <a>) carry
+      meaning that <div>s don't. Use them correctly and a huge
+      chunk of accessibility comes for free.
 
-  <!-- ══ HOW IT WORKS ══ -->
-  <section class="section" aria-labelledby="how-title">
-    <div class="container">
-      <p class="eyebrow reveal">How it works</p>
-      <h2 class="display-title reveal reveal-d1" id="how-title">Three steps<br>into the <em>multiverse</em></h2>
-      <div class="steps">
-        <div class="step reveal reveal-d1">
-          <div class="step-num" aria-hidden="true">01</div>
-          <div class="step-content">
-            <div class="step-title">Build your other yous</div>
-            <div class="step-text">Create personas for the versions of yourself defined by crossroads you didn't take. Your goth phase that never ended. The year you almost moved to Berlin. The artist you shelved for a stable job. Give them an alias, a story, a personality.</div>
-          </div>
-        </div>
-        <div class="step reveal reveal-d2">
-          <div class="step-num" aria-hidden="true">02</div>
-          <div class="step-content">
-            <div class="step-title">Connect with your partner</div>
-            <div class="step-text">Share a private invite link over text, email, or any messaging app. Or a QR code when in person. Your persons are shared with your partner and your partner's personas are shared with you. Your universes connect privately.</div>
-          </div>
-        </div>
-        <div class="step reveal reveal-d3">
-          <div class="step-num" aria-hidden="true">03</div>
-          <div class="step-content">
-            <div class="step-title">Go on a multiverse date</div>
-            <div class="step-text">Spin for a match. Two personas meet for the first time. Lock the slots you like and re-spin the rest. Accept when the combination feels right — then go on a date as those two versions of yourselves.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+   5. ARIA attributes supplement semantics in a dynamic app where
+      things appear, disappear, and change state. The key ones
+      here: aria-hidden, aria-label, aria-live, role, aria-modal,
+      aria-current.
 
-  <div class="divider"></div>
+   COMMON MISTAKES TO AVOID
+   -------------------------
+   ⚠️  Never make a clickable <div> when a <button> will do.
+       Divs are invisible to keyboard users and screen readers.
 
-  <!-- ══ FEATURES ══ -->
-  <section class="section" aria-labelledby="features-title">
-    <div class="container">
-      <p class="eyebrow reveal">Built with intention</p>
-      <h2 class="display-title reveal reveal-d1" id="features-title">Everything you need,<br>nothing you <em>don't</em></h2>
-      <div class="features">
-        <div class="feature reveal reveal-d1">
-          <div class="feature-icon" aria-hidden="true">🔒</div>
-          <div class="feature-title">Completely private</div>
-          <div class="feature-text">No algorithm, no feed, no followers. This app exists only between you two — a private universe for the relationship you're building.</div>
-        </div>
-        <div class="feature reveal reveal-d2">
-          <div class="feature-icon" aria-hidden="true">✨</div>
-          <div class="feature-title">Partner connection</div>
-          <div class="feature-text">Connect with your partner with an invite link, QR code, or manual code. Sync with each other's personas with end-to-end encryption.</div>
-        </div>
-        <div class="feature reveal reveal-d3">
-          <div class="feature-icon" aria-hidden="true">🌀</div>
-          <div class="feature-title">Profile backup</div>
-          <div class="feature-text">Export your backup file for safe keeping. Import your backup file if you get a new device.</div>
-        </div>
-        <div class="feature reveal reveal-d4">
-          <div class="feature-icon" aria-hidden="true">📱</div>
-          <div class="feature-title">Install on any device</div>
-          <div class="feature-text">A progressive web app — no App Store required. Install from your browser, works offline.</div>
-        </div>
-        <div class="feature reveal reveal-d5">
-          <div class="feature-icon" aria-hidden="true">🌙</div>
-          <div class="feature-title">Personalized app aesthetics</div>
-          <div class="feature-text">Dark &amp; light themes. Follows your device settings.</div>
-        </div>
-        <div class="feature reveal reveal-d6">
-          <div class="feature-icon" aria-hidden="true">✦</div>
-          <div class="feature-title">Always free to start</div>
-          <div class="feature-text">The core experience is free. This is an early version being actively developed.</div>
-        </div>
-      </div>
-    </div>
-  </section>
+   ⚠️  Never add maximum-scale=1 to the viewport tag. It breaks
+       pinch-to-zoom for users with low vision (WCAG 1.4.4).
 
-  <div class="divider"></div>
+   ⚠️  Always use rel="noopener noreferrer" on <a target="_blank">
+       links. Without it, the linked page can access your page
+       via window.opener — a real security vulnerability.
 
-  <!-- ══ EXPLORE LINKS ══ -->
-  <section class="section" aria-labelledby="explore-title">
-    <div class="container">
-      <p class="eyebrow reveal">Explore</p>
-      <h2 class="display-title reveal reveal-d1" id="explore-title">There's more<br>to <em>discover</em></h2>
-      <div class="explore-grid">
-        <a href="roadmap.html" class="explore-card reveal reveal-d1" aria-label="View the roadmap">
-          <div class="explore-icon" aria-hidden="true">🗺</div>
-          <div class="explore-label">Where we're going</div>
-          <div class="explore-title">The Roadmap</div>
-          <div class="explore-text">See what's been built, what's coming next, and the longer vision for where Other You is headed.</div>
-          <div class="explore-arrow">View roadmap →</div>
-        </a>
-        <a href="contact.html" class="explore-card reveal reveal-d2" aria-label="Send a suggestion">
-          <div class="explore-icon" aria-hidden="true">💌</div>
-          <div class="explore-label">Shape what's next</div>
-          <div class="explore-title">Suggestions &amp; Contact</div>
-          <div class="explore-text">Have a feature idea? Found something that needs fixing? I'd love to hear from you.</div>
-          <div class="explore-arrow">Get in touch →</div>
-        </a>
-      </div>
-    </div>
-  </section>
+   ⚠️  Don't skip the lang attribute on <html>. Screen readers
+       use it to choose the right pronunciation voice.
 
+   COMING UP NEXT
+   --------------
+   Chapter 2 covers the CSS in css/ — starting with tokens.css
+   (the design token system) that makes the entire visual theme
+   work. If you've wondered how the dark/light mode switch works,
+   that's where the answer is.
 
-  <!-- ══ HOW TO INSTALL ══ -->
-  <section class="section" id="install" aria-labelledby="install-title">
-    <div class="container">
-      <p class="eyebrow reveal">No App Store needed</p>
-      <h2 class="display-title reveal reveal-d1" id="install-title">Add it to your<br><em>home screen</em></h2>
-      <p class="lead reveal reveal-d2" style="margin-top:16px;">
-        Other You is a progressive web app — it installs directly from your browser in seconds, works offline, and feels completely native.
-      </p>
-      <div class="install-grid">
-        <div class="install-card reveal reveal-d1">
-          <div class="install-os">
-            <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-            iPhone &amp; iPad
-          </div>
-          <ol class="install-steps">
-            <li>Open <strong>Safari</strong> and go to <span class="install-url">pwa.other-you.app</span></li>
-            <li>Tap the <strong>Share button</strong> <span class="install-icon">⎙</span> at the bottom of the screen</li>
-            <li>Scroll down and tap <strong>"Add to Home Screen"</strong></li>
-            <li>Tap <strong>Add</strong> in the top right</li>
-          </ol>
-          <p class="install-note">Must use Safari — Chrome on iOS does not support installation.</p>
-        </div>
-        <div class="install-card reveal reveal-d2">
-          <div class="install-os">
-            <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22" aria-hidden="true"><path d="M6 18c0 .55.45 1 1 1h1v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h2v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h1c.55 0 1-.45 1-1V8H6v10zM3.5 8C2.67 8 2 8.67 2 9.5v7c0 .83.67 1.5 1.5 1.5S5 17.33 5 16.5v-7C5 8.67 4.33 8 3.5 8zm17 0c-.83 0-1.5.67-1.5 1.5v7c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-7c0-.83-.67-1.5-1.5-1.5zm-4.97-5.84l1.3-1.3c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0l-1.48 1.48C13.85 1.23 12.95 1 12 1c-.96 0-1.86.23-2.66.63L7.85.15c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71l1.31 1.31C7.08 3.03 6 4.91 6 7h12c0-2.09-1.08-3.97-2.47-4.84zM10 5H9V4h1v1zm5 0h-1V4h1v1z"/></svg>
-            Android
-          </div>
-          <ol class="install-steps">
-            <li>Open <strong>Chrome</strong> and go to <span class="install-url">pwa.other-you.app</span></li>
-            <li>Tap the <strong>three-dot menu</strong> ⋮ in the top right</li>
-            <li>Tap <strong>"Add to Home Screen"</strong> or <strong>"Install App"</strong></li>
-            <li>Tap <strong>Install</strong> to confirm</li>
-          </ol>
-          <p class="install-note">Chrome may show an automatic install banner — tap it to install in one tap.</p>
-        </div>
-      </div>
-      <p class="install-footer reveal reveal-d3">
-        Once installed, Other You opens full-screen like any native app — and works offline.
-        No updates to download. No App Store account needed.</p>
-    </div>
-  </section>
+================================================================ -->
 
-  <div class="divider"></div>
-  <!-- ══ CTA ══ -->
-  <section class="section-sm">
-    <div class="container">
-      <div class="cta-band reveal">
-        <p class="eyebrow">Ready?</p>
-        <h2 class="display-title">Meet the other<br><em>versions</em> of each other</h2>
-        <p class="lead">Try it now — no sign-up required. Just two people and all the versions of them.</p>
-        <a href="https://pwa.other-you.app" class="btn btn-gold">Enter the App</a>
-      </div>
-    </div>
-  </section>
+<!-- ── MODAL OVERLAY ──────────────────────────────────────────────
+  📖 ACCESSIBILITY: Modal dialogs need special ARIA attributes:
+  • role="dialog"       — tells screen readers "this is a dialog box"
+  • aria-modal="true"   — tells AT to treat this as a modal (ignore bg)
+  • aria-labelledby     — points to the dialog's title element
+  • focus management    — see openModal() / closeOverlay() in JS
+  The backdrop click area closes the modal (for mouse users).
+  The Escape key also closes it (handled in the keydown listener below).
+─────────────────────────────────────────────────────────────────── -->
+<div id="overlay" aria-hidden="true">
+  <div class="overlay-bg" onclick="closeOverlay()" aria-hidden="true"></div>
+  <div class="modal"
+       id="modal-content"
+       role="dialog"
+       aria-modal="true"
+       aria-labelledby="modal-title-sr"
+       tabindex="-1">
+    <!-- Screen-reader-only title; individual modals set this via JS -->
+    <span id="modal-title-sr" class="sr-only"></span>
+  </div>
+</div>
 
-  <!-- ══ FOOTER ══ -->
-  <footer class="site-footer">
-    <div class="footer-logo">Other <em>You</em></div>
-    <p>Privacy Policy &nbsp;·&nbsp; Terms and Conditions</p>
-    <p class="footer-copyright">© 2026 Other You</p>
-    <p class="footer-donate">Enjoying the app? <a href="https://connect.vestwell.com/gift/stable/JpWVJZ7rQ0ixof6rguIVEA" target="_blank" rel="noopener noreferrer">Leave a tip ↗</a></p>
-  </footer>
+<!-- 📖 ACCESSIBILITY: role="alert" + aria-live="polite" makes screen
+     readers announce toast messages automatically without the user
+     having to focus this element. "polite" means "wait for the user
+     to finish their current activity, then announce." -->
+<div id="toast" role="alert" aria-live="polite" aria-atomic="true"></div>
 
-</div><!-- /page-wrap -->
+<!-- ================================================================
+   📌 WHAT: Loads the Supabase JavaScript library as an ES module
+            and bridges it to the classic scripts below.
+   📌 WHY:  Two script types share this page:
+            - This <script type="module"> block uses modern ES module
+              syntax (import/export). Modules are isolated by default —
+              variables defined inside don't leak to the global scope.
+            - The classic scripts below cannot use ES module import syntax.
+            The bridge: import createClient inside the module, then
+            attach it to window (the global object) so the classic
+            scripts can reach it as window._supabaseCreateClient.
+            This is a real-world pattern for mixing script types. -->
+<script type="module" src="js/supabase.js"></script>
 
-<script src="site.js"></script>
+<!-- ================================================================
+   📌 WHAT: The app's JavaScript, split into seven files by responsibility.
+   📌 WHY:  Each file has a single, clear purpose. They load in dependency
+            order: state first (constants + variables), then data (save/load
+            + crypto), then demo (all demo mode code — isolated so it can
+            be disabled by removing one line), then render (UI building
+            functions), then navigation (screen switching), then handlers
+            (event responses), then init (startup code that calls everything
+            above).
+================================================================ -->
+<script src="js/state.js"></script>
+<script src="js/data.js"></script>
+<!-- Demo mode — remove this line to disable demo entirely -->
+<script src="js/demo.js"></script>
+<script src="js/render.js"></script>
+<script src="js/navigation.js"></script>
+<script src="js/handlers.js"></script>
+<script src="js/init.js"></script>
 </body>
 </html>
