@@ -71,7 +71,7 @@
   <ul class="nav-links" role="list">
     <li><a href="index.html">Home</a></li>
     <li><a href="how-it-works.html">How It Works</a></li>
-    <li><a href="roadmap.html" class="active">Roadmap</a></li>
+    <li><a href="roadmap.html" class="active" aria-current="page">Roadmap</a></li>
     <li><a href="contact.html">Contact</a></li>
     <li><a href="https://pwa.other-you.app" class="nav-cta">Open App</a></li>
   </ul>
@@ -82,7 +82,7 @@
 <nav class="nav-mobile" id="nav-mobile" aria-label="Mobile navigation">
   <a href="index.html">Home</a>
   <a href="how-it-works.html">How It Works</a>
-  <a href="roadmap.html" class="active">Roadmap</a>
+  <a href="roadmap.html" class="active" aria-current="page">Roadmap</a>
   <a href="contact.html">Contact</a>
   <a href="https://pwa.other-you.app" class="nav-cta">Open App</a>
 </nav>
@@ -136,9 +136,7 @@
 
             <h3 class="phase-sub">Partner connection</h3>
             <ul class="phase-items" aria-label="Connection features">
-              <li><span class="item-dot" aria-hidden="true"></span>Invite link: share via text, email, or any messaging app</li>
-              <li><span class="item-dot" aria-hidden="true"></span>QR code for in-person connection</li>
-              <li><span class="item-dot" aria-hidden="true"></span>Manual code as a fallback</li>
+              <li><span class="item-dot" aria-hidden="true"></span>Private code pairing: one partner generates a code, shares it via any messaging app, partner enters it to connect</li>
               <li><span class="item-dot" aria-hidden="true"></span>End-to-end encrypted persona sync via Supabase</li>
               <li><span class="item-dot" aria-hidden="true"></span>Offline queue: changes sync when both are online</li>
               <li><span class="item-dot" aria-hidden="true"></span>Disconnect with partner notification</li>
@@ -149,7 +147,7 @@
               <li><span class="item-dot" aria-hidden="true"></span>Progressive Web App: installable from browser, works offline</li>
               <li><span class="item-dot" aria-hidden="true"></span>Dark and light themes following device settings</li>
               <li><span class="item-dot" aria-hidden="true"></span>Full WCAG AA accessibility compliance</li>
-              <li><span class="item-dot" aria-hidden="true"></span>Export and import backup: restore on any device</li>
+              <li><span class="item-dot" aria-hidden="true"></span>Encrypted automatic backup with password protection and background file saving</li>
               <li><span class="item-dot" aria-hidden="true"></span>Full demo mode with example personas and history</li>
               <li><span class="item-dot" aria-hidden="true"></span>Date history with completed date tracking and editing</li>
             </ul>
@@ -170,7 +168,7 @@
               <li><span class="item-dot" aria-hidden="true"></span>Personas creation prompts to combat writer's block</li>
               <li><span class="item-dot" aria-hidden="true"></span>Date suggestions including themes, activities, and questions for deeper conversation</li>
               <li><span class="item-dot" aria-hidden="true"></span>Journal feature added to history with reflection prompts and the recording of date theme details</li>
-              <li><span class="item-dot" aria-hidden="true"></span>Multi device sync: devices can sync when on the same network</li>
+              <li><span class="item-dot" aria-hidden="true"></span>Multi-device support: set up the app on a second device using your backup file</li>
             </ul>
           </div>
         </div>
@@ -187,8 +185,7 @@
             <ul class="phase-items" aria-label="Phase 3 features">
               <li><span class="item-dot" aria-hidden="true"></span>Trait compatibility algorithm for tension and resonance between personas including date suggestions and questions for conversation</li>
               <li><span class="item-dot" aria-hidden="true"></span>Match history: no repeats until all combinations have been tried</li>
-              <li><span class="item-dot" aria-hidden="true"></span>Optional cloud sync via third party storage with automatic backup</li>
-              <li><span class="item-dot" aria-hidden="true"></span>Encrypted backup</li>
+              <li><span class="item-dot" aria-hidden="true"></span>No-repeat matching: all persona combinations tried before repeating</li>
             </ul>
           </div>
         </div>
@@ -230,7 +227,7 @@
   <!-- ══ FOOTER ══ -->
   <footer class="site-footer">
     <div class="footer-logo">Other <em>You</em></div>
-    <p>Privacy Policy &nbsp;·&nbsp; Terms and Conditions</p>
+    <p><a href="privacy-policy.html">Privacy Policy</a> &nbsp;·&nbsp; <a href="terms.html">Terms and Conditions</a></p>
     <p class="footer-copyright">© 2026 Other You</p>
     <p class="footer-donate">Enjoying the app? <a href="https://connect.vestwell.com/gift/stable/JpWVJZ7rQ0ixof6rguIVEA" target="_blank" rel="noopener noreferrer">Leave a tip ↗</a></p>
   </footer>

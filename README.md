@@ -1,69 +1,128 @@
-# Other You · Multiverse Date Night
+# Other You · Marketing Site
 
-Marketing website for **Other You** — a Progressive Web App that helps couples explore alternate versions of themselves through imaginative, conversation-driven date nights.
+The static marketing website for Other You: Multiverse Date Night, served at `other-you.app`. It introduces the app to new users, explains how it works, shows the roadmap, and links to the live PWA at `pwa.other-you.app`.
 
-## Live Site
+Hand-coded static site — no CMS, no framework, no build step.
 
-[pwa.other-you.app](https://pwa.other-you.app)
-
-## About
-
-Other You lets couples create fictional personas, then "spin" multiverse date nights based on those personas. The PWA handles everything on-device with end-to-end encrypted partner sync — no accounts, no tracking, no data sold.
-
-This repo is the **marketing website** for the app. It explains what the app is, how it works, and where it's headed.
-
-## Pages
-
-| File | Description |
-|------|-------------|
-| `index.html` | Homepage — hero, features, install guide, CTA |
-| `how-it-works.html` | Full user guide covering every feature |
-| `roadmap.html` | Four-phase development timeline |
-| `contact.html` | Feedback form (powered by Opnform) |
-
-## Tech Stack
-
-- **Vanilla HTML, CSS, and JavaScript** — no frameworks, no build step
-- **Google Fonts** — Cormorant Garamond (headings) + DM Sans (body)
-- **Canvas API** — animated starfield background
-- **IntersectionObserver** — scroll-triggered reveal animations
-- **Opnform** — embedded contact form
+---
 
 ## Project Structure
 
 ```
 site/
-├── assets/             # Icons, favicon, OG image, logo SVG
-├── index.html
-├── how-it-works.html
-├── roadmap.html
-├── contact.html
-├── site.css            # All styles
-├── tokens.css          # Design tokens (colors, typography)
-├── site.js             # Starfield, mobile nav, scroll reveals
-└── manifest.json       # PWA web app manifest
+├── README.md
+├── manifest.json               # PWA manifest for the marketing site
+├── index.html                  # Homepage
+├── how-it-works.html           # Full user guide — install, personas, connect, dating, backup, FAQ
+├── roadmap.html                # Product roadmap — phased timeline with status indicators
+├── contact.html                # Contact / feedback form
+├── privacy-policy.html         # Privacy policy
+├── terms.html                  # Terms and conditions
+├── assets/
+│   ├── og-image.png            # Open Graph social share image
+│   ├── icons/
+│   │   ├── favicon.ico
+│   │   ├── apple-touch-icon.png
+│   │   ├── icon-192.png
+│   │   └── icon-512.png
+│   └── logos/
+│       └── logo-icon.svg       # App logomark used in hero and nav
+├── css/
+│   ├── tokens.css              # Design tokens — brand colors, spacing, type scale
+│   └── site.css                # All site styles — nav, layout, sections, components, animations
+└── js/
+    └── site.js                 # Navigation (hamburger menu, active states), scroll reveal animations, canvas background
 ```
-
-## Running Locally
-
-No build step required. Just open any `.html` file in a browser, or serve the folder with any static file server:
-
-```bash
-npx serve .
-```
-
-## Design
-
-- Dark purple + cream + gold color scheme with light mode support
-- Glass-morphism cards with backdrop blur
-- Fluid typography via CSS `clamp()`
-- WCAG AA accessible — skip link, ARIA labels, keyboard nav, reduced motion support
-- Mobile-first responsive layout (hamburger nav below 680px)
-
-## Contact
-
-Questions or feedback → [other-you.app/contact](https://other-you.app/contact)
 
 ---
 
-Built by [Huemanatee Group](https://huemanatee.com)
+## Pages
+
+| File | URL | Purpose |
+|---|---|---|
+| `index.html` | `/` | Hero, what-it-is cards, how-it-works steps, feature grid, install instructions, CTA |
+| `how-it-works.html` | `/how-it-works` | Full guide — installing, getting started, personas, connecting, dating, history, sync, disconnect, privacy, backup, device requirements, FAQ |
+| `roadmap.html` | `/roadmap` | Phased timeline — Phase 1 (complete), Phase 2 (in progress), Phases 3–4 (planned) |
+| `contact.html` | `/contact` | Feedback and contact form |
+| `privacy-policy.html` | `/privacy-policy` | Privacy policy |
+| `terms.html` | `/terms` | Terms and conditions |
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Markup | Vanilla HTML — one file per page |
+| Styles | Vanilla CSS — `tokens.css` + `site.css` |
+| Scripts | Vanilla JavaScript — `site.js` (no framework, no build step) |
+| Fonts | Google Fonts — Cormorant Garamond + DM Sans |
+| Background | Canvas-based animated starfield (in `site.js`) |
+| Animations | Intersection Observer scroll-reveal (CSS classes + `site.js`) |
+| Hosting | Static file host (cPanel deployment via File Manager) |
+
+---
+
+## Design System
+
+The site shares brand tokens with the app:
+
+- **Primary dark background:** `#0d0818`
+- **Surface:** `#1a0e2e`
+- **Gold accent:** `#9e7a2e` (rendered as `var(--gold)`)
+- **Text:** cream / mist / dim hierarchy via CSS custom properties
+- **Typography:** Cormorant Garamond (display/headings) + DM Sans (body/UI)
+
+Tokens are defined in `css/tokens.css` and consumed throughout `css/site.css`.
+
+---
+
+## Running Locally
+
+No build step. Open any HTML file directly in a browser, or serve with a local server for accurate relative path resolution:
+
+**Python:**
+```bash
+cd site
+python -m http.server 8080
+```
+Open `http://localhost:8080`
+
+**Node.js:**
+```bash
+npx serve site
+```
+
+**VS Code:** right-click any `.html` file → *Open with Live Server*
+
+---
+
+## Deployment
+
+Deployed via cPanel File Manager — upload the contents of `site/` to the web root of `other-you.app`. No build or compile step. After each CSS change, increment the version comment in `css/site.css` to bust browser cache.
+
+---
+
+## Accessibility
+
+WCAG 2.1 AA targets:
+
+- Skip navigation link on every page
+- All nav links and icon buttons have descriptive `aria-label` attributes
+- `aria-current="page"` on the active nav item
+- `aria-expanded` and `aria-controls` on the hamburger menu button
+- Canvas background has `aria-hidden="true"`
+- Semantic landmarks: `<nav>`, `<main>`, `<header>`, `<footer>`, `<section>`
+
+---
+
+## URLs
+
+- **Marketing site:** `https://www.other-you.app` (also `https://other-you.app`)
+- **Live PWA:** `https://pwa.other-you.app`
+
+---
+
+## License
+
+Private — Huemanatee Group. All rights reserved.

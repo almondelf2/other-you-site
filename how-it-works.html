@@ -80,7 +80,7 @@
   <a href="index.html" class="nav-logo">Other <em>You</em><small>Multiverse Date Night</small></a>
   <ul class="nav-links" role="list">
     <li><a href="index.html">Home</a></li>
-    <li><a href="how-it-works.html" class="active">How It Works</a></li>
+    <li><a href="how-it-works.html" class="active" aria-current="page">How It Works</a></li>
     <li><a href="roadmap.html">Roadmap</a></li>
     <li><a href="contact.html">Contact</a></li>
     <li><a href="https://pwa.other-you.app" class="nav-cta">Open App</a></li>
@@ -91,7 +91,7 @@
 </nav>
 <nav class="nav-mobile" id="nav-mobile" aria-label="Mobile navigation">
   <a href="index.html">Home</a>
-  <a href="how-it-works.html" class="active">How It Works</a>
+  <a href="how-it-works.html" class="active" aria-current="page">How It Works</a>
   <a href="roadmap.html">Roadmap</a>
   <a href="contact.html">Contact</a>
   <a href="https://pwa.other-you.app" class="nav-cta">Open App</a>
@@ -193,7 +193,7 @@
             <div class="expect-icon" aria-hidden="true">👤</div>
             <div>
               <h3 class="expect-title">Set up your real profile</h3>
-              <div class="expect-text">Tap "Start for real" on the welcome screen. You'll be asked for your name and a one-line bio — just enough for your partner to know whose profile they're looking at. This takes about 30 seconds. You can change it later in Settings.</div>
+              <div class="expect-text">Tap "Begin your journey →" on the last welcome slide, or "Create a new profile" on the profile entry screen. You'll be asked for your name and a one-line bio — just enough for your partner to know whose profile they're looking at. This takes about 30 seconds. You can change it later in Settings.</div>
             </div>
           </div>
         </div>
@@ -214,7 +214,7 @@
           </div>
           <div class="step-item">
             <div>
-              <h3 class="step-item-title">Tap "Add a self"</h3>
+              <h3 class="step-item-title">Tap "Add another version of yourself"</h3>
               <div class="step-item-text">The persona creation screen opens. Start with the name — a real name, an archetype ("The Musician"), or both ("Noa — The Wanderer"). If you're stuck, tap "Suggest a name" for ideas.</div>
             </div>
           </div>
@@ -238,7 +238,7 @@
           </div>
           <div class="step-item">
             <div>
-              <h3 class="step-item-title">Tap "Save this version of you"</h3>
+              <h3 class="step-item-title">Tap "Save persona"</h3>
               <div class="step-item-text">Your persona is saved to your device. It syncs to your partner's device automatically the next time you're both online.</div>
             </div>
           </div>
@@ -255,7 +255,7 @@
             <div class="expect-icon" aria-hidden="true">✕</div>
             <div>
               <h3 class="expect-title">Deleting a persona</h3>
-              <div class="expect-text">Open the persona to edit it, then scroll to the bottom and tap "Remove this persona." A confirmation screen appears before anything is deleted. Your other personas are not affected.</div>
+              <div class="expect-text">Open the persona to edit it, then scroll to the bottom and tap "✕ Remove this persona." A confirmation screen appears before anything is deleted. Your other personas are not affected.</div>
             </div>
           </div>
         </div>
@@ -266,76 +266,56 @@
       <!-- ── CONNECTING ── -->
       <div class="hiw-block reveal" id="connect">
         <h2 class="hiw-block-title"><span class="hiw-block-icon" aria-hidden="true">🔗</span> Connecting with your partner</h2>
-        <p class="hiw-block-lead">The first connection is a one-time handshake. You do not need to be in the same room — it works entirely remotely over text, email, or any messaging app.</p>
+        <p class="hiw-block-lead">The first connection is a one-time handshake using a private text code. You do not need to be in the same room — it works entirely over any messaging app.</p>
 
         <div class="callout callout-info" style="margin-bottom:18px;">
           <div class="callout-icon" aria-hidden="true">🔑</div>
           <div>
             <div class="callout-title-info">No accounts required</div>
-            <div class="callout-text">The invite link itself is the relationship. It contains a unique pair ID and an encryption key. Only the two of you ever hold that key — it never touches any server. Whoever has the link can join, so only send it to your partner.</div>
+            <div class="callout-text">The code itself is the relationship. It contains a unique pair ID and an encryption key. Only the two of you ever hold that key — it never touches a server in readable form. Treat your code like a shared secret and only send it to your partner.</div>
           </div>
         </div>
 
         <div class="step-list" style="margin-bottom:20px;">
           <div class="step-item">
             <div>
-              <h3 class="step-item-title">One partner generates the invite</h3>
-              <div class="step-item-text">Go to the Connect screen (tap Settings → Partner connection, or the Connect option on the Home screen). Tap "Generate invite for my partner." The app creates a private link, a QR code, and a manual code — all at once.</div>
+              <h3 class="step-item-title">One partner generates the code</h3>
+              <div class="step-item-text">Go to the Connect tab. Tap "✦ Generate my code." The app creates a private code — a short string that looks like <code class="code-inline">K7M2P-R9NQ4-W3XBT-H6YL8</code> — and displays it large on screen.</div>
             </div>
           </div>
           <div class="step-item">
             <div>
-              <h3 class="step-item-title">Share the invite link</h3>
-              <div class="step-item-text">Tap "Share invite link" to use your phone's share sheet (works with any messaging app), or tap "Copy link to clipboard" to paste it yourself. The link looks like: <code class="code-inline">pwa.other-you.app/join#pair=…</code></div>
+              <h3 class="step-item-title">Share the code</h3>
+              <div class="step-item-text">Tap "Copy code" to copy it to your clipboard, or tap "Share" to open your phone's share sheet. Send it to your partner however you like — text, iMessage, WhatsApp, email, anything works.</div>
             </div>
           </div>
           <div class="step-item">
             <div>
-              <h3 class="step-item-title">Your partner opens the link</h3>
-              <div class="step-item-text">When your partner taps the link, the app opens and the connection is established automatically. If they haven't set up their profile yet, they'll be prompted to do that first — the connection completes after.</div>
+              <h3 class="step-item-title">Your partner enters the code</h3>
+              <div class="step-item-text">Your partner opens the Connect tab in their app, types or pastes the code into the "Enter a code" field, and taps "Join." If they haven't set up their profile yet, they'll be prompted to do that first — the connection completes after.</div>
             </div>
           </div>
           <div class="step-item">
             <div>
               <h3 class="step-item-title">Personas sync automatically</h3>
-              <div class="step-item-text">Once connected, both partners exchange their personas. Within a few seconds (if both devices are online), you'll each see the other's personas appear on your Profiles screen.</div>
+              <div class="step-item-text">Once connected, both partners exchange their personas. Within a few seconds (if both devices are online), you'll each see the other's personas on your Profiles screen.</div>
             </div>
           </div>
         </div>
 
-        <div class="method-list">
-          <div class="method">
-            <div class="method-num">A</div>
-            <div>
-              <h3 class="method-title">Invite link — recommended</h3>
-              <div class="method-text">Send it via text, WhatsApp, iMessage, email — anything. Works remotely. This is the easiest method for most couples.</div>
-              <span class="method-tag recommended">★ Easiest</span>
-              <span class="method-tag">Works remotely</span>
-            </div>
-          </div>
-          <div class="method">
-            <div class="method-num">B</div>
-            <div>
-              <h3 class="method-title">QR code — in person</h3>
-              <div class="method-text">The same invite displayed as a QR code on your screen. Your partner opens their camera and points it at your screen. Instant — but requires both phones in the same room.</div>
-              <span class="method-tag">Best in person</span>
-            </div>
-          </div>
-          <div class="method">
-            <div class="method-num">C</div>
-            <div>
-              <h3 class="method-title">Manual code — fallback</h3>
-              <div class="method-text">A short code like <code class="code-inline">7X9K-2M4P</code> your partner can type in. Use this if the link doesn't work for some reason.</div>
-              <span class="method-tag">Backup option</span>
-            </div>
+        <div class="callout callout-info" style="margin-bottom:14px;">
+          <div class="callout-icon" aria-hidden="true">💡</div>
+          <div>
+            <div class="callout-title-info">One method, full flexibility</div>
+            <div class="callout-text">Because it's just a code, you can share it any way you like — paste it into a text, drop it in a WhatsApp message, email it, read it out loud. Whatever works for you. No special app required on either end.</div>
           </div>
         </div>
 
         <div class="callout callout-warn" style="margin-top:16px;">
           <div class="callout-icon" aria-hidden="true">⚠️</div>
           <div>
-            <div class="callout-title-warn">The invite link expires after one use</div>
-            <div class="callout-text">Once your partner joins, the link is invalid. If you sent it to the wrong person, cancel it immediately in the Connect screen before they open it. You can generate a new invite any time.</div>
+            <div class="callout-title-warn">The code expires after one use</div>
+            <div class="callout-text">Once your partner joins, the code is no longer valid. If you sent it to the wrong person, cancel it immediately in the Connect screen before they enter it. You can generate a new code any time.</div>
           </div>
         </div>
       </div>
@@ -449,7 +429,7 @@
             <div class="expect-icon" aria-hidden="true">🔐</div>
             <div>
               <h3 class="expect-title">What the relay server sees</h3>
-              <div class="expect-text">All data is encrypted on your device before it leaves. The relay server (Supabase) sees only your pair ID — a random string with no names attached — and an encrypted blob it cannot read. Your names, personas, and date history are never readable by anyone except the two of you.</div>
+              <div class="expect-text">All data is encrypted on your device before it is transmitted. The relay server (Supabase) can only see your pair ID — a random string with no names attached — and encrypted data it cannot read. Your personas, names, and history are never visible to anyone except the two of you.</div>
             </div>
           </div>
         </div>
@@ -466,7 +446,7 @@
             <div class="expect-icon" aria-hidden="true">⚙️</div>
             <div>
               <h3 class="expect-title">How to disconnect</h3>
-              <div class="expect-text">Go to Settings (the gear icon in the bottom nav) → Partner connection → tap "Disconnect from [name]." A confirmation screen appears first. You can also disconnect from the Connect screen directly.</div>
+              <div class="expect-text">Go to Settings → tap the partner connection card → tap "Disconnect from [name]." A confirmation appears first. You can also disconnect directly from the Connect tab.</div>
             </div>
           </div>
           <div class="expect-row">
@@ -480,7 +460,7 @@
             <div class="expect-icon" aria-hidden="true">🔁</div>
             <div>
               <h3 class="expect-title">Reconnecting</h3>
-              <div class="expect-text">Generate a new invite link in the Connect screen and share it again. The new connection starts fresh — sync history does not carry over.</div>
+              <div class="expect-text">Generate a new code in the Connect tab and share it with your partner. The new connection starts fresh — sync history does not carry over.</div>
             </div>
           </div>
         </div>
@@ -507,10 +487,10 @@
             </div>
           </div>
           <div class="expect-row">
-            <div class="expect-icon" aria-hidden="true">📄</div>
+            <div class="expect-icon" aria-hidden="true">🔐</div>
             <div>
-              <h3 class="expect-title">Your backup file is not encrypted</h3>
-              <div class="expect-text">When you export a backup, the downloaded file is plain readable text (JSON). Anyone who has the file can read your personas. Store it somewhere private — iCloud Drive, Google Drive, or a password-protected location. Do not share it publicly.</div>
+              <h3 class="expect-title">Your backup file is encrypted</h3>
+              <div class="expect-text">Your backup is locked with a password you create during setup. The encryption is AES-256 — the same standard used by banks and governments. Without your password, the file is unreadable. This means your backup is safe to store anywhere: iCloud, Google Drive, a USB drive, anywhere.</div>
             </div>
           </div>
           <div class="expect-row">
@@ -525,7 +505,7 @@
           <div class="callout-icon" aria-hidden="true">⚠️</div>
           <div>
             <div class="callout-title-warn">No account means no account recovery</div>
-            <div class="callout-text">There is no "forgot password" because there is no account. If you clear your browser storage or get a new phone without exporting a backup, your data is gone permanently. Export backups regularly.</div>
+            <div class="callout-text">There is no "forgot password" because there is no account. If you clear your browser storage or get a new phone without a backup configured, your data is gone permanently. Set up Backup &amp; Sync in Settings and keep your password somewhere safe.</div>
           </div>
         </div>
       </div>
@@ -535,37 +515,50 @@
       <!-- ── BACKUP ── -->
       <div class="hiw-block reveal" id="backup">
         <h2 class="hiw-block-title"><span class="hiw-block-icon" aria-hidden="true">💾</span> Backing up your data</h2>
-        <p class="hiw-block-lead">The Export Backup feature in Settings is your only safety net. Use it every time you create or edit a persona.</p>
+        <p class="hiw-block-lead">Other You has a built-in encrypted backup system. Set it up once and the app updates your backup file automatically every time something changes — no manual exporting needed.</p>
         <div class="step-list" style="margin-bottom:16px;">
           <div class="step-item">
             <div>
-              <h3 class="step-item-title">Open Settings</h3>
-              <div class="step-item-text">Tap the gear icon ⚙️ in the bottom navigation bar.</div>
+              <h3 class="step-item-title">Open Settings → Backup &amp; Sync</h3>
+              <div class="step-item-text">Tap the gear icon ⚙️ in the bottom navigation bar, then tap "Backup &amp; Sync."</div>
             </div>
           </div>
           <div class="step-item">
             <div>
-              <h3 class="step-item-title">Tap "Export backup"</h3>
-              <div class="step-item-text">A file called <code class="code-inline">other-you-backup-YYYY-MM-DD.json</code> downloads to your device. On iPhone it goes to Downloads in the Files app. On Android it goes to your Downloads folder.</div>
+              <h3 class="step-item-title">Tap "Create a backup"</h3>
+              <div class="step-item-text">This starts the backup setup flow. You'll go through three steps: an intro, creating a password, and choosing a save location.</div>
             </div>
           </div>
           <div class="step-item">
             <div>
-              <h3 class="step-item-title">Move it somewhere safe</h3>
-              <div class="step-item-text">On iPhone: open the Files app, find the file in Downloads, and move it to iCloud Drive. On Android: move it to Google Drive. Do not leave it only in Downloads — that folder is often cleared automatically. Remember: this file is readable, so keep it private.</div>
+              <h3 class="step-item-title">Create your backup password</h3>
+              <div class="step-item-text">Your backup is encrypted with a password you create. The app never stores your password — not on your device, not anywhere. If you lose it, your backup cannot be recovered. Use a password manager to generate and save a strong one. The password must be at least 15 characters.</div>
             </div>
           </div>
           <div class="step-item">
             <div>
-              <h3 class="step-item-title">To restore: tap "Import backup"</h3>
-              <div class="step-item-text">In Settings, tap Import backup and choose your file. The app shows a preview of what's in it and asks you to confirm before replacing anything. Your personas are restored instantly.</div>
+              <h3 class="step-item-title">Choose where to save your backup</h3>
+              <div class="step-item-text">A file picker opens. Choose a folder — ideally a cloud folder like iCloud Drive, Google Drive, or OneDrive so your backup is protected even if your device is lost. The app saves a file called <code class="code-inline">other-you-backup.json</code> to that location.</div>
             </div>
           </div>
           <div class="step-item">
             <div>
-              <h3 class="step-item-title">Using the app on a second device</h3>
-              <div class="step-item-text">Export on Device A, open the backup file on Device B from iCloud Drive or Google Drive, then import it in the app on Device B. Export a fresh backup any time you make changes — manual export is the only way to keep two personal devices in sync.</div>
+              <h3 class="step-item-title">After that, it's automatic</h3>
+              <div class="step-item-text">Every time you save a persona, accept a date, or make any change, the app encrypts your latest data and writes it to your backup file in the background. You'll be asked for your password once each time you open the app. That's it.</div>
             </div>
+          </div>
+          <div class="step-item">
+            <div>
+              <h3 class="step-item-title">To restore: Settings → Backup &amp; Sync → Restore from backup</h3>
+              <div class="step-item-text">Choose your backup file, enter your password, and your data is restored. This replaces everything currently in the app — it cannot be undone.</div>
+            </div>
+          </div>
+        </div>
+        <div class="callout callout-info">
+          <div class="callout-icon" aria-hidden="true">📱</div>
+          <div>
+            <div class="callout-title-info">On iPhone and Firefox</div>
+            <div class="callout-text">iOS Safari and Firefox don't support automatic background file saving. On these browsers, the app will prompt you to download a fresh backup after important changes. Save the downloaded file to your cloud folder. Your backup is still encrypted and password-protected.</div>
           </div>
         </div>
       </div>
@@ -609,14 +602,14 @@
             <div class="expect-icon" aria-hidden="true">🆕</div>
             <div>
               <h3 class="expect-title">I got a new phone. What do I do?</h3>
-              <div class="expect-text">Before switching: export a backup on your old phone and save it to iCloud Drive or Google Drive. On your new phone: install the app, go to Settings → Import backup, and choose your file. Then go to the Connect screen and ask your partner to generate a new invite — tap it to re-establish the connection.</div>
+              <div class="expect-text">Before switching: make sure Backup &amp; Sync is set up and your backup file is saved to a cloud folder (iCloud Drive, Google Drive, etc.). On your new phone: install the app, go to Settings → Backup &amp; Sync → Restore from backup, navigate to your backup file in the cloud folder, and enter your password. Then go to the Connect tab and generate a new code — share it with your partner to re-establish the connection.</div>
             </div>
           </div>
           <div class="expect-row">
             <div class="expect-icon" aria-hidden="true">🔄</div>
             <div>
               <h3 class="expect-title">My partner's persona isn't showing up</h3>
-              <div class="expect-text">Make sure both of you have the app open and are connected to the internet at the same time. Try closing and reopening the app. If it still doesn't appear, your partner can export their data and share the backup file with you to import manually as a fallback.</div>
+              <div class="expect-text">Make sure both of you have the app open and are connected to the internet at the same time. Try closing and reopening the app. If it still doesn't appear, try disconnecting and reconnecting using a new code.</div>
             </div>
           </div>
           <div class="expect-row">
@@ -629,8 +622,8 @@
           <div class="expect-row">
             <div class="expect-icon" aria-hidden="true">🔑</div>
             <div>
-              <h3 class="expect-title">I sent the invite to the wrong person</h3>
-              <div class="expect-text">Cancel it immediately in the Connect screen before the wrong person opens it. Once cancelled, the link is invalid. Generate a new one. If the wrong person already opened it, disconnect in Connect, clear all data in Settings, and start fresh — your partner will need to do the same.</div>
+              <h3 class="expect-title">I sent the code to the wrong person</h3>
+              <div class="expect-text">Cancel it immediately in the Connect tab before the wrong person enters it. Once cancelled, the code is invalid. Generate a new one and share it with your partner. If the wrong person already used it, disconnect in the Connect tab and generate a new code for your partner.</div>
             </div>
           </div>
           <div class="expect-row">
@@ -674,7 +667,7 @@
   <!-- ══ FOOTER ══ -->
   <footer class="site-footer">
     <div class="footer-logo">Other <em>You</em></div>
-    <p>Privacy Policy &nbsp;·&nbsp; Terms and Conditions</p>
+    <p><a href="privacy-policy.html">Privacy Policy</a> &nbsp;·&nbsp; <a href="terms.html">Terms and Conditions</a></p>
     <p class="footer-copyright">© 2026 Other You</p>
     <p class="footer-donate">Enjoying the app? <a href="https://connect.vestwell.com/gift/stable/JpWVJZ7rQ0ixof6rguIVEA" target="_blank" rel="noopener noreferrer">Leave a tip ↗</a></p>
   </footer>

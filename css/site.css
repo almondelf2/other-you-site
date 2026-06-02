@@ -121,6 +121,12 @@ body {
   font-size: 16px;
   line-height: 1.6;
   min-height: 100vh;
+  /* overflow-wrap:break-word prevents long unbroken words (URLs, long persona
+     names, compound terms) from overflowing their containers at narrow widths
+     (320–375px). The property cascades to all child elements and is only
+     overridden where explicit truncation (text-overflow:ellipsis) is already
+     in use. Added in the responsive design pass.  [ADDED: a11y-pass] */
+  overflow-wrap: break-word;
   -webkit-font-smoothing: antialiased; /* crisper text on macOS/iOS */
 }
 img  { max-width: 100%; display: block; }
