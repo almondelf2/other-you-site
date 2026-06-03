@@ -1,488 +1,274 @@
 <!DOCTYPE html>
+<!-- Last audited: 2026-06-03 — migrated from embedded styles to shared CSS; scroll-margin-top now provided by site.css .section rule -->
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Privacy Policy — Other You: Multiverse Date Night</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --gold: #9e7a2e;
-      --gold-light: #c9a55a;
-      --gold-dim: rgba(158, 122, 46, 0.15);
-      --bg: #0d0818;
-      --surface: #1a0e2e;
-      --surface-2: #221540;
-      --text: #e8e0f5;
-      --text-muted: #9d8fbf;
-      --border: rgba(158, 122, 46, 0.2);
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 300;
-      line-height: 1.8;
-      min-height: 100vh;
-    }
-
-    /* Starfield background */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image:
-        radial-gradient(1px 1px at 12% 18%, rgba(255,255,255,0.4) 0%, transparent 100%),
-        radial-gradient(1px 1px at 34% 72%, rgba(255,255,255,0.3) 0%, transparent 100%),
-        radial-gradient(1.5px 1.5px at 58% 9%, rgba(255,255,255,0.5) 0%, transparent 100%),
-        radial-gradient(1px 1px at 78% 44%, rgba(255,255,255,0.3) 0%, transparent 100%),
-        radial-gradient(1px 1px at 91% 88%, rgba(255,255,255,0.4) 0%, transparent 100%),
-        radial-gradient(1px 1px at 5% 63%, rgba(255,255,255,0.2) 0%, transparent 100%),
-        radial-gradient(1.5px 1.5px at 47% 55%, rgba(255,255,255,0.3) 0%, transparent 100%),
-        radial-gradient(1px 1px at 66% 81%, rgba(255,255,255,0.2) 0%, transparent 100%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* Orb glow */
-    body::after {
-      content: '';
-      position: fixed;
-      top: -20%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 700px;
-      height: 700px;
-      background: radial-gradient(ellipse, rgba(158, 122, 46, 0.07) 0%, transparent 65%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .wrapper {
-      position: relative;
-      z-index: 1;
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 4rem 2rem 6rem;
-    }
-
-    /* Header */
-    header {
-      text-align: center;
-      margin-bottom: 4rem;
-      padding-bottom: 3rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .site-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(0.8rem, 2vw, 0.9rem);
-      font-weight: 400;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 1.2rem;
-    }
-
-    h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(2.2rem, 5vw, 3.4rem);
-      font-weight: 300;
-      line-height: 1.15;
-      color: var(--text);
-      margin-bottom: 1.2rem;
-    }
-
-    h1 em {
-      font-style: italic;
-      color: var(--gold-light);
-    }
-
-    .meta {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      letter-spacing: 0.05em;
-    }
-
-    /* Table of contents */
-    .toc {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.8rem 2.2rem;
-      margin-bottom: 3.5rem;
-    }
-
-    .toc-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 0.75rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 1rem;
-    }
-
-    .toc ol {
-      list-style: none;
-      counter-reset: toc;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.4rem 2rem;
-    }
-
-    @media (max-width: 540px) {
-      .toc ol { grid-template-columns: 1fr; }
-    }
-
-    .toc li {
-      counter-increment: toc;
-      display: flex;
-      align-items: baseline;
-      gap: 0.5rem;
-      font-size: 0.88rem;
-    }
-
-    .toc li::before {
-      content: counter(toc, decimal-leading-zero);
-      color: var(--gold-dim);
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 0.75rem;
-      flex-shrink: 0;
-      color: var(--gold);
-      opacity: 0.6;
-    }
-
-    .toc a {
-      color: var(--text-muted);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    .toc a:hover { color: var(--gold-light); }
-
-    /* Sections */
-    section {
-      margin-bottom: 3.5rem;
-      scroll-margin-top: 2rem;
-    }
-
-    .section-number {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 0.72rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--gold);
-      opacity: 0.7;
-      margin-bottom: 0.4rem;
-    }
-
-    h2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(1.4rem, 3vw, 1.9rem);
-      font-weight: 400;
-      color: var(--text);
-      margin-bottom: 1.2rem;
-      padding-bottom: 0.8rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    p {
-      color: var(--text-muted);
-      margin-bottom: 1rem;
-      font-size: 0.95rem;
-    }
-
-    p:last-child { margin-bottom: 0; }
-
-    p strong {
-      color: var(--text);
-      font-weight: 500;
-    }
-
-    ul, ol {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      padding-left: 1.4rem;
-      margin-bottom: 1rem;
-    }
-
-    li { margin-bottom: 0.4rem; }
-
-    /* Callout box */
-    .callout {
-      background: var(--gold-dim);
-      border: 1px solid rgba(158, 122, 46, 0.3);
-      border-left: 3px solid var(--gold);
-      border-radius: 0 8px 8px 0;
-      padding: 1.2rem 1.5rem;
-      margin: 1.5rem 0;
-    }
-
-    .callout p {
-      color: var(--text);
-      margin: 0;
-      font-size: 0.92rem;
-    }
-
-    /* Contact card */
-    .contact-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 2rem;
-      text-align: center;
-      margin-top: 1.5rem;
-    }
-
-    .contact-card .label {
-      font-size: 0.75rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 0.6rem;
-      display: block;
-    }
-
-    .contact-card a {
-      color: var(--gold-light);
-      text-decoration: none;
-      font-size: 1rem;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.2rem;
-      font-weight: 400;
-    }
-
-    .contact-card a:hover {
-      text-decoration: underline;
-      text-underline-offset: 4px;
-    }
-
-    /* Divider */
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin: 1.5rem 0;
-      opacity: 0.3;
-    }
-
-    .divider::before, .divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--gold);
-    }
-
-    .divider span {
-      font-family: 'Cormorant Garamond', serif;
-      color: var(--gold);
-      font-size: 1rem;
-    }
-
-    /* Footer */
-    footer {
-      margin-top: 5rem;
-      padding-top: 2rem;
-      border-top: 1px solid var(--border);
-      text-align: center;
-    }
-
-    footer p {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      opacity: 0.6;
-    }
-
-    footer a {
-      color: var(--gold);
-      text-decoration: none;
-    }
-
-    footer a:hover { text-decoration: underline; }
-
-    /* Fade-in animation */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(18px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    header, .toc, section {
-      animation: fadeUp 0.6s ease both;
-    }
-
-    .toc { animation-delay: 0.1s; }
-    section:nth-of-type(1) { animation-delay: 0.15s; }
-    section:nth-of-type(2) { animation-delay: 0.2s; }
-    section:nth-of-type(3) { animation-delay: 0.25s; }
-    section:nth-of-type(4) { animation-delay: 0.3s; }
-    section:nth-of-type(5) { animation-delay: 0.35s; }
-    section:nth-of-type(6) { animation-delay: 0.4s; }
-    section:nth-of-type(7) { animation-delay: 0.45s; }
-    section:nth-of-type(8) { animation-delay: 0.5s; }
-    section:nth-of-type(9) { animation-delay: 0.55s; }
-    section:nth-of-type(10) { animation-delay: 0.6s; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0d0818">
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="assets/icons/favicon.ico">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<meta name="description" content="Read the Other You Privacy Policy — what we collect, how we use it, and how your data is protected.">
+<title>Privacy Policy · Other You</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap">
+<link rel="stylesheet" href="css/site.css">
+<style>
+@media (max-width: 540px) { .toc-grid { grid-template-columns: 1fr; } }
+/* display:block expands each link to fill its grid cell, increasing touch target area */
+.toc-grid a { display: block; padding: 4px 2px; }
+</style>
 </head>
 <body>
-  <div class="wrapper">
 
-    <header>
-      <p class="site-name">Other You: Multiverse Date Night</p>
-      <h1>Privacy <em>Policy</em></h1>
-      <p class="meta">Effective Date: June 1, 2025 &nbsp;·&nbsp; Last Updated: June 1, 2025</p>
-    </header>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+<canvas id="site-bg" aria-hidden="true"></canvas>
 
-    <nav class="toc" aria-label="Table of contents">
-      <p class="toc-title">Contents</p>
-      <ol>
-        <li><a href="#overview">Overview</a></li>
-        <li><a href="#information-we-collect">Information We Collect</a></li>
-        <li><a href="#how-we-use">How We Use Your Information</a></li>
-        <li><a href="#data-sharing">Data Sharing</a></li>
-        <li><a href="#data-storage">Data Storage & Security</a></li>
-        <li><a href="#couples-data">Couples & Shared Data</a></li>
-        <li><a href="#your-rights">Your Rights</a></li>
-        <li><a href="#children">Children's Privacy</a></li>
-        <li><a href="#changes">Changes to This Policy</a></li>
-        <li><a href="#contact">Contact Us</a></li>
-      </ol>
-    </nav>
+<nav class="site-nav" role="navigation" aria-label="Main navigation">
+  <a href="index.html" class="nav-logo" aria-label="Other You home">
+    Other <em>You</em>
+    <small>Multiverse Date Night</small>
+  </a>
+  <ul class="nav-links" role="list">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="how-it-works.html">How It Works</a></li>
+    <li><a href="roadmap.html">Roadmap</a></li>
+    <li><a href="contact.html">Contact</a></li>
+    <li><a href="https://pwa.other-you.app" class="nav-cta">Open App</a></li>
+  </ul>
+  <button type="button" class="nav-hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24" aria-hidden="true">
+      <path d="M3 6h18M3 12h18M3 18h18"/>
+    </svg>
+  </button>
+</nav>
+<nav class="nav-mobile" id="nav-mobile" aria-label="Mobile navigation">
+  <a href="index.html">Home</a>
+  <a href="how-it-works.html">How It Works</a>
+  <a href="roadmap.html">Roadmap</a>
+  <a href="contact.html">Contact</a>
+  <a href="https://pwa.other-you.app" class="nav-cta">Open App</a>
+</nav>
 
-    <section id="overview">
-      <p class="section-number">01 — Overview</p>
-      <h2>The Short Version</h2>
-      <div class="callout">
-        <p>Other You is built for couples. We collect only what's needed to make the app work, we never sell your data, and your personas and date history belong to you.</p>
+<main class="page-wrap" id="main-content" tabindex="-1">
+
+  <section class="section reveal" style="padding-top: calc(var(--nav-h) + 48px);">
+    <div class="container">
+      <p class="eyebrow">Legal</p>
+      <h1 class="display-title">Privacy <em>Policy</em></h1>
+      <p class="lead" style="margin-top: 16px;">Last Updated: June 1, 2025</p>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container">
+      <nav aria-label="Page contents">
+        <div class="card">
+          <p class="eyebrow" style="margin-bottom: 12px;">Contents</p>
+          <ol class="toc-grid" role="list" style="list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 2rem; padding: 0;">
+            <li><a href="#overview" style="color: var(--text-dim); font-size: .88rem;">Overview</a></li>
+            <li><a href="#information-we-collect" style="color: var(--text-dim); font-size: .88rem;">Information We Collect</a></li>
+            <li><a href="#how-we-use" style="color: var(--text-dim); font-size: .88rem;">How We Use Your Information</a></li>
+            <li><a href="#data-sharing" style="color: var(--text-dim); font-size: .88rem;">Data Sharing</a></li>
+            <li><a href="#data-storage" style="color: var(--text-dim); font-size: .88rem;">Data Storage &amp; Security</a></li>
+            <li><a href="#couples-data" style="color: var(--text-dim); font-size: .88rem;">Couples &amp; Shared Data</a></li>
+            <li><a href="#your-rights" style="color: var(--text-dim); font-size: .88rem;">Your Rights</a></li>
+            <li><a href="#children" style="color: var(--text-dim); font-size: .88rem;">Children's Privacy</a></li>
+            <li><a href="#changes" style="color: var(--text-dim); font-size: .88rem;">Changes to This Policy</a></li>
+            <li><a href="#contact" style="color: var(--text-dim); font-size: .88rem;">Contact Us</a></li>
+          </ol>
+        </div>
+      </nav>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section id="overview" class="section reveal" aria-labelledby="overview-title">
+    <div class="container">
+      <p class="eyebrow">01 — Overview</p>
+      <h2 class="display-title" id="overview-title" style="font-size: clamp(1.4rem, 3vw, 2rem);">The Short <em>Version</em></h2>
+      <div style="margin-top: 24px;">
+        <div class="card" style="border-left: 3px solid var(--gold); border-radius: 0 12px 12px 0; margin: 20px 0;">
+          <p style="color: var(--text); font-size: .92rem; margin: 0;">Other You is built for couples. We collect only what's needed to make the app work, we never sell your data, and your personas and date history belong to you.</p>
+        </div>
+        <p class="lead" style="font-size: .95rem; max-width: 100%;">This Privacy Policy describes how Other You ("we," "us," or "our") collects, uses, and protects information when you use the Other You: Multiverse Date Night web application (the "App") and our website at <strong>other-you.app</strong>.</p>
+        <p class="lead" style="font-size: .95rem; max-width: 100%;">By using the App, you agree to the practices described in this policy. If you do not agree, please do not use the App.</p>
       </div>
-      <p>This Privacy Policy describes how Other You ("we," "us," or "our") collects, uses, and protects information when you use the Other You: Multiverse Date Night web application (the "App") and our website at <strong>other-you.app</strong>.</p>
-      <p>By using the App, you agree to the practices described in this policy. If you do not agree, please do not use the App.</p>
-    </section>
+    </div>
+  </section>
 
-    <section id="information-we-collect">
-      <p class="section-number">02 — Information We Collect</p>
-      <h2>What We Collect</h2>
-      <p>We collect only the information necessary to provide the Other You experience:</p>
-      <p><strong>Account Information</strong></p>
-      <ul>
-        <li>Email address (used for account creation and login)</li>
-        <li>Display name or username you choose</li>
-        <li>Couple pairing identifier (to link partners' accounts)</li>
-      </ul>
-      <p><strong>App Content You Create</strong></p>
-      <ul>
-        <li>Persona profiles: the alternate-life details you enter (career paths, cities, life choices)</li>
-        <li>Match history: records of which personas were paired and the generated date scenarios</li>
-        <li>Date completion notes and timestamps you add</li>
-      </ul>
-      <p><strong>Technical Information</strong></p>
-      <ul>
-        <li>Basic usage data (feature interactions, error logs) used solely for app improvement</li>
-        <li>Device type and browser version for compatibility purposes</li>
-      </ul>
-      <p>We do <strong>not</strong> collect payment information directly — any future subscription billing is handled entirely by our payment processor.</p>
-    </section>
+  <div class="divider"></div>
 
-    <section id="how-we-use">
-      <p class="section-number">03 — How We Use It</p>
-      <h2>How We Use Your Information</h2>
-      <p>Your information is used to:</p>
-      <ul>
-        <li>Create and manage your account and couple pairing</li>
-        <li>Store and display your persona profiles and date history</li>
-        <li>Generate date scenario content through the match spin feature</li>
-        <li>Improve app performance and fix bugs</li>
-        <li>Respond to support requests you initiate</li>
-        <li>Send essential service communications (e.g., account changes, policy updates)</li>
-      </ul>
-      <p>We do <strong>not</strong> use your persona content or date history for advertising, marketing profiling, or training AI models.</p>
-    </section>
-
-    <section id="data-sharing">
-      <p class="section-number">04 — Data Sharing</p>
-      <h2>Who Can See Your Data</h2>
-      <p><strong>Your partner:</strong> Because Other You is designed for couples, certain app features are intentionally shared between paired accounts — specifically, the outcome of match spins and date history you both create together. Persona profile details remain private to each partner until a match spin reveals them.</p>
-      <p><strong>Service providers:</strong> We use Supabase as our backend infrastructure provider for authentication and data storage. Supabase processes data on our behalf under a data processing agreement and does not use your data for its own purposes.</p>
-      <p><strong>No selling:</strong> We do not sell, rent, or trade your personal information to any third party, ever.</p>
-      <p><strong>Legal requirements:</strong> We may disclose information if required by law or to protect the rights, safety, or property of Other You or our users.</p>
-    </section>
-
-    <section id="data-storage">
-      <p class="section-number">05 — Data Storage & Security</p>
-      <h2>How We Protect Your Data</h2>
-      <p>Your data is stored on Supabase's infrastructure, which uses industry-standard encryption in transit (TLS) and at rest. Access to your account data requires authentication.</p>
-      <p>The Other You application is hosted on Cloudflare Pages and served over HTTPS.</p>
-      <p>While we take reasonable measures to protect your information, no internet service is 100% secure. We encourage you to use a strong, unique password for your account.</p>
-      <p><strong>Data retention:</strong> We retain your account data for as long as your account is active. If you delete your account, we will delete your personal data and app content within 30 days, except where retention is required by law.</p>
-    </section>
-
-    <section id="couples-data">
-      <p class="section-number">06 — Couples & Shared Data</p>
-      <h2>A Note on Couple Pairing</h2>
-      <div class="callout">
-        <p>Other You is designed to be used by two consenting adults in a relationship. Both partners should read this policy and agree to use the app together.</p>
+  <section id="information-we-collect" class="section reveal" aria-labelledby="information-we-collect-title">
+    <div class="container">
+      <p class="eyebrow">02 — Information We Collect</p>
+      <h2 class="display-title" id="information-we-collect-title" style="font-size: clamp(1.4rem, 3vw, 2rem);">What We <em>Collect</em></h2>
+      <div style="margin-top: 24px;">
+        <p class="lead" style="font-size: .95rem; max-width: 100%;">We collect only the information necessary to provide the Other You experience:</p>
+        <p class="lead" style="font-size: .95rem; max-width: 100%;"><strong>Profile Information (stored on your device)</strong></p>
+        <ul style="color: var(--text-dim); font-size: .95rem; padding-left: 1.4rem; margin-top: 12px;">
+          <li>Your first name and an optional one-line bio, entered during setup</li>
+          <li>These are stored in your browser's local storage only — they are never uploaded to any server in identifiable form</li>
+          <li>A randomly generated pair ID is created when you connect with a partner; it contains no personal information and is the only identifier the sync server ever sees</li>
+        </ul>
+        <p class="lead" style="font-size: .95rem; max-width: 100%;"><strong>App Content You Create</strong></p>
+        <ul style="color: var(--text-dim); font-size: .95rem; padding-left: 1.4rem; margin-top: 12px;">
+          <li>Persona profiles: the alternate-life details you enter (career paths, cities, life choices)</li>
+          <li>Match history: records of which personas were paired and the generated date scenarios</li>
+          <li>Date completion notes and timestamps you add</li>
+        </ul>
+        <p class="lead" style="font-size: .95rem; max-width: 100%;"><strong>Technical Information</strong></p>
+        <ul style="color: var(--text-dim); font-size: .95rem; padding-left: 1.4rem; margin-top: 12px;">
+          <li>Basic usage data (feature interactions, error logs) used solely for app improvement</li>
+          <li>Device type and browser version for compatibility purposes</li>
+        </ul>
+        <p class="lead" style="font-size: .95rem; max-width: 100%;">We do <strong>not</strong> collect payment information directly — any future subscription billing is handled entirely by our payment processor.</p>
       </div>
-      <p>When two accounts are paired, certain data is shared as a core part of how the App functions:</p>
-      <ul>
-        <li>Match spin results are visible to both partners</li>
-        <li>Shared date history is accessible to both partners</li>
-        <li>Each partner's individual persona details remain private until revealed by a spin</li>
-      </ul>
-      <p>If you unpair or delete your account, your partner will no longer have access to your persona data, and shared date history may be removed.</p>
-    </section>
+    </div>
+  </section>
 
-    <section id="your-rights">
-      <p class="section-number">07 — Your Rights</p>
-      <h2>Your Rights & Choices</h2>
-      <p>You have the right to:</p>
-      <ul>
-        <li><strong>Access</strong> the personal data we hold about you</li>
-        <li><strong>Correct</strong> inaccurate information in your account</li>
-        <li><strong>Delete</strong> your account and associated data</li>
-        <li><strong>Export</strong> your persona and date history data (upon request)</li>
-        <li><strong>Withdraw consent</strong> by discontinuing use of the App</li>
-      </ul>
-      <p>To exercise any of these rights, contact us at the address below. We will respond within 30 days.</p>
-      <p>If you are located in the European Economic Area (EEA), UK, or California, you may have additional rights under GDPR or CCPA. We honor those rights regardless of your location.</p>
-    </section>
+  <div class="divider"></div>
 
-    <section id="children">
-      <p class="section-number">08 — Children's Privacy</p>
-      <h2>Age Requirement</h2>
-      <p>Other You is intended for adults aged <strong>18 and older</strong>. We do not knowingly collect personal information from anyone under 18. If we become aware that a minor has created an account, we will delete that account promptly.</p>
-      <p>If you believe a minor is using the App, please contact us immediately.</p>
-    </section>
-
-    <section id="changes">
-      <p class="section-number">09 — Changes</p>
-      <h2>Updates to This Policy</h2>
-      <p>We may update this Privacy Policy as the App evolves. When we make material changes, we will update the "Last Updated" date at the top of this page and, where appropriate, notify you by email or in-app notice.</p>
-      <p>Continued use of the App after a policy update constitutes your acceptance of the revised policy. We encourage you to review this page periodically.</p>
-    </section>
-
-    <section id="contact">
-      <p class="section-number">10 — Contact</p>
-      <h2>Get in Touch</h2>
-      <p>If you have questions about this Privacy Policy, your data, or how the App works, we're happy to help.</p>
-      <div class="contact-card">
-        <span class="label">Privacy Inquiries</span>
-        <a href="mailto:hello@other-you.app">hello@other-you.app</a>
-        <div class="divider"><span>✦</span></div>
-        <p style="font-size:0.82rem; color: var(--text-muted); margin: 0;">Other You &nbsp;·&nbsp; Kettering, Ohio, USA</p>
+  <section id="how-we-use" class="section reveal" aria-labelledby="how-we-use-title">
+    <div class="container">
+      <p class="eyebrow">03 — How We Use It</p>
+      <h2 class="display-title" id="how-we-use-title" style="font-size: clamp(1.4rem, 3vw, 2rem);">How We Use Your <em>Information</em></h2>
+      <div style="margin-top: 24px;">
+        <p class="lead" style="font-size: .95rem; max-width: 100%;">Your information is used to:</p>
+        <ul style="color: var(--text-dim); font-size: .95rem; padding-left: 1.4rem; margin-top: 12px;">
+          <li>Create and manage your account and couple pairing</li>
+          <li>Store and display your persona profiles and date history</li>
+          <li>Generate date scenario content through the match spin feature</li>
+          <li>Improve app performance and fix bugs</li>
+          <li>Respond to support requests you initiate</li>
+          <li>Send essential service communications (e.g., account changes, policy updates)</li>
+        </ul>
+        <p class="lead" style="font-size: .95rem; max-width: 100%;">We do <strong>not</strong> use your persona content or date history for advertising, marketing profiling, or training AI models.</p>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <footer>
-      <p>&copy; 2026 Other You: Multiverse Date Night. All rights reserved.</p>
-      <p style="margin-top:0.4rem;"><a href="/">Return to other-you.app</a></p>
-    </footer>
+  <div class="divider"></div>
 
-  </div>
+  <section id="data-sharing" class="section reveal" aria-labelledby="data-sharing-title">
+    <div class="container">
+      <p class="eyebrow">04 — Data Sharing</p>
+      <h2 class="display-title" id="data-sharing-title" style="font-size: clamp(1.4rem, 3vw, 2rem);">Who Can See Your <em>Data</em></h2>
+      <div style="margin-top: 24px;">
+        <p class="lead" style="font-size: .95rem; max-width: 100%;"><strong>Your partner:</strong> Because Other You is designed for couples, certain app features are intentionally shared between paired accounts — specifically, the outcome of match spins and date history you both create together. Persona profile details remain private to each partner until a match spin reveals them.</p>
+        <p class="lead" style="font-size: .95rem; max-width: 100%;"><strong>Service providers:</strong> We use Supabase as our backend infrastructure provider for authentication and data storage. Supabase processes data on our behalf under a data processing agreement and does not use your data for its own purposes.</p>
+        <p class="lead" style="font-size: .95rem; max-width: 100%;"><strong>No selling:</strong> We do not sell, rent, or trade your personal information to any third party, ever.</p>
+        <p class="lead" style="font-size: .95rem; max-width: 100%;"><strong>Legal requirements:</strong> We may disclose information if required by law or to protect the rights, safety, or property of Other You or our users.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section id="data-storage" class="section reveal" aria-labelledby="data-storage-title">
+    <div class="container">
+      <p class="eyebrow">05 — Data Storage &amp; Security</p>
+      <h2 class="display-title" id="data-storage-title" style="font-size: clamp(1.4rem, 3vw, 2rem);">How We Protect Your <em>Data</em></h2>
+      <div style="margin-top: 24px;">
+        <p class="lead" style="font-size: .95rem; max-width: 100%;">There are no user accounts in the traditional sense. Your name, bio, and personas are stored in your browser's local storage. When syncing with a partner, data is encrypted on your device before transmission using AES-256-GCM. The sync server (Supabase) only ever receives your randomly generated pair ID and an encrypted data blob it cannot read.</p>
+        <p class="lead" style="font-size: .95rem; max-width: 100%;">The Other You application is hosted on Cloudflare Pages and served over HTTPS.</p>
+        <p class="lead" style="font-size: .95rem; max-width: 100%;">While we take reasonable measures to protect your information, no internet service is 100% secure. We encourage you to use a strong, unique password for your account.</p>
+        <p class="lead" style="font-size: .95rem; max-width: 100%;"><strong>Data retention:</strong> We retain your account data for as long as your account is active. If you delete your account, we will delete your personal data and app content within 30 days, except where retention is required by law.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section id="couples-data" class="section reveal" aria-labelledby="couples-data-title">
+    <div class="container">
+      <p class="eyebrow">06 — Couples &amp; Shared Data</p>
+      <h2 class="display-title" id="couples-data-title" style="font-size: clamp(1.4rem, 3vw, 2rem);">A Note on Couple <em>Pairing</em></h2>
+      <div style="margin-top: 24px;">
+        <div class="card" style="border-left: 3px solid var(--gold); border-radius: 0 12px 12px 0; margin: 20px 0;">
+          <p style="color: var(--text); font-size: .92rem; margin: 0;">Other You is designed to be used by two consenting adults in a relationship. Both partners should read this policy and agree to use the app together.</p>
+        </div>
+        <p class="lead" style="font-size: .95rem; max-width: 100%;">When two accounts are paired, certain data is shared as a core part of how the App functions:</p>
+        <ul style="color: var(--text-dim); font-size: .95rem; padding-left: 1.4rem; margin-top: 12px;">
+          <li>Match spin results are visible to both partners</li>
+          <li>Shared date history is accessible to both partners</li>
+          <li>Each partner's individual persona details remain private until revealed by a spin</li>
+        </ul>
+        <p class="lead" style="font-size: .95rem; max-width: 100%;">If you unpair or delete your account, your partner will no longer have access to your persona data, and shared date history may be removed.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section id="your-rights" class="section reveal" aria-labelledby="your-rights-title">
+    <div class="container">
+      <p class="eyebrow">07 — Your Rights</p>
+      <h2 class="display-title" id="your-rights-title" style="font-size: clamp(1.4rem, 3vw, 2rem);">Your Rights &amp; <em>Choices</em></h2>
+      <div style="margin-top: 24px;">
+        <p class="lead" style="font-size: .95rem; max-width: 100%;">You have the right to:</p>
+        <ul style="color: var(--text-dim); font-size: .95rem; padding-left: 1.4rem; margin-top: 12px;">
+          <li><strong>Access</strong> the personal data we hold about you</li>
+          <li><strong>Correct</strong> inaccurate information in your account</li>
+          <li><strong>Delete</strong> your account and associated data</li>
+          <li><strong>Export</strong> your persona and date history data (upon request)</li>
+          <li><strong>Withdraw consent</strong> by discontinuing use of the App</li>
+        </ul>
+        <p class="lead" style="font-size: .95rem; max-width: 100%;">To exercise any of these rights, contact us at the address below. We will respond within 30 days.</p>
+        <p class="lead" style="font-size: .95rem; max-width: 100%;">If you are located in the European Economic Area (EEA), UK, or California, you may have additional rights under GDPR or CCPA. We honor those rights regardless of your location.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section id="children" class="section reveal" aria-labelledby="children-title">
+    <div class="container">
+      <p class="eyebrow">08 — Children's Privacy</p>
+      <h2 class="display-title" id="children-title" style="font-size: clamp(1.4rem, 3vw, 2rem);">Age <em>Requirement</em></h2>
+      <div style="margin-top: 24px;">
+        <p class="lead" style="font-size: .95rem; max-width: 100%;">Other You is intended for adults aged <strong>18 and older</strong>. We do not knowingly collect personal information from anyone under 18. If we become aware that a minor has created an account, we will delete that account promptly.</p>
+        <p class="lead" style="font-size: .95rem; max-width: 100%;">If you believe a minor is using the App, please contact us immediately.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section id="changes" class="section reveal" aria-labelledby="changes-title">
+    <div class="container">
+      <p class="eyebrow">09 — Changes</p>
+      <h2 class="display-title" id="changes-title" style="font-size: clamp(1.4rem, 3vw, 2rem);">Updates to This <em>Policy</em></h2>
+      <div style="margin-top: 24px;">
+        <p class="lead" style="font-size: .95rem; max-width: 100%;">We may update this Privacy Policy as the App evolves. When we make material changes, we will update the "Last Updated" date at the top of this page and, where appropriate, notify you by email or in-app notice.</p>
+        <p class="lead" style="font-size: .95rem; max-width: 100%;">Continued use of the App after a policy update constitutes your acceptance of the revised policy. We encourage you to review this page periodically.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section id="contact" class="section reveal" aria-labelledby="contact-title">
+    <div class="container">
+      <p class="eyebrow">10 — Contact</p>
+      <h2 class="display-title" id="contact-title" style="font-size: clamp(1.4rem, 3vw, 2rem);">Get in <em>Touch</em></h2>
+      <div style="margin-top: 24px;">
+        <p class="lead" style="font-size: .95rem; max-width: 100%;">If you have questions about this Privacy Policy, your data, or how the App works, visit the <a href="contact.html">Contact page</a> to reach us.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="footer-logo">Other <em>You</em></div>
+    <p><a href="privacy-policy.html">Privacy Policy</a> &nbsp;·&nbsp; <a href="terms.html">Terms and Conditions</a></p>
+    <p class="footer-copyright">© 2026 Other You</p>
+    <p class="footer-donate">Enjoying the app? <a href="https://connect.vestwell.com/gift/stable/JpWVJZ7rQ0ixof6rguIVEA" target="_blank" rel="noopener noreferrer">Leave a tip ↗</a></p>
+  </footer>
+
+</main><!-- /page-wrap -->
+
+<script src="js/site.js"></script>
 </body>
 </html>

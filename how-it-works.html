@@ -1,9 +1,11 @@
 <!DOCTYPE html>
+<!-- Last audited: 2026-06-03 — removed duplicate callout-title color defs, added scroll-margin-top to hiw-block -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0d0818">
+<meta name="color-scheme" content="dark light">
 <link rel="icon" href="assets/icons/favicon.ico">
 <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
 <meta name="description" content="How Other You works — full guide to using the app, connecting with your partner, privacy, sync, and troubleshooting.">
@@ -23,7 +25,7 @@
 <link rel="stylesheet" href="css/site.css">
 <style>
 .page-header{padding:calc(var(--nav-h) + 64px) 28px 48px;text-align:center;}
-.hiw-block{margin-bottom:48px;}
+.hiw-block{margin-bottom:48px;scroll-margin-top:calc(var(--nav-h) + 16px);}
 .hiw-block-title{font-family:var(--font-d);font-size:1.6rem;font-weight:400;color:var(--cream);margin-bottom:6px;display:flex;align-items:center;gap:12px;}
 .hiw-block-icon{font-size:1.4rem;}
 .hiw-block-lead{font-size:.9rem;color:var(--text-dim-aa);line-height:1.7;margin-bottom:18px;max-width:660px;}
@@ -40,7 +42,8 @@
 .method-title{font-size:.95rem;font-weight:500;color:var(--cream);margin-bottom:4px;}
 .method-text{font-size:.83rem;color:var(--text-dim-aa);line-height:1.65;}
 .method-tag{display:inline-flex;align-items:center;gap:4px;background:rgba(91,58,140,.18);border:1px solid var(--border);border-radius:100px;padding:3px 10px;font-size:.68rem;color:var(--mist-aa);margin-top:8px;margin-right:4px;}
-.method-tag.recommended{background:rgba(232,188,120,.12);border-color:rgba(232,188,120,.3);color:var(--gold);}
+/* color:var(--gold) on this bg = 4.07:1 — WCAG AA fail for 0.68rem text; use --cream for ~13:1 */
+.method-tag.recommended{background:rgba(232,188,120,.12);border-color:rgba(232,188,120,.3);color:var(--cream);}
 .expect-list{display:flex;flex-direction:column;gap:10px;}
 .expect-row{display:flex;align-items:flex-start;gap:14px;background:var(--bg-card);border:1px solid var(--border);border-radius:13px;padding:14px 16px;backdrop-filter:blur(6px);}
 .expect-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px;}
@@ -51,11 +54,13 @@
 .callout-good{background:rgba(134,239,172,.06);border:1px solid rgba(134,239,172,.2);}
 .callout-info{background:rgba(91,58,140,.1);border:1px solid var(--border);}
 .callout-icon{font-size:1.1rem;flex-shrink:0;}
-.callout-title-warn{font-size:.88rem;font-weight:500;color:#fca5a5;margin-bottom:3px;}
-.callout-title-good{font-size:.88rem;font-weight:500;color:#86efac;margin-bottom:3px;}
-.callout-title-info{font-size:.88rem;font-weight:500;color:var(--mist-aa);margin-bottom:3px;}
+/* callout-title-* colors are defined globally in site.css section 15 */
+.callout-title-warn,.callout-title-good,.callout-title-info{font-size:.88rem;font-weight:500;margin-bottom:3px;}
 .callout-text{font-size:.79rem;color:var(--text-dim-aa);line-height:1.6;}
-.step-list{display:flex;flex-direction:column;gap:0;counter-reset:steps;}
+/* list-style:none removes the browser's own numbers so the CSS ::before counter
+   is the only visual number — no duplication. padding-left:0 overrides the
+   browser's default <ol> indent. */
+.step-list{display:flex;flex-direction:column;gap:0;counter-reset:steps;list-style:none;padding-left:0;}
 .step-item{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--border-soft);counter-increment:steps;}
 .step-item:last-child{border-bottom:none;}
 .step-item::before{content:counter(steps);font-family:var(--font-d);font-size:1.4rem;color:var(--gold);min-width:28px;flex-shrink:0;line-height:1.3;}
@@ -64,9 +69,11 @@
 .section-divider{height:1px;background:var(--border);margin:48px 0;}
 /* .reveal and .reveal-d1/.reveal-d2 are defined in site.css */
 .toc{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:20px 24px;margin-bottom:40px;backdrop-filter:blur(6px);}
-.toc-title{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:12px;}
+/* Reset h2 browser defaults so the toc heading looks like an eyebrow label,
+   not a large heading. The visual role is a label; the semantic role is h2. */
+.toc-title{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:12px;font-weight:500;line-height:1;}
 .toc-list{list-style:none;display:flex;flex-direction:column;gap:6px;}
-.toc-list li a{font-size:.85rem;color:var(--text-dim-aa);text-decoration:none;display:flex;align-items:center;gap:8px;}
+.toc-list li a{font-size:.85rem;color:var(--text-dim-aa);text-decoration:none;display:flex;align-items:center;gap:8px;padding:6px 0;}
 .toc-list li a:hover{color:var(--mist-aa);}
 .toc-list li a::before{content:'→';color:var(--gold);font-size:.75rem;} /* was var(--iris) = 2.4:1 on dark bg — WCAG AA fail; gold = 5.5:1 */
 /* Inline code snippets (URLs, file names, short codes) */
@@ -77,7 +84,7 @@
 <a href="#main-content" class="skip-link">Skip to main content</a>
 <canvas id="site-bg" aria-hidden="true"></canvas>
 <nav class="site-nav" role="navigation" aria-label="Main navigation">
-  <a href="index.html" class="nav-logo">Other <em>You</em><small>Multiverse Date Night</small></a>
+  <a href="index.html" class="nav-logo" aria-label="Other You home">Other <em>You</em><small>Multiverse Date Night</small></a>
   <ul class="nav-links" role="list">
     <li><a href="index.html">Home</a></li>
     <li><a href="how-it-works.html" class="active" aria-current="page">How It Works</a></li>
@@ -109,9 +116,13 @@
   <section class="section" style="padding-top:0;">
     <div class="container">
 
-      <!-- TABLE OF CONTENTS -->
-      <div class="toc reveal">
-        <div class="toc-title">On this page</div>
+      <!-- TABLE OF CONTENTS
+           Using <nav aria-label="Page contents"> makes the TOC a navigation
+           landmark — screen readers list it in their landmarks menu so users
+           can jump directly to it without reading through the page intro.
+           The <h2> provides an accessible name and establishes heading hierarchy. -->
+      <nav class="toc reveal" aria-labelledby="toc-heading">
+        <h2 class="toc-title" id="toc-heading">On this page</h2>
         <ul class="toc-list" role="list">
           <li><a href="#install">Installing the app</a></li>
           <li><a href="#getstarted">Getting started — the demo and your first persona</a></li>
@@ -126,7 +137,7 @@
           <li><a href="#devices">Device requirements</a></li>
           <li><a href="#questions">Common questions</a></li>
         </ul>
-      </div>
+      </nav>
 
       <!-- EARLY VERSION NOTE -->
       <div class="callout callout-info reveal" style="margin-bottom:40px;">
@@ -186,14 +197,14 @@
             <div class="expect-icon" aria-hidden="true">🎭</div>
             <div>
               <h3 class="expect-title">Try the demo first</h3>
-              <div class="expect-text">The demo loads two fully written fictional people — Jordan and Avery — each with four personas. You can explore every feature of the app with their personas: spin matches, accept dates, view history entries. Nothing you do in demo mode is saved. It's a safe way to see how everything works before you commit to creating your own.</div>
+              <div class="expect-text">The demo loads two fully written fictional people — Jordan and Avery — each with four personas. You can explore every feature of the app with their personas: spin matches, accept dates, view history entries. Nothing you do in demo mode is saved. It's a safe way to see how everything works before you commit to creating your own. You can also launch demo mode any time from <strong style="color:var(--cream);">Settings → Demo</strong> — you don't need to be on the welcome screen.</div>
             </div>
           </div>
           <div class="expect-row">
             <div class="expect-icon" aria-hidden="true">👤</div>
             <div>
               <h3 class="expect-title">Set up your real profile</h3>
-              <div class="expect-text">Tap "Begin your journey →" on the last welcome slide, or "Create a new profile" on the profile entry screen. You'll be asked for your name and a one-line bio — just enough for your partner to know whose profile they're looking at. This takes about 30 seconds. You can change it later in Settings.</div>
+              <div class="expect-text">Tap "Begin your journey →" on the last welcome slide, or "Create a new profile" on the profile entry screen. You'll be asked for your name and a one-line bio — just enough for your partner to know whose profile they're looking at. This takes about 30 seconds. You can edit your name and bio any time — just tap your profile card at the top of the Settings screen.</div>
             </div>
           </div>
         </div>
@@ -205,44 +216,44 @@
       <div class="hiw-block reveal" id="personas">
         <h2 class="hiw-block-title"><span class="hiw-block-icon" aria-hidden="true">🌀</span> Creating and managing personas</h2>
         <p class="hiw-block-lead">A persona is an alternate version of you — based on a crossroads you didn't take, a phase that ended too soon, or a version of yourself that never quite got to exist. You can have as many as you like.</p>
-        <div class="step-list" style="margin-bottom:20px;">
-          <div class="step-item">
+        <ol class="step-list" role="list" style="margin-bottom:20px;">
+          <li class="step-item">
             <div>
-              <h3 class="step-item-title">Go to the Profiles tab</h3>
-              <div class="step-item-text">Tap the Profiles icon in the bottom navigation bar. You'll see your personas listed here, plus an "Add a self" button.</div>
+              <h3 class="step-item-title">Go to the Personas tab</h3>
+              <div class="step-item-text">Tap the Personas icon in the bottom navigation bar. You'll see your personas listed here, plus an "Add another version of yourself" button.</div>
             </div>
-          </div>
-          <div class="step-item">
+          </li>
+          <li class="step-item">
             <div>
               <h3 class="step-item-title">Tap "Add another version of yourself"</h3>
-              <div class="step-item-text">The persona creation screen opens. Start with the name — a real name, an archetype ("The Musician"), or both ("Noa — The Wanderer"). If you're stuck, tap "Suggest a name" for ideas.</div>
+              <div class="step-item-text">The persona creation screen opens. Start with the name — a real name, an archetype ("The Musician"), or both ("Noa — The Wanderer"). If you're stuck, tap "✦ Inspire me" for ideas.</div>
             </div>
-          </div>
-          <div class="step-item">
+          </li>
+          <li class="step-item">
             <div>
               <h3 class="step-item-title">Write the origin story</h3>
               <div class="step-item-text">What crossroads created this version of you? "The year I quit my band to get a real job" or "When I turned down the job in Tokyo."</div>
             </div>
-          </div>
-          <div class="step-item">
+          </li>
+          <li class="step-item">
             <div>
               <h3 class="step-item-title">Describe who they are</h3>
               <div class="step-item-text">What does this version of you care about? What's their vibe? What would you find in their apartment?</div>
             </div>
-          </div>
-          <div class="step-item">
+          </li>
+          <li class="step-item">
             <div>
               <h3 class="step-item-title">Add traits and an avatar</h3>
               <div class="step-item-text">Pick personality traits from the suggestions or write your own — phrases like "cries at commercials" work just as well as single words. Choose an emoji avatar, and optionally upload a photo of yourself dressed as this persona.</div>
             </div>
-          </div>
-          <div class="step-item">
+          </li>
+          <li class="step-item">
             <div>
               <h3 class="step-item-title">Tap "Save persona"</h3>
               <div class="step-item-text">Your persona is saved to your device. It syncs to your partner's device automatically the next time you're both online.</div>
             </div>
-          </div>
-        </div>
+          </li>
+        </ol>
         <div class="expect-list">
           <div class="expect-row">
             <div class="expect-icon" aria-hidden="true">↕️</div>
@@ -276,32 +287,32 @@
           </div>
         </div>
 
-        <div class="step-list" style="margin-bottom:20px;">
-          <div class="step-item">
+        <ol class="step-list" role="list" style="margin-bottom:20px;">
+          <li class="step-item">
             <div>
               <h3 class="step-item-title">One partner generates the code</h3>
               <div class="step-item-text">Go to the Connect tab. Tap "✦ Generate my code." The app creates a private code — a short string that looks like <code class="code-inline">K7M2P-R9NQ4-W3XBT-H6YL8</code> — and displays it large on screen.</div>
             </div>
-          </div>
-          <div class="step-item">
+          </li>
+          <li class="step-item">
             <div>
               <h3 class="step-item-title">Share the code</h3>
               <div class="step-item-text">Tap "Copy code" to copy it to your clipboard, or tap "Share" to open your phone's share sheet. Send it to your partner however you like — text, iMessage, WhatsApp, email, anything works.</div>
             </div>
-          </div>
-          <div class="step-item">
+          </li>
+          <li class="step-item">
             <div>
               <h3 class="step-item-title">Your partner enters the code</h3>
               <div class="step-item-text">Your partner opens the Connect tab in their app, types or pastes the code into the "Enter a code" field, and taps "Join." If they haven't set up their profile yet, they'll be prompted to do that first — the connection completes after.</div>
             </div>
-          </div>
-          <div class="step-item">
+          </li>
+          <li class="step-item">
             <div>
               <h3 class="step-item-title">Personas sync automatically</h3>
               <div class="step-item-text">Once connected, both partners exchange their personas. Within a few seconds (if both devices are online), you'll each see the other's personas on your Profiles screen.</div>
             </div>
-          </div>
-        </div>
+          </li>
+        </ol>
 
         <div class="callout callout-info" style="margin-bottom:14px;">
           <div class="callout-icon" aria-hidden="true">💡</div>
@@ -326,44 +337,44 @@
       <div class="hiw-block reveal" id="dating">
         <h2 class="hiw-block-title"><span class="hiw-block-icon" aria-hidden="true">🎰</span> The date matching experience</h2>
         <p class="hiw-block-lead">The Date tab is where the magic happens. It pairs one of your personas with one of your partner's. Spin, lock what you like, and accept when the combination feels right.</p>
-        <div class="step-list" style="margin-bottom:20px;">
-          <div class="step-item">
+        <ol class="step-list" role="list" style="margin-bottom:20px;">
+          <li class="step-item">
             <div>
               <h3 class="step-item-title">Tap "Spin your next match"</h3>
               <div class="step-item-text">The slot machine spins and lands on one persona from each of you. Both you and your partner see the same result — the spin is synced so you're always planning the same date.</div>
             </div>
-          </div>
-          <div class="step-item">
+          </li>
+          <li class="step-item">
             <div>
               <h3 class="step-item-title">Lock what you like, re-spin the rest</h3>
               <div class="step-item-text">Each persona slot has a lock button (🔓). Tap it to lock that persona. Then tap "Spin again" — locked slots stay put while the unlocked one re-rolls. Mix and match until the combination feels right.</div>
             </div>
-          </div>
-          <div class="step-item">
+          </li>
+          <li class="step-item">
             <div>
               <h3 class="step-item-title">Browse manually if you prefer</h3>
               <div class="step-item-text">Every persona slot also has left/right arrow buttons for manual control. You can cycle through your personas one at a time — no spinning required.</div>
             </div>
-          </div>
-          <div class="step-item">
+          </li>
+          <li class="step-item">
             <div>
               <h3 class="step-item-title">Accept the date</h3>
               <div class="step-item-text">When you're happy with the combination, tap "Accept this date night." This locks in the match and changes the button to "We did it — mark as complete." Both you and your partner can see the accepted date.</div>
             </div>
-          </div>
-          <div class="step-item">
+          </li>
+          <li class="step-item">
             <div>
               <h3 class="step-item-title">Go on the date</h3>
               <div class="step-item-text">Both you and your partner see the same matched personas. Go on a date as those two versions of yourselves — dress up as your persona if you like.</div>
             </div>
-          </div>
-          <div class="step-item">
+          </li>
+          <li class="step-item">
             <div>
               <h3 class="step-item-title">Mark it complete</h3>
               <div class="step-item-text">After the date, open the app and tap "We did it — mark as complete." The date is saved to your History. You can then spin a new match.</div>
             </div>
-          </div>
-        </div>
+          </li>
+        </ol>
         <div class="callout callout-info">
           <div class="callout-icon" aria-hidden="true">💡</div>
           <div>
@@ -385,6 +396,13 @@
             <div>
               <h3 class="expect-title">Editing the date</h3>
               <div class="expect-text">If you mark a date complete in the app before you actually go on it, you can fix the date afterward. Expand the history entry and tap "Edit date" in the bottom right of the card. A date picker lets you set the real date you went on it.</div>
+            </div>
+          </div>
+          <div class="expect-row">
+            <div class="expect-icon" aria-hidden="true">🗑️</div>
+            <div>
+              <h3 class="expect-title">Removing a date</h3>
+              <div class="expect-text">To remove an entry from your history, expand it and tap "Edit date," then tap "Remove this date" at the bottom of the sheet. A confirmation appears before anything is deleted. Removing a date only affects your own history — your partner's history is not changed.</div>
             </div>
           </div>
           <div class="expect-row">
@@ -516,44 +534,44 @@
       <div class="hiw-block reveal" id="backup">
         <h2 class="hiw-block-title"><span class="hiw-block-icon" aria-hidden="true">💾</span> Backing up your data</h2>
         <p class="hiw-block-lead">Other You has a built-in encrypted backup system. Set it up once and the app updates your backup file automatically every time something changes — no manual exporting needed.</p>
-        <div class="step-list" style="margin-bottom:16px;">
-          <div class="step-item">
+        <ol class="step-list" role="list" style="margin-bottom:16px;">
+          <li class="step-item">
             <div>
               <h3 class="step-item-title">Open Settings → Backup &amp; Sync</h3>
               <div class="step-item-text">Tap the gear icon ⚙️ in the bottom navigation bar, then tap "Backup &amp; Sync."</div>
             </div>
-          </div>
-          <div class="step-item">
+          </li>
+          <li class="step-item">
             <div>
               <h3 class="step-item-title">Tap "Create a backup"</h3>
               <div class="step-item-text">This starts the backup setup flow. You'll go through three steps: an intro, creating a password, and choosing a save location.</div>
             </div>
-          </div>
-          <div class="step-item">
+          </li>
+          <li class="step-item">
             <div>
               <h3 class="step-item-title">Create your backup password</h3>
-              <div class="step-item-text">Your backup is encrypted with a password you create. The app never stores your password — not on your device, not anywhere. If you lose it, your backup cannot be recovered. Use a password manager to generate and save a strong one. The password must be at least 15 characters.</div>
+              <div class="step-item-text">Your backup is encrypted with a password you create. Your password is stored securely on this device using an encrypted key in your browser's private storage — this lets the app unlock automatically when you reopen it, so you won't be prompted every time. If you clear your browser data or move to a new device, you'll need to re-enter it. If you forget it entirely, your backup cannot be recovered. Use a password manager to generate and save a strong one. The password must be at least 15 characters.</div>
             </div>
-          </div>
-          <div class="step-item">
+          </li>
+          <li class="step-item">
             <div>
               <h3 class="step-item-title">Choose where to save your backup</h3>
               <div class="step-item-text">A file picker opens. Choose a folder — ideally a cloud folder like iCloud Drive, Google Drive, or OneDrive so your backup is protected even if your device is lost. The app saves a file called <code class="code-inline">other-you-backup.json</code> to that location.</div>
             </div>
-          </div>
-          <div class="step-item">
+          </li>
+          <li class="step-item">
             <div>
               <h3 class="step-item-title">After that, it's automatic</h3>
-              <div class="step-item-text">Every time you save a persona, accept a date, or make any change, the app encrypts your latest data and writes it to your backup file in the background. You'll be asked for your password once each time you open the app. That's it.</div>
+              <div class="step-item-text">Every time you save a persona, accept a date, or make any change, the app encrypts your latest data and writes it to your backup file in the background. The app remembers your password securely so future sessions unlock automatically — no prompt needed.</div>
             </div>
-          </div>
-          <div class="step-item">
+          </li>
+          <li class="step-item">
             <div>
               <h3 class="step-item-title">To restore: Settings → Backup &amp; Sync → Restore from backup</h3>
               <div class="step-item-text">Choose your backup file, enter your password, and your data is restored. This replaces everything currently in the app — it cannot be undone.</div>
             </div>
-          </div>
-        </div>
+          </li>
+        </ol>
         <div class="callout callout-info">
           <div class="callout-icon" aria-hidden="true">📱</div>
           <div>

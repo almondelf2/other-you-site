@@ -12,6 +12,7 @@
    with each other. Think of each IIFE as its
    own sealed room.
 ═══════════════════════════════════════ */
+// Last audited: 2026-06-03 — added gradient caching to avoid ~120 object allocations/sec in draw loop
 
 
 /* ══════════════════════════════
@@ -50,6 +51,7 @@
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   let W, H, stars, raf;             /* W/H = canvas dimensions, raf = animation frame ID */
+  let cachedGrad1, cachedGrad2;     /* ambient gradients — rebuilt only on resize or theme change */
 
   /* Match the canvas pixel size to the browser window size */
   function resize() {
@@ -69,9 +71,26 @@
     };
   }
 
+  /*
+    Build the two ambient radial gradients and cache them.
+    Called from init() (after resize sets W/H) and from updateTheme()
+    (when the color scheme changes). Avoids recreating gradient objects
+    inside draw(), which ran at ~60fps = ~120 allocations/sec.
+  */
+  function buildGradients() {
+    const dark = isDark();
+    cachedGrad1 = ctx.createRadialGradient(W * .15, H * .25, 0, W * .15, H * .25, W * .45);
+    cachedGrad1.addColorStop(0, dark ? 'rgba(91,58,140,.07)' : 'rgba(155,126,200,.1)');
+    cachedGrad1.addColorStop(1, 'transparent');
+    cachedGrad2 = ctx.createRadialGradient(W * .85, H * .7, 0, W * .85, H * .7, W * .4);
+    cachedGrad2.addColorStop(0, dark ? 'rgba(124,58,237,.05)' : 'rgba(124,58,237,.07)');
+    cachedGrad2.addColorStop(1, 'transparent');
+  }
+
   /* Set up the canvas and create all stars */
   function init() {
     resize();
+    buildGradients();
     stars = Array.from({ length: 90 }, mkStar);
     if (raf) cancelAnimationFrame(raf);       /* stop any previous animation loop */
     draw();
@@ -82,18 +101,12 @@
     ctx.clearRect(0, 0, W, H);               /* wipe the previous frame */
     const dark = isDark();
 
-    /* Ambient glow 1 — top-left iris purple */
-    const g1 = ctx.createRadialGradient(W * .15, H * .25, 0, W * .15, H * .25, W * .45);
-    g1.addColorStop(0, dark ? 'rgba(91,58,140,.07)' : 'rgba(155,126,200,.1)');
-    g1.addColorStop(1, 'transparent');
-    ctx.fillStyle = g1;
+    /* Ambient glow 1 — top-left iris purple (gradient built once in buildGradients()) */
+    ctx.fillStyle = cachedGrad1;
     ctx.fillRect(0, 0, W, H);
 
     /* Ambient glow 2 — bottom-right portal purple */
-    const g2 = ctx.createRadialGradient(W * .85, H * .7, 0, W * .85, H * .7, W * .4);
-    g2.addColorStop(0, dark ? 'rgba(124,58,237,.05)' : 'rgba(124,58,237,.07)');
-    g2.addColorStop(1, 'transparent');
-    ctx.fillStyle = g2;
+    ctx.fillStyle = cachedGrad2;
     ctx.fillRect(0, 0, W, H);
 
     /* Draw each star */
@@ -141,10 +154,12 @@
     }
   });
 
-  /* Reuse darkMQ (declared above) — no need for a second matchMedia call. */
+  /* Reuse darkMQ (declared above) — no need for a second matchMedia call.
+     Also rebuilds gradient cache so ambient glow colors update with the theme. */
   function updateTheme(e) {
     const meta = document.querySelector('meta[name="theme-color"]');
     if (meta) meta.content = e.matches ? '#f4f0ff' : '#0d0818';
+    if (cachedGrad1) buildGradients(); /* cachedGrad1 is null before init() runs */
   }
   darkMQ.addEventListener('change', updateTheme);
   updateTheme(darkMQ);
@@ -178,6 +193,22 @@
     /* Keep ARIA in sync with visual state */
     hamburger.setAttribute('aria-expanded', isOpen);
     hamburger.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
+
+    /*
+      When the menu opens, move keyboard focus to the first link inside it.
+      WHY: After activating the hamburger button, keyboard users expect Tab to
+      enter the newly visible menu. Without this, focus stays on the hamburger
+      and users must Tab past it (and any other elements) before reaching the
+      menu links. Moving focus immediately makes the menu feel intentional and
+      avoids the "where did my focus go?" problem that affects screen reader users.
+      requestAnimationFrame delays the focus until the browser has painted the
+      newly opened menu, so the focus move is visible and not cancelled by the
+      display transition.
+    */
+    if (isOpen) {
+      const firstLink = mobileNav.querySelector('a');
+      if (firstLink) requestAnimationFrame(() => firstLink.focus());
+    }
   });
 
   /* Close when a link inside the drawer is tapped */

@@ -3,6 +3,7 @@
   "short_name": "Other You",
   "description": "A private app for couples to explore each other's alternate selves — the roads not taken, the versions that were forgotten.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0d0818",
   "theme_color": "#0d0818",

@@ -1,9 +1,11 @@
 <!DOCTYPE html>
+<!-- Last audited: 2026-06-03 — fixed pulseDot to opacity animation, removed duplicate phase 3 item, fixed rel=noopener to include noreferrer -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0d0818">
+<meta name="color-scheme" content="dark light">
 <link rel="icon" href="assets/icons/favicon.ico">
 <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
 <meta name="description" content="The Other You roadmap — what's been built and where we're going.">
@@ -31,8 +33,9 @@
 .phase:nth-child(even) .phase-meta{order:2;}.phase:nth-child(even) .phase-card{order:1;}}
 .phase::before{content:'';position:absolute;left:19px;top:6px;width:18px;height:18px;border-radius:50%;border:2px solid var(--border);background:var(--bg);z-index:1;}
 .phase.done::before{background:var(--gold);border-color:var(--gold);box-shadow:0 0 12px rgba(232,188,120,.4);}
+/* Static box-shadow for constant glow; opacity animation is GPU-composited (no paint trigger) */
 .phase.active::before{background:var(--iris);border-color:var(--iris);box-shadow:0 0 14px rgba(91,58,140,.5);animation:pulseDot 2s ease-in-out infinite;}
-@keyframes pulseDot{0%,100%{box-shadow:0 0 10px rgba(91,58,140,.4);}50%{box-shadow:0 0 22px rgba(91,58,140,.7);}}
+@keyframes pulseDot{0%,100%{opacity:1;}50%{opacity:.35;}}
 @media(min-width:640px){.phase::before{left:50%;transform:translateX(-50%);top:18px;}}
 .phase-meta{padding-top:4px;}
 @media(min-width:640px){.phase-meta{text-align:right;padding-top:16px;}.phase:nth-child(even) .phase-meta{text-align:left;}}
@@ -67,7 +70,7 @@
 <a href="#main-content" class="skip-link">Skip to main content</a>
 <canvas id="site-bg" aria-hidden="true"></canvas>
 <nav class="site-nav" role="navigation" aria-label="Main navigation">
-  <a href="index.html" class="nav-logo">Other <em>You</em><small>Multiverse Date Night</small></a>
+  <a href="index.html" class="nav-logo" aria-label="Other You home">Other <em>You</em><small>Multiverse Date Night</small></a>
   <ul class="nav-links" role="list">
     <li><a href="index.html">Home</a></li>
     <li><a href="how-it-works.html">How It Works</a></li>
@@ -120,13 +123,13 @@
             <div class="phase-desc">Everything required for two real people to actually use Other You together. This phase ships as one complete release.</div>
 
             <h3 class="phase-sub">Persona creation</h3>
-            <ul class="phase-items" aria-label="Persona features">
+            <ul class="phase-items" role="list" aria-label="Persona features">
               <li><span class="item-dot" aria-hidden="true"></span>Persona profiles: alias, origin story, short descriptive bio, trait tags, emoji or photo</li>
               <li><span class="item-dot" aria-hidden="true"></span>Reorder and delete personas</li>
             </ul>
 
             <h3 class="phase-sub">Date matching</h3>
-            <ul class="phase-items" aria-label="Matching features">
+            <ul class="phase-items" role="list" aria-label="Matching features">
               <li><span class="item-dot" aria-hidden="true"></span>Slot machine-like spin matching two personas for a date</li>
               <li><span class="item-dot" aria-hidden="true"></span>Lock individual slots and re-spin the rest</li>
               <li><span class="item-dot" aria-hidden="true"></span>Manual scroll through personas</li>
@@ -135,7 +138,7 @@
             </ul>
 
             <h3 class="phase-sub">Partner connection</h3>
-            <ul class="phase-items" aria-label="Connection features">
+            <ul class="phase-items" role="list" aria-label="Connection features">
               <li><span class="item-dot" aria-hidden="true"></span>Private code pairing: one partner generates a code, shares it via any messaging app, partner enters it to connect</li>
               <li><span class="item-dot" aria-hidden="true"></span>End-to-end encrypted persona sync via Supabase</li>
               <li><span class="item-dot" aria-hidden="true"></span>Offline queue: changes sync when both are online</li>
@@ -143,7 +146,7 @@
             </ul>
 
             <h3 class="phase-sub">App foundation</h3>
-            <ul class="phase-items" aria-label="Foundation features">
+            <ul class="phase-items" role="list" aria-label="Foundation features">
               <li><span class="item-dot" aria-hidden="true"></span>Progressive Web App: installable from browser, works offline</li>
               <li><span class="item-dot" aria-hidden="true"></span>Dark and light themes following device settings</li>
               <li><span class="item-dot" aria-hidden="true"></span>Full WCAG AA accessibility compliance</li>
@@ -164,7 +167,7 @@
           <div class="phase-card">
             <h2 class="phase-title">Inspirational Prompts</h2>
             <div class="phase-desc">Moving beyond basic persona spins with the addition of inspirational date prompts.</div>
-            <ul class="phase-items" aria-label="Phase 2 features">
+            <ul class="phase-items" role="list" aria-label="Phase 2 features">
               <li><span class="item-dot" aria-hidden="true"></span>Personas creation prompts to combat writer's block</li>
               <li><span class="item-dot" aria-hidden="true"></span>Date suggestions including themes, activities, and questions for deeper conversation</li>
               <li><span class="item-dot" aria-hidden="true"></span>Journal feature added to history with reflection prompts and the recording of date theme details</li>
@@ -182,10 +185,9 @@
           <div class="phase-card">
             <h2 class="phase-title">Persona Compatibility</h2>
             <div class="phase-desc">Automated personalization and expanded date idea library.</div>
-            <ul class="phase-items" aria-label="Phase 3 features">
+            <ul class="phase-items" role="list" aria-label="Phase 3 features">
               <li><span class="item-dot" aria-hidden="true"></span>Trait compatibility algorithm for tension and resonance between personas including date suggestions and questions for conversation</li>
-              <li><span class="item-dot" aria-hidden="true"></span>Match history: no repeats until all combinations have been tried</li>
-              <li><span class="item-dot" aria-hidden="true"></span>No-repeat matching: all persona combinations tried before repeating</li>
+              <li><span class="item-dot" aria-hidden="true"></span>No-repeat matching: all persona combinations tried before any are repeated</li>
             </ul>
           </div>
         </div>
@@ -199,7 +201,7 @@
           <div class="phase-card">
             <h2 class="phase-title">AI Personalization</h2>
             <div class="phase-desc">AI features add extremely personalized assistance and date recommendations.</div>
-            <ul class="phase-items" aria-label="Phase 4 features">
+            <ul class="phase-items" role="list" aria-label="Phase 4 features">
               <li><span class="item-dot" aria-hidden="true"></span>Personalized AI features: date suggestions, questions, personas assistant</li>
               <li><span class="item-dot" aria-hidden="true"></span>Fan fiction universes: not cosplay, but persona imagination</li>
               <li><span class="item-dot" aria-hidden="true"></span>Real time cloud sync and backup via server</li>
@@ -218,7 +220,7 @@
           <a href="contact.html" class="btn btn-primary">Send a suggestion →</a>
           <a href="https://pwa.other-you.app" class="btn btn-ghost">Open App ↗</a>
         </div>
-        <p style="margin-top:20px;font-size:.8rem;color:var(--text-dim-aa);">If you're enjoying what's being built, you can <a href="https://connect.vestwell.com/gift/stable/JpWVJZ7rQ0ixof6rguIVEA" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none;">support development here</a>.</p>
+        <p style="margin-top:20px;font-size:.8rem;color:var(--text-dim-aa);">If you're enjoying what's being built, you can <a href="https://connect.vestwell.com/gift/stable/JpWVJZ7rQ0ixof6rguIVEA" target="_blank" rel="noopener noreferrer" style="color:var(--gold);text-decoration:none;">support development here</a>.</p>
       </div>
 
     </div>

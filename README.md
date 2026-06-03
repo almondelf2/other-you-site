@@ -99,13 +99,13 @@ npx serve site
 
 ## Deployment
 
-Deployed via cPanel File Manager — upload the contents of `site/` to the web root of `other-you.app`. No build or compile step. After each CSS change, increment the version comment in `css/site.css` to bust browser cache.
+Deployed via cPanel File Manager — upload the contents of `site/` to the web root of `other-you.app`. No build or compile step.
 
 ---
 
 ## Accessibility
 
-WCAG 2.1 AA targets:
+WCAG 2.1 AA compliance:
 
 - Skip navigation link on every page
 - All nav links and icon buttons have descriptive `aria-label` attributes
@@ -113,6 +113,10 @@ WCAG 2.1 AA targets:
 - `aria-expanded` and `aria-controls` on the hamburger menu button
 - Canvas background has `aria-hidden="true"`
 - Semantic landmarks: `<nav>`, `<main>`, `<header>`, `<footer>`, `<section>`
+- `<meta name="color-scheme" content="dark light">` on every page — ensures browser-native UI elements render in the correct theme
+- `role="list"` on all lists with `list-style: none` — preserves list announcements in Safari/VoiceOver
+- Inline prose links (`.lead a`) are visually distinguished from body text via `--mist-aa` color and underline — satisfies WCAG 1.4.1 (Use of Color, Level A)
+- Legal page TOC links use `display: block` with padding to meet WCAG 2.5.8 minimum touch-target size
 
 ---
 
